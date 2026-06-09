@@ -1,4 +1,4 @@
-﻿@page "/"
+@page "/"
 
 <PageTitle>Login baltec</PageTitle>
 
@@ -9,21 +9,27 @@
     <a href="/contato">Contato</a>
     </nav>
 </header>
-<body>
+<main class="page-background">
 <div class="container">
     <img class="baltec" src="/imgs/baltec.svg" alt="Logo da Baltec"/>
     <form class="login-form">
         <h1>Login</h1>
-        <p>Email</p>
-        <input type="text" placeholder="Digite seu email" />
-        <p>Senha</p>
-        <input type="password" placeholder="Digite sua senha "alt="reveal password"/>
-        <span class="input-icon">
-            <img src="/imgs/eye.svg" alt="reveal password" />
-        </span>
-        <button>Entrar</button>
-        <p>Não tem uma conta? <a href="/cadastro">Cadastre-se</a></p>
+        <div class="input-group">
+            <label>Email</label>
+            <input type="text" placeholder="Digite seu email" />
+        </div>
+        <div class="input-group">
+            <label>Senha</label>
+            <div class="password-wrapper">
+                <input type="password" placeholder="Digite sua senha" />
+                <span class="input-icon">
+                    <img src="/imgs/eye.svg" alt="reveal password" />
+                </span>
+            </div>
+        </div>
+        <button type="button">Entrar</button>
+        <p class="register-link">Não tem uma conta? <a href="/cadastro">Cadastre-se</a></p>
     </form>
-    <p>Versão 1.0.0 - © 2026 Baltec</p>
+    <p class="version">Versão 1.0.0 - © 2026 Baltec</p>
 </div>
-</body>
+</main>
