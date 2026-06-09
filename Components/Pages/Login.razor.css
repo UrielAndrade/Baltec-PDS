@@ -53,17 +53,30 @@
 
 header{
     position: absolute;
-    top: 0;
-    left: 0;
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 1rem 2rem;
-    background: linear-gradient(180deg, rgba(255,255,255,0.7), rgba(255,255,255,0.5));
     backdrop-filter: blur(6px);
     z-index: 10;
     gap: 1rem;
+}
+
+header nav {
+    display: flex;
+    gap: 1rem;
+}
+
+header nav a {
+    color: #101010;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+header nav a:hover{
+    text-decoration: underline transition 0.3s;
+
 }
 
 .baltec{
@@ -76,9 +89,6 @@ header{
     text-decoration: none;
 }
 
-header .baltec img{
-    height: 40px;
-    width: auto;
-    display: block;
-    border-radius: 6px;
+body{
+        background: linear-gradient(180deg, var(--c12, rgba(232, 232, 232, 0.16)) 0%, var(--c5, rgba(97, 97, 97, 0.16)) 100%);
 }
