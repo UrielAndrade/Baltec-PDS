@@ -1,42 +1,56 @@
 @page "/"
+@rendermode InteractiveServer
 @inject NavigationManager Navigation
 
-<PageTitle>Login baltec</PageTitle>
+<PageTitle>Login - Baltec</PageTitle>
 
-<header>
-    <nav>
-        <a href="/sobre-nos">Sobre-nos</a>
-        <a href="/contato">Contato</a>
-    </nav>
-</header>
 <main class="page-background">
-<div class="container">
-    <img class="baltec" src="/imgs/baltec.svg" alt="Logo da Baltec"/>
-    <form class="login-form" @onsubmit="HandleLogin">
-        <h1>Login</h1>
-        <div class="input-group">
-            <label>Email</label>
-            <input type="email" placeholder="Digite seu email" required />
-        </div>
-        <div class="input-group">
-            <label>Senha</label>
-            <div class="password-wrapper">
-                <input type="password" placeholder="Digite sua senha" required />
-                <span class="input-icon">
-                    <img src="/imgs/eye.svg" alt="reveal password" />
-                </span>
+    <div class="container">
+        <img class="baltec-logo" src="/imgs/baltec.svg" alt="Logo da Baltec" />
+        <form class="login-form" @onsubmit:preventDefault>
+            <h1>Login</h1>
+            <div class="input-group">
+                <label for="email">Email</label>
+                <input id="email" type="email" @bind="email" placeholder="Digite seu email" />
             </div>
-        </div>
-        <button type="submit">Entrar</button>
-        <p class="register-link">Não tem uma conta? <a href="/cadastro">Cadastre-se</a></p>
-    </form>
-    <p class="version">Versão 1.0.0 - © 2026 Baltec</p>
-</div>
+            <div class="input-group">
+                <label for="senha">Senha</label>
+                <div class="password-wrapper">
+                    <input id="senha" type="@(mostrarSenha ? "text" : "password")"
+                           @bind="senha" placeholder="Digite sua senha" />
+                    <span class="input-icon" @onclick="ToggleSenha">
+                        <img src="/imgs/eye.svg" alt="Mostrar senha" />
+                    </span>
+                </div>
+            </div>
+
+            @if (!string.IsNullOrEmpty(erro))
+            {
+                <p class="erro-msg">@erro</p>
+            }
+
+            <button type="button" @onclick="Entrar">Entrar</button>
+            <p class="register-link">Não tem uma conta? <a href="/cadastro">Cadastre-se</a></p>
+        </form>
+        <p class="version">Versão 1.0.0 - © 2026 Baltec</p>
+    </div>
 </main>
 
 @code {
-    private void HandleLogin()
+    private string email = "";
+    private string senha = "";
+    private bool mostrarSenha = false;
+    private string erro = "";
+
+    private void ToggleSenha() => mostrarSenha = !mostrarSenha;
+
+    private void Entrar()
     {
+        if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(senha))
+        {
+            erro = "Preencha o email e a senha.";
+            return;
+        }
         Navigation.NavigateTo("/inicio");
     }
 }

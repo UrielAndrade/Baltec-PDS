@@ -1,0 +1,145 @@
+@page "/cadastro"
+@rendermode InteractiveServer
+@inject NavigationManager Nav
+
+<PageTitle>Cadastro - Baltec</PageTitle>
+
+<main class="page-background">
+    <div class="container">
+        <img class="baltec-logo" src="/imgs/baltec.svg" alt="Logo da Baltec" />
+
+        <form class="cadastro-form" @onsubmit:preventDefault>
+            <h1>Criar Conta</h1>
+
+            <div class="form-row">
+                <div class="input-group">
+                    <label for="nome">Nome completo</label>
+                    <input id="nome" type="text" @bind="nome" placeholder="Digite seu nome" />
+                </div>
+            </div>
+
+            <div class="form-row two-cols">
+                <div class="input-group">
+                    <label for="cpf">CPF</label>
+                    <input id="cpf" type="text" @bind="cpf" placeholder="000.000.000-00" maxlength="14" />
+                </div>
+                <div class="input-group">
+                    <label for="telefone">Telefone</label>
+                    <input id="telefone" type="text" @bind="telefone" placeholder="(00) 00000-0000" maxlength="15" />
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="email-cad">Email</label>
+                <input id="email-cad" type="email" @bind="email" placeholder="Digite seu email" />
+            </div>
+
+            <div class="input-group">
+                <label for="cargo">Cargo / Função</label>
+                <select id="cargo" @bind="cargo">
+                    <option value="">Selecione...</option>
+                    <option value="tecnico">Técnico de Calibração</option>
+                    <option value="engenheiro">Engenheiro</option>
+                    <option value="administrativo">Administrativo</option>
+                    <option value="gerente">Gerente</option>
+                </select>
+            </div>
+
+            <div class="form-row two-cols">
+                <div class="input-group">
+                    <label for="senha-cad">Senha</label>
+                    <div class="password-wrapper">
+                        <input id="senha-cad" type="@(mostrarSenha ? "text" : "password")"
+                               @bind="senha" placeholder="Mínimo 6 caracteres" />
+                        <span class="input-icon" @onclick="ToggleSenha">
+                            <img src="/imgs/eye.svg" alt="Mostrar senha" />
+                        </span>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label for="conf-senha">Confirmar senha</label>
+                    <div class="password-wrapper">
+                        <input id="conf-senha" type="@(mostrarConfSenha ? "text" : "password")"
+                               @bind="confirmarSenha" placeholder="Repita a senha" />
+                        <span class="input-icon" @onclick="ToggleConfSenha">
+                            <img src="/imgs/eye.svg" alt="Mostrar senha" />
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            @if (!string.IsNullOrEmpty(erro))
+            {
+                <p class="msg-erro">@erro</p>
+            }
+
+            @if (sucesso)
+            {
+                <div class="msg-sucesso">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                    </svg>
+                    Conta criada! Redirecionando para o login...
+                </div>
+            }
+
+            <button type="button" @onclick="Cadastrar" disabled="@carregando">
+                @if (carregando)
+                {
+                    <span class="spinner"></span>
+                    <span>Criando conta...</span>
+                }
+                else
+                {
+                    <span>Cadastrar</span>
+                }
+            </button>
+
+            <p class="login-link">Já tem uma conta? <a href="/">Entrar</a></p>
+        </form>
+
+        <p class="version">Versão 1.0.0 - © 2026 Baltec</p>
+    </div>
+</main>
+
+@code {
+    private string nome = "";
+    private string cpf = "";
+    private string telefone = "";
+    private string email = "";
+    private string cargo = "";
+    private string senha = "";
+    private string confirmarSenha = "";
+    private bool mostrarSenha = false;
+    private bool mostrarConfSenha = false;
+    private string erro = "";
+    private bool sucesso = false;
+    private bool carregando = false;
+
+    private void ToggleSenha() => mostrarSenha = !mostrarSenha;
+    private void ToggleConfSenha() => mostrarConfSenha = !mostrarConfSenha;
+
+    private async Task Cadastrar()
+    {
+        erro = "";
+
+        if (string.IsNullOrWhiteSpace(nome))       { erro = "Informe seu nome completo."; return; }
+        if (string.IsNullOrWhiteSpace(email))       { erro = "Informe um email válido."; return; }
+        if (string.IsNullOrWhiteSpace(cargo))       { erro = "Selecione um cargo."; return; }
+        if (senha.Length < 6)                       { erro = "A senha deve ter no mínimo 6 caracteres."; return; }
+        if (senha != confirmarSenha)                { erro = "As senhas não coincidem."; return; }
+
+        carregando = true;
+        StateHasChanged();
+
+        // Simulação de chamada à API (2s)
+        await Task.Delay(2000);
+
+        carregando = false;
+        sucesso = true;
+        StateHasChanged();
+
+        await Task.Delay(1800);
+        Nav.NavigateTo("/");
+    }
+}

@@ -1,0 +1,104 @@
+@page "/gestaoEstoque"
+
+
+<div class="container-fluid p-0">
+    <div class="row g-0">
+
+        <!-- Menu Lateral -->
+        <div class="col-md-2 sidebar">
+            <div class="logo">
+                <h3>BALTEC</h3>
+            </div>
+
+            <ul class="menu">
+                <li><a href="#">Início</a></li>
+                <li><a href="#">Cadastro de balança</a></li>
+                <li><a href="#">Cadastro de componente</a></li>
+                <li><a href="#">Gerar ordem de serviço</a></li>
+                <li><a href="#">Gerar cert. de calibração</a></li>
+                <li><a href="#">Gerar ordem de serviço de peça</a></li>
+                <li><a href="#">Financeiro</a></li>
+            </ul>
+        </div>
+
+        <!-- Conteúdo -->
+        <div class="col-md-10 content">
+
+            <h2>Movimentação Estoque</h2>
+
+            <form>
+                <div class="row">
+
+                    <div class="col-md-4 mb-3">
+                        <label>Código Peça</label>
+                        <input type="text" class="form-control">
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                        <label>Tipo Movimentação</label>
+                        <input type="text" class="form-control" placeholder="Entrada ou saída">
+                    </div>
+
+                </div>
+
+                <div class="row">
+
+                    <div class="col-md-4 mb-3">
+                        <label>Motivo Movimentação</label>
+                        <input type="text" class="form-control" placeholder="Compra, Venda etc">
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                        <label>Quantidade</label>
+                        <input type="number" class="form-control" placeholder="1 2 3...">
+                    </div>
+
+                </div>
+
+                <div class="row">
+
+                    <div class="col-md-4 mb-3">
+                        <label>Custo Unitário</label>
+                        <input type="number" step="0.01" class="form-control">
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                        <label>Fornecedor</label>
+                        <input type="text" class="form-control">
+                    </div>
+
+                </div>
+
+                <div class="row">
+
+                    <div class="col-md-4 mb-3">
+                        <label>Código Ordem Serviço</label>
+                        <input type="text" class="form-control">
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                        <label>Data Movimentação</label>
+                        <input type="date" class="form-control">
+                    </div>
+
+                </div>
+
+                <div class="row">
+
+                    <div class="col-md-4 mb-3">
+                        <label>Usuário Responsável</label>
+                        <input type="text" class="form-control">
+                    </div>
+
+                </div>
+
+                <button type="submit" class="btn btn-success">
+                    Salvar Movimentação
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+</div>
