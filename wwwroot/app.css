@@ -1,4 +1,19 @@
+/* ===== GLOBAL RESET ===== */
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+    width: 100%;
+}
+
+/* ===== CSS VARIABLES ===== */
 :root {
     --g5: #1B984D;
     --g7: #0B652F;
+    --c12: rgba(232, 232, 232, 0.16);
+    --c5: rgba(97, 97, 97, 0.16);
 }

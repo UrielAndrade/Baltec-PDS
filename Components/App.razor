@@ -1,10 +1,13 @@
-﻿<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="pt-BR">
 
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <base href="/" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="app.css" />
     <link rel="stylesheet" href="Baltec.styles.css" />
     <HeadOutlet />
@@ -12,7 +15,91 @@
 
 <body>
     <Routes />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="_framework/blazor.web.js"></script>
+    <script>
+        window.renderCharts = function () {
+            // Destrói instâncias anteriores se existirem
+            ['chartOS', 'chartBarras'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    const existing = Chart.getChart(el);
+                    if (existing) existing.destroy();
+                }
+            });
+
+            // --- Gráfico: OS por Mês ---
+            const ctxOS = document.getElementById('chartOS');
+            if (ctxOS) {
+                new Chart(ctxOS, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'],
+                        datasets: [
+                            {
+                                label: '2023',
+                                data: [18,22,15,28,30,24,20,26,22,18,25,30],
+                                backgroundColor: 'rgba(79,195,247,0.75)',
+                                borderRadius: 4,
+                            },
+                            {
+                                label: '2024',
+                                data: [25,28,22,32,35,28,30,34,28,24,30,38],
+                                backgroundColor: 'rgba(129,199,132,0.75)',
+                                borderRadius: 4,
+                            },
+                            {
+                                label: '2025',
+                                data: [30,34,26,38,42,34,36,40,32,28,35,42],
+                                backgroundColor: 'rgba(255,183,77,0.75)',
+                                borderRadius: 4,
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            x: { grid: { display: false }, ticks: { font: { size: 11 } } },
+                            y: { grid: { color: '#F0F0F0' }, ticks: { font: { size: 11 } } }
+                        }
+                    }
+                });
+            }
+
+            // --- Gráfico: Produtos por Categoria ---
+            const ctxBarras = document.getElementById('chartBarras');
+            if (ctxBarras) {
+                new Chart(ctxBarras, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Produto A','Produto B','Produto C','Produto D'],
+                        datasets: [{
+                            label: 'Qtd',
+                            data: [85, 60, 95, 40],
+                            backgroundColor: [
+                                'rgba(156,39,176,0.7)',
+                                'rgba(156,39,176,0.5)',
+                                'rgba(156,39,176,0.7)',
+                                'rgba(156,39,176,0.4)',
+                            ],
+                            borderRadius: 5,
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            x: { grid: { display: false }, ticks: { font: { size: 10 } } },
+                            y: { grid: { color: '#F0F0F0' }, ticks: { font: { size: 10 } } }
+                        }
+                    }
+                });
+            }
+        };
+    </script>
 </body>
 
 </html>

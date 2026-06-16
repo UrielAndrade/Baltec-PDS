@@ -1,0 +1,308 @@
+@page "/home"
+@rendermode InteractiveServer
+@inject IJSRuntime JS
+@inject NavigationManager Nav
+
+<PageTitle>Painel - Baltec</PageTitle>
+
+<div class="app-shell">
+
+    <!-- ===== SIDEBAR ===== -->
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <img src="/imgs/baltec.svg" alt="Baltec" class="logo-img" />
+        </div>
+
+        <nav class="sidebar-nav">
+            <a class="nav-item @(activeTab == "inicio" ? "active" : "")"
+               @onclick='() => SetTab("inicio")'>
+                <span class="nav-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+                    </svg>
+                </span>
+                <span class="nav-label">Início</span>
+            </a>
+
+            <a class="nav-item @(activeTab == "balanca" ? "active" : "")"
+               @onclick='() => SetTabDisabled("Cadastro de balança")'>
+                <span class="nav-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 3C10.34 3 9 4.34 9 6s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3zm0 13c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4zm0-2c2.21 0 6.67.74 8 2.58V20H4v-3.42C5.33 14.74 9.79 14 12 14zm0-11c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2z"/>
+                    </svg>
+                </span>
+                <span class="nav-label">Cadastro de balança</span>
+            </a>
+
+            <a class="nav-item @(activeTab == "componente" ? "active" : "")"
+               @onclick='() => SetTabDisabled("Cadastro de componente")'>
+                <span class="nav-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/>
+                    </svg>
+                </span>
+                <span class="nav-label">Cadastro de componente</span>
+            </a>
+
+            <a class="nav-item @(activeTab == "os" ? "active" : "")"
+               @onclick='() => SetTabDisabled("Gerar ordem de serviço")'>
+                <span class="nav-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+                    </svg>
+                </span>
+                <span class="nav-label">Gerar ordem de serviço</span>
+            </a>
+
+            <a class="nav-item @(activeTab == "calibracao" ? "active" : "")"
+               @onclick='() => SetTabDisabled("Gerar cert. de calibração")'>
+                <span class="nav-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/>
+                    </svg>
+                </span>
+                <span class="nav-label">Gerar cert. de calibração</span>
+            </a>
+
+            <a class="nav-item @(activeTab == "ospeca" ? "active" : "")"
+               @onclick='() => SetTabDisabled("Gerar ordem de serviço de peça")'>
+                <span class="nav-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M22.7 19l-9.1-9.1c.9-2.3.4-5-1.5-6.9-2-2-5-2.4-7.4-1.3L9 6 6 9 1.6 4.7C.4 7.1.9 10.1 2.9 12.1c1.9 1.9 4.6 2.4 6.9 1.5l9.1 9.1c.4.4 1 .4 1.4 0l2.3-2.3c.5-.4.5-1.1.1-1.4z"/>
+                    </svg>
+                </span>
+                <span class="nav-label">Gerar ordem de serviço de peça</span>
+            </a>
+
+            <a class="nav-item @(activeTab == "financeiro" ? "active" : "")"
+               @onclick='() => SetTabDisabled("Financeiro")'>
+                <span class="nav-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/>
+                    </svg>
+                </span>
+                <span class="nav-label">Financeiro</span>
+                <span class="nav-arrow">▲</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <button class="logout-btn" @onclick="Logout">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/>
+                </svg>
+                Sair
+            </button>
+        </div>
+    </aside>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <main class="main-content">
+
+        <!-- TOP BAR -->
+        <header class="topbar">
+            <div class="topbar-title">
+                <span class="topbar-accent"></span>
+                <h1>Painel</h1>
+            </div>
+            <div class="topbar-user">
+                <div class="user-avatar">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
+                    </svg>
+                </div>
+                <span class="user-name">Usuário</span>
+            </div>
+        </header>
+
+        <!-- DASHBOARD CONTENT -->
+        <div class="dashboard">
+
+            <!-- KPI CARDS -->
+            <section class="kpi-row">
+                <div class="kpi-card kpi-green">
+                    <div class="kpi-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                        </svg>
+                    </div>
+                    <div class="kpi-info">
+                        <span class="kpi-label">Tarefas Concluídas</span>
+                        <span class="kpi-value">12</span>
+                    </div>
+                </div>
+
+                <div class="kpi-card kpi-blue">
+                    <div class="kpi-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11z"/>
+                        </svg>
+                    </div>
+                    <div class="kpi-info">
+                        <span class="kpi-label">Ordens de Serviço</span>
+                        <span class="kpi-value">34</span>
+                    </div>
+                </div>
+
+                <div class="kpi-card kpi-orange">
+                    <div class="kpi-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/>
+                        </svg>
+                    </div>
+                    <div class="kpi-info">
+                        <span class="kpi-label">Cert. de Calibração</span>
+                        <span class="kpi-value">8</span>
+                    </div>
+                </div>
+
+                <div class="kpi-card kpi-purple">
+                    <div class="kpi-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/>
+                        </svg>
+                    </div>
+                    <div class="kpi-info">
+                        <span class="kpi-label">Faturamento Mensal</span>
+                        <span class="kpi-value">R$ 42k</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CHARTS ROW -->
+            <section class="charts-row">
+                <div class="chart-card chart-large">
+                    <div class="chart-header">
+                        <h2>Ordens de Serviço por Mês</h2>
+                        <div class="chart-legend">
+                            <span class="legend-dot" style="background:#4FC3F7"></span><span>2023</span>
+                            <span class="legend-dot" style="background:#81C784"></span><span>2024</span>
+                            <span class="legend-dot" style="background:#FFB74D"></span><span>2025</span>
+                        </div>
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="chartOS"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card chart-small">
+                    <div class="chart-header">
+                        <h2>Produtos por Categoria</h2>
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="chartBarras"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- RECENT TABLE -->
+            <section class="table-card">
+                <div class="table-header">
+                    <h2>Últimas Ordens de Serviço</h2>
+                    <button class="btn-ver-todas" @onclick='() => SetTabDisabled("Gerar ordem de serviço")'>
+                        Ver todas
+                    </button>
+                </div>
+                <table class="os-table">
+                    <thead>
+                        <tr>
+                            <th>Nº OS</th>
+                            <th>Cliente</th>
+                            <th>Equipamento</th>
+                            <th>Data</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>#0034</td>
+                            <td>Empresa Alpha</td>
+                            <td>Balança Toledo</td>
+                            <td>14/06/2026</td>
+                            <td><span class="badge badge-done">Concluído</span></td>
+                        </tr>
+                        <tr>
+                            <td>#0033</td>
+                            <td>Indústrias Beta</td>
+                            <td>Balança Filizola</td>
+                            <td>13/06/2026</td>
+                            <td><span class="badge badge-progress">Em andamento</span></td>
+                        </tr>
+                        <tr>
+                            <td>#0032</td>
+                            <td>Comércio Gama</td>
+                            <td>Célula de carga</td>
+                            <td>12/06/2026</td>
+                            <td><span class="badge badge-done">Concluído</span></td>
+                        </tr>
+                        <tr>
+                            <td>#0031</td>
+                            <td>Metalúrgica Delta</td>
+                            <td>Balança Plataforma</td>
+                            <td>11/06/2026</td>
+                            <td><span class="badge badge-pending">Pendente</span></td>
+                        </tr>
+                        <tr>
+                            <td>#0030</td>
+                            <td>Frigorífico Sigma</td>
+                            <td>Balança Rodoviária</td>
+                            <td>10/06/2026</td>
+                            <td><span class="badge badge-done">Concluído</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+        </div>
+    </main>
+</div>
+
+<!-- TOAST NOTIFICATION -->
+@if (showToast)
+{
+    <div class="toast @(toastVisible ? "toast-show" : "")">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+        </svg>
+        <span><strong>@toastTitle</strong> — Em desenvolvimento</span>
+    </div>
+}
+
+@code {
+    private string activeTab = "inicio";
+    private bool showToast = false;
+    private bool toastVisible = false;
+    private string toastTitle = "";
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("renderCharts");
+        }
+    }
+
+    private void SetTab(string tab)
+    {
+        activeTab = tab;
+    }
+
+    private async Task SetTabDisabled(string name)
+    {
+        toastTitle = name;
+        showToast = true;
+        toastVisible = true;
+        StateHasChanged();
+        await Task.Delay(2500);
+        toastVisible = false;
+        StateHasChanged();
+        await Task.Delay(400);
+        showToast = false;
+        StateHasChanged();
+    }
+
+    private void Logout()
+    {
+        Nav.NavigateTo("/");
+    }
+}
