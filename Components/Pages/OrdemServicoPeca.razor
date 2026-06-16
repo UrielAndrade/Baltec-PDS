@@ -1,0 +1,66 @@
+@page "/ordem-servico-peca"
+
+<PageTitle>Gerar Ordem de Serviço de Peça - Baltec</PageTitle>
+
+<div class="form-container">
+    <header class="page-header">
+        <h1>Ordem de Serviço de Peça</h1>
+        <p class="subtitle">Solicite substituição ou reparo de peças específicas de uma máquina.</p>
+    </header>
+
+    <div class="card">
+        <form class="app-form" @onsubmit="SaveOSComponente">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="osPai">Ordem de Serviço Principal (Opcional)</label>
+                    <input type="text" id="osPai" placeholder="Ex: OS-2026-004" />
+                </div>
+
+                <div class="form-group">
+                    <label for="pecaSelect">Peça a Substituir / Reparar</label>
+                    <select id="pecaSelect" required>
+                        <option value="">Selecione a peça...</option>
+                        <option value="1">Célula de Carga 50kg</option>
+                        <option value="2">Teclado de Membrana</option>
+                        <option value="3">Placa Fonte 12V</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="quantidade">Quantidade Necessária</label>
+                    <input type="number" id="quantidade" placeholder="Ex: 1" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="urgencia">Grau de Urgência</label>
+                    <select id="urgencia" required>
+                        <option value="">Selecione...</option>
+                        <option value="baixa">Baixa - Preventiva</option>
+                        <option value="media">Média - Equipamento lento</option>
+                        <option value="alta">Alta - Equipamento parado</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="observacoes">Observações Técnicas / Justificativa</label>
+                <textarea id="observacoes" rows="4" placeholder="Adicione observações sobre a necessidade de troca, defeito apresentado pela peça antiga, etc." required></textarea>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Gerar OS de Peça</button>
+                <a href="/inicio" class="btn btn-secondary">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@code {
+    private void SaveOSComponente()
+    {
+        NavigationManager.NavigateTo("/inicio");
+    }
+
+    [Inject]
+    private NavigationManager NavigationManager { get; set; } = default!;
+}
