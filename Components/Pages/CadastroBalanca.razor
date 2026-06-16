@@ -1,0 +1,62 @@
+@page "/cadastro-balanca"
+
+<PageTitle>Cadastro de Balança - Baltec</PageTitle>
+
+<div class="form-container">
+    <header class="page-header">
+        <h1>Cadastro de Balança</h1>
+        <p class="subtitle">Cadastre novas balanças no sistema preenchendo as especificações técnicas.</p>
+    </header>
+
+    <div class="card">
+        <form class="app-form" @onsubmit="SaveBalanca">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="modelo">Modelo</label>
+                    <input type="text" id="modelo" placeholder="Ex: Filizola Platinum" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="marca">Marca / Fabricante</label>
+                    <input type="text" id="marca" placeholder="Ex: Filizola" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="capacidade">Capacidade Máxima (kg)</label>
+                    <input type="number" id="capacidade" placeholder="Ex: 30" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="divisao">Divisão / Escala (g)</label>
+                    <input type="number" id="divisao" placeholder="Ex: 5" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="numSerie">Número de Série</label>
+                    <input type="text" id="numSerie" placeholder="Ex: SN-2026-987" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="setor">Setor / Localização</label>
+                    <input type="text" id="setor" placeholder="Ex: Expedição" required />
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Salvar Balança</button>
+                <a href="/inicio" class="btn btn-secondary">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@code {
+    private void SaveBalanca()
+    {
+        // Simply navigate back to dashboard
+        NavigationManager.NavigateTo("/inicio");
+    }
+
+    [Inject]
+    private NavigationManager NavigationManager { get; set; } = default!;
+}
