@@ -1,0 +1,65 @@
+@page "/ordem-servico"
+
+<PageTitle>Gerar Ordem de Serviço - Baltec</PageTitle>
+
+<div class="form-container">
+    <header class="page-header">
+        <h1>Gerar Ordem de Serviço</h1>
+        <p class="subtitle">Abra uma nova Ordem de Serviço para manutenção ou calibração.</p>
+    </header>
+
+    <div class="card">
+        <form class="app-form" @onsubmit="SaveOS">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="cliente">Cliente</label>
+                    <input type="text" id="cliente" placeholder="Ex: Metalúrgica Silva Ltda" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="balancaSelect">Balança Vinculada</label>
+                    <select id="balancaSelect" required>
+                        <option value="">Selecione a balança...</option>
+                        <option value="1">Filizola Platinum (Expedição)</option>
+                        <option value="2">Toledo 9094 (Recebimento)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="tipoServico">Tipo de Serviço</label>
+                    <select id="tipoServico" required>
+                        <option value="">Selecione o tipo...</option>
+                        <option value="preventiva">Manutenção Preventiva</option>
+                        <option value="corretiva">Manutenção Corretiva</option>
+                        <option value="calibracao">Calibração Periódica</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="tecnico">Técnico Responsável</label>
+                    <input type="text" id="tecnico" placeholder="Ex: Roberto Ramos" required />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="descricao">Descrição do Problema / Atividade</label>
+                <textarea id="descricao" rows="4" placeholder="Descreva os sintomas relatados ou os detalhes do serviço a ser executado..." required></textarea>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Gerar Ordem de Serviço</button>
+                <a href="/inicio" class="btn btn-secondary">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@code {
+    private void SaveOS()
+    {
+        NavigationManager.NavigateTo("/inicio");
+    }
+
+    [Inject]
+    private NavigationManager NavigationManager { get; set; } = default!;
+}
