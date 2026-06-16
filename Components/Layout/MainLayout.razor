@@ -27,10 +27,11 @@ else
     private bool IsUrlPublic(string uri)
     {
         var relative = NavigationManager.ToBaseRelativePath(uri);
-        return string.IsNullOrEmpty(relative) || 
-               relative.StartsWith("sobre-nos") || 
-               relative.StartsWith("contato") || 
-               relative.StartsWith("cadastro");
+        var path = relative.Split('?')[0].TrimEnd('/');
+        return string.IsNullOrEmpty(path) || 
+               path == "sobre-nos" || 
+               path == "contato" || 
+               path == "cadastro";
     }
 
     protected override void OnInitialized()
