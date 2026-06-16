@@ -33,14 +33,14 @@ O **Baltec PDS** (Painel de Desenvolvimento de Software) é um sistema de gestã
 
 ## Tecnologias Utilizadas
 
-| Tecnologia | Versao | Finalidade |
-|---|---|---|
-| .NET 8 | 8.0 | Backend e servidor |
-| Blazor Web App | .NET 8 | Framework de interface |
-| C# | 12 | Linguagem principal |
-| HTML / CSS | — | Estrutura e estilo das paginas |
-| Chart.js | 4.4.0 | Graficos no painel |
-| Google Fonts (Inter) | — | Tipografia |
+| Tecnologia           | Versao | Finalidade                     |
+| -------------------- | ------ | ------------------------------ |
+| .NET 8               | 8.0    | Backend e servidor             |
+| Blazor Web App       | .NET 8 | Framework de interface         |
+| C#                   | 12     | Linguagem principal            |
+| HTML / CSS           | —      | Estrutura e estilo das paginas |
+| Chart.js             | 4.4.0  | Graficos no painel             |
+| Google Fonts (Inter) | —      | Tipografia                     |
 
 A arquitetura escolhida e o **Blazor Server com render mode interativo**, permitindo que toda a logica de negocio rode no servidor enquanto a interface e renderizada no navegador em tempo real via SignalR. Isso garante desempenho e seguranca sem necessidade de uma API separada na fase inicial do projeto.
 
@@ -112,17 +112,17 @@ cd Baltec-PDS
 dotnet run
 ```
 
-Apos a inicializacao, acesse `http://localhost:5015` no navegador.
+Apos a inicializacao, acesse ex: `http://localhost:5015` no navegador.
 
 ---
 
 ## Historico de Desenvolvimento
 
-| Versao | Descricao |
-|---|---|
-| 0.1.0 | Estrutura inicial do projeto Blazor, primeiros estilos e logo |
-| 0.2.0 | Tela de Login com design finalizado, CSS isolado e variaveis de cor |
-| 1.0.0 | Implementacao completa: Login funcional, tela de Cadastro, Painel com graficos e tabela de OS |
+| Versao | Descricao                                                                                     |
+| ------ | --------------------------------------------------------------------------------------------- |
+| 0.1.0  | Estrutura inicial do projeto Blazor, primeiros estilos e logo                                 |
+| 0.2.0  | Tela de Login com design finalizado, CSS isolado e variaveis de cor                           |
+| 1.0.0  | Implementacao completa: Login funcional, tela de Cadastro, Painel com graficos e tabela de OS |
 
 ---
 
