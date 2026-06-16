@@ -1,4 +1,225 @@
 :root {
     --g5: #1B984D;
     --g7: #0B652F;
+    --font-primary: 'Inter', system-ui, -apple-system, sans-serif;
+    --bg-main: #f9fafb;
+    --text-main: #1f2937;
+    --border-color: #e5e7eb;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-primary);
+    background-color: var(--bg-main);
+    color: var(--text-main);
+}
+
+/* Common Form and Subpage layouts */
+.form-container {
+    padding: 2.5rem;
+    max-width: 900px;
+    margin: 0 auto;
+    animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.page-header {
+    margin-bottom: 2rem;
+}
+
+.page-header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #111827;
+    margin: 0;
+}
+
+.page-header .subtitle {
+    margin: 0.25rem 0 0 0;
+    color: #6b7280;
+    font-size: 1rem;
+}
+
+.card {
+    background: #ffffff;
+    border-radius: 1rem;
+    padding: 2rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    border: 1px solid var(--border-color);
+}
+
+/* Form Styling */
+.app-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-group label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #374151;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    font-size: 0.95rem;
+    outline: none;
+    font-family: var(--font-primary);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    border-color: var(--g5);
+    box-shadow: 0 0 0 3px rgba(27, 152, 77, 0.15);
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+/* Button styles */
+.btn {
+    padding: 0.75rem 1.75rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    border: none;
+    font-family: var(--font-primary);
+}
+
+.btn-primary {
+    background-color: var(--g5);
+    color: #ffffff;
+}
+
+.btn-primary:hover {
+    background-color: var(--g7);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(27, 152, 77, 0.2);
+}
+
+.btn-secondary {
+    background-color: #f3f4f6;
+    color: #4b5563;
+    border: 1px solid #e5e7eb;
+}
+
+.btn-secondary:hover {
+    background-color: #e5e7eb;
+    color: #1f2937;
+    transform: translateY(-1px);
+}
+
+/* Financial Tables and Badges */
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    margin-top: 1.5rem;
+}
+
+.finance-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+    text-align: left;
+}
+
+.finance-table th {
+    background-color: #f9fafb;
+    padding: 1rem;
+    font-weight: 600;
+    color: #374151;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.finance-table td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border-color);
+    color: #4b5563;
+}
+
+.finance-table tr:hover {
+    background-color: #f9fafb;
+}
+
+.amount-col {
+    text-align: right;
+    font-family: monospace;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.amount-col.positive {
+    color: #10b981;
+}
+
+.amount-col.negative {
+    color: #ef4444;
+}
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.badge-pending {
+    background-color: #fef3c7;
+    color: #d97706;
+}
+
+.badge-paid {
+    background-color: #d1fae5;
+    color: #059669;
+}
+
+.badge-info {
+    background-color: #dbeafe;
+    color: #2563eb;
+}
+
+.total-row {
+    background-color: #f3f4f6;
+}
+
+.total-row td {
+    border-top: 2px solid #d1d5db;
+    border-bottom: 2px solid #d1d5db;
+    color: #111827;
 }
