@@ -1,0 +1,65 @@
+@page "/cert-calibracao"
+
+<PageTitle>Gerar Certificado de Calibração - Baltec</PageTitle>
+
+<div class="form-container">
+    <header class="page-header">
+        <h1>Gerar Certificado de Calibração</h1>
+        <p class="subtitle">Emita um novo certificado de calibração padrão RBC.</p>
+    </header>
+
+    <div class="card">
+        <form class="app-form" @onsubmit="SaveCertificado">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="numeroCertificado">Número do Certificado</label>
+                    <input type="text" id="numeroCertificado" placeholder="Ex: CERT-2026-112" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="balancaSelect">Balança Calibrada</label>
+                    <select id="balancaSelect" required>
+                        <option value="">Selecione a balança...</option>
+                        <option value="1">Filizola Platinum (Expedição)</option>
+                        <option value="2">Toledo 9094 (Recebimento)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="dataCalibracao">Data da Calibração</label>
+                    <input type="date" id="dataCalibracao" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="proximaCalibracao">Próxima Calibração (Validade)</label>
+                    <input type="date" id="proximaCalibracao" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="temperatura">Temperatura Ambiente (°C)</label>
+                    <input type="number" step="0.1" id="temperatura" placeholder="Ex: 22.4" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="umidade">Umidade Relativa (%)</label>
+                    <input type="number" step="0.1" id="umidade" placeholder="Ex: 55.0" required />
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Gerar Certificado</button>
+                <a href="/inicio" class="btn btn-secondary">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@code {
+    private void SaveCertificado()
+    {
+        NavigationManager.NavigateTo("/inicio");
+    }
+
+    [Inject]
+    private NavigationManager NavigationManager { get; set; } = default!;
+}
