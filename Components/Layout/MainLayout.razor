@@ -1,9 +1,51 @@
-﻿@inherits LayoutComponentBase
+@inherits LayoutComponentBase
+@inject NavigationManager NavigationManager
 
-@Body
+@if (IsPublicPage)
+{
+    @Body
+}
+else
+{
+    <div class="app-container">
+        <NavMenu />
+        <main class="content-container">
+            @Body
+        </main>
+    </div>
+}
 
 <div id="blazor-error-ui">
     An unhandled error has occurred.
     <a href="" class="reload">Reload</a>
     <a class="dismiss">🗙</a>
 </div>
+
+@code {
+    private bool IsPublicPage => IsUrlPublic(NavigationManager.Uri);
+
+    private bool IsUrlPublic(string uri)
+    {
+        var relative = NavigationManager.ToBaseRelativePath(uri);
+        return string.IsNullOrEmpty(relative) || 
+               relative.StartsWith("sobre-nos") || 
+               relative.StartsWith("contato") || 
+               relative.StartsWith("cadastro");
+    }
+
+    protected override void OnInitialized()
+    {
+        NavigationManager.LocationChanged += OnLocationChanged;
+    }
+
+    private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        NavigationManager.LocationChanged -= OnLocationChanged;
+    }
+}
+
