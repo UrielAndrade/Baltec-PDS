@@ -1,0 +1,124 @@
+@page "/inicio"
+
+<PageTitle>Início - Baltec</PageTitle>
+
+<div class="dashboard-container">
+    <header class="dashboard-header">
+        <div class="header-left">
+            <h1>Painel de Controle</h1>
+            <p class="subtitle">Bem-vindo de volta! Aqui está o resumo do dia.</p>
+        </div>
+        <div class="header-right">
+            <span class="user-badge">
+                <span class="avatar">U</span>
+                <span class="username">Usuário Baltec</span>
+            </span>
+        </div>
+    </header>
+
+    <div class="metrics-grid">
+        <div class="metric-card">
+            <div class="card-icon green">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="2" x2="12" y2="22"></line>
+                    <line x1="5" y1="22" x2="19" y2="22"></line>
+                    <line x1="5" y1="7" x2="19" y2="7"></line>
+                    <path d="M2 17h6l-3-6z"></path>
+                </svg>
+            </div>
+            <div class="card-content">
+                <h3>Balanças Cadastradas</h3>
+                <span class="value">42</span>
+                <span class="trend positive">↑ 12% este mês</span>
+            </div>
+        </div>
+
+        <div class="metric-card">
+            <div class="card-icon blue">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                    <polyline points="10 9 9 9 8 9"></polyline>
+                </svg>
+            </div>
+            <div class="card-content">
+                <h3>Ordens de Serviço</h3>
+                <span class="value">18</span>
+                <span class="trend">5 pendentes</span>
+            </div>
+        </div>
+
+        <div class="metric-card">
+            <div class="card-icon purple">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+            </div>
+            <div class="card-content">
+                <h3>Certificados Calibrados</h3>
+                <span class="value">124</span>
+                <span class="trend positive">100% de conformidade</span>
+            </div>
+        </div>
+
+        <div class="metric-card">
+            <div class="card-icon gold">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="1" x2="12" y2="23"></line>
+                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                </svg>
+            </div>
+            <div class="card-content">
+                <h3>Faturamento Mensal</h3>
+                <span class="value">R$ 15.820</span>
+                <span class="trend positive">↑ 8% vs meta</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-sections">
+        <div class="section-card main-section">
+            <h2>Atividades Recentes</h2>
+            <div class="activity-list">
+                <div class="activity-item">
+                    <div class="activity-time">14:23</div>
+                    <div class="activity-desc">Balança Filizola Platinum cadastrada com sucesso.</div>
+                    <div class="activity-tag success">Cadastro</div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-time">11:05</div>
+                    <div class="activity-desc">Nova Ordem de Serviço #2026-08 gerada para Metalúrgica Silva.</div>
+                    <div class="activity-tag info">Serviço</div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-time">Ontem</div>
+                    <div class="activity-desc">Certificado de Calibração #889 emitido.</div>
+                    <div class="activity-tag warning">Certificado</div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-time">15 Jun</div>
+                    <div class="activity-desc">Conciliação financeira mensal realizada.</div>
+                    <div class="activity-tag primary">Financeiro</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-card secondary-section">
+            <h2>Acesso Rápido</h2>
+            <div class="quick-links">
+                <a href="/cadastro-balanca" class="quick-btn">
+                    Nova Balança
+                </a>
+                <a href="/ordem-servico" class="quick-btn">
+                    Criar OS
+                </a>
+                <a href="/cert-calibracao" class="quick-btn">
+                    Novo Certificado
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
