@@ -1,0 +1,62 @@
+@page "/cadastro-componente"
+
+<PageTitle>Cadastro de Componente - Baltec</PageTitle>
+
+<div class="form-container">
+    <header class="page-header">
+        <h1>Cadastro de Componente</h1>
+        <p class="subtitle">Cadastre novas peças e componentes técnicos no inventário.</p>
+    </header>
+
+    <div class="card">
+        <form class="app-form" @onsubmit="SaveComponente">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="nome">Nome do Componente</label>
+                    <input type="text" id="nome" placeholder="Ex: Célula de Carga 50kg" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="codigo">Código do Item</label>
+                    <input type="text" id="codigo" placeholder="Ex: COMP-987-AB" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="categoria">Categoria</label>
+                    <select id="categoria" required>
+                        <option value="">Selecione...</option>
+                        <option value="sensores">Sensores / Células</option>
+                        <option value="indicadores">Indicadores de Peso</option>
+                        <option value="cabos">Cabos e Conectores</option>
+                        <option value="estrutural">Partes Estruturais</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="quantidade">Quantidade em Estoque</label>
+                    <input type="number" id="quantidade" placeholder="Ex: 15" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="preco">Preço Unitário (R$)</label>
+                    <input type="number" step="0.01" id="preco" placeholder="Ex: 249.90" required />
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Salvar Componente</button>
+                <a href="/inicio" class="btn btn-secondary">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@code {
+    private void SaveComponente()
+    {
+        NavigationManager.NavigateTo("/inicio");
+    }
+
+    [Inject]
+    private NavigationManager NavigationManager { get; set; } = default!;
+}
