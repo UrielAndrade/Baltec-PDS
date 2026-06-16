@@ -1,35 +1,42 @@
 @page "/"
+@inject NavigationManager Navigation
 
 <PageTitle>Login baltec</PageTitle>
 
-
 <header>
     <nav>
-    <a href="/sobre-nos">Sobre-nos</a>
-    <a href="/contato">Contato</a>
+        <a href="/sobre-nos">Sobre-nos</a>
+        <a href="/contato">Contato</a>
     </nav>
 </header>
 <main class="page-background">
 <div class="container">
     <img class="baltec" src="/imgs/baltec.svg" alt="Logo da Baltec"/>
-    <form class="login-form">
+    <form class="login-form" @onsubmit="HandleLogin">
         <h1>Login</h1>
         <div class="input-group">
             <label>Email</label>
-            <input type="text" placeholder="Digite seu email" />
+            <input type="email" placeholder="Digite seu email" required />
         </div>
         <div class="input-group">
             <label>Senha</label>
             <div class="password-wrapper">
-                <input type="password" placeholder="Digite sua senha" />
+                <input type="password" placeholder="Digite sua senha" required />
                 <span class="input-icon">
                     <img src="/imgs/eye.svg" alt="reveal password" />
                 </span>
             </div>
         </div>
-        <button type="button">Entrar</button>
+        <button type="submit">Entrar</button>
         <p class="register-link">Não tem uma conta? <a href="/cadastro">Cadastre-se</a></p>
     </form>
     <p class="version">Versão 1.0.0 - © 2026 Baltec</p>
 </div>
 </main>
+
+@code {
+    private void HandleLogin()
+    {
+        Navigation.NavigateTo("/inicio");
+    }
+}
