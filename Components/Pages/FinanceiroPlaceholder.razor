@@ -2,118 +2,173 @@
 @page "/financeiro/contas-receber"
 @page "/financeiro/fluxo-caixa"
 
+@inject NavigationManager NavigationManager
+
 <PageTitle>@PageTitleText - Baltec</PageTitle>
 
-<div class="form-container">
-    <header class="page-header">
-        <h1>@PageTitleText</h1>
-        <p class="subtitle">Gerenciamento financeiro integrado - Baltec.</p>
-    </header>
+<main class="page-background">
+    <div class="container">
 
-    <div class="card">
-        <h2>@SectionSubtitleText</h2>
-        <p class="desc">Abaixo estão listadas as transações financeiras registradas na categoria.</p>
-        
-        <div class="table-responsive">
-            <table class="finance-table">
-                <thead>
-                    <tr>
-                        <th>Data</th>
-                        <th>Descrição</th>
-                        <th>Status</th>
-                        <th class="amount-col">Valor</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @if (IsContasPagar)
-                    {
-                        <tr>
-                            <td>18/06/2026</td>
-                            <td>Fornecedor de Sensores Toledo</td>
-                            <td><span class="badge badge-pending">Pendente</span></td>
-                            <td class="amount-col negative">- R$ 4.250,00</td>
-                        </tr>
-                        <tr>
-                            <td>15/06/2026</td>
-                            <td>Aluguel do Galpão Industrial</td>
-                            <td><span class="badge badge-paid">Pago</span></td>
-                            <td class="amount-col negative">- R$ 2.800,00</td>
-                        </tr>
-                        <tr>
-                            <td>10/06/2026</td>
-                            <td>Energia Elétrica (Copel)</td>
-                            <td><span class="badge badge-paid">Pago</span></td>
-                            <td class="amount-col negative">- R$ 680,00</td>
-                        </tr>
-                    }
-                    else if (IsContasReceber)
-                    {
-                        <tr>
-                            <td>20/06/2026</td>
-                            <td>Serviço Calibração - Metalúrgica Silva</td>
-                            <td><span class="badge badge-pending">A Receber</span></td>
-                            <td class="amount-col positive">+ R$ 1.500,00</td>
-                        </tr>
-                        <tr>
-                            <td>16/06/2026</td>
-                            <td>Venda Balança Filizola - Mercado Preço Bom</td>
-                            <td><span class="badge badge-paid">Recebido</span></td>
-                            <td class="amount-col positive">+ R$ 3.800,00</td>
-                        </tr>
-                        <tr>
-                            <td>12/06/2026</td>
-                            <td>Contrato Mensal Manutenção - Cooperativa Agro</td>
-                            <td><span class="badge badge-paid">Recebido</span></td>
-                            <td class="amount-col positive">+ R$ 4.500,00</td>
-                        </tr>
-                    }
-                    else
-                    {
-                        <tr>
-                            <td>16/06/2026</td>
-                            <td>Saldo Anterior Acumulado</td>
-                            <td><span class="badge badge-info">Saldo</span></td>
-                            <td class="amount-col positive">+ R$ 24.120,00</td>
-                        </tr>
-                        <tr>
-                            <td>15/06/2026</td>
-                            <td>Total Pagamentos Efetuados</td>
-                            <td><span class="badge badge-pending">Saídas</span></td>
-                            <td class="amount-col negative">- R$ 3.480,00</td>
-                        </tr>
-                        <tr>
-                            <td>15/06/2026</td>
-                            <td>Total Recebimentos Efetuados</td>
-                            <td><span class="badge badge-paid">Entradas</span></td>
-                            <td class="amount-col positive">+ R$ 8.300,00</td>
-                        </tr>
-                        <tr class="total-row">
-                            <td colspan="3"><strong>Saldo Disponível Atual</strong></td>
-                            <td class="amount-col positive"><strong>+ R$ 28.940,00</strong></td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+        <img src="/images/logo-baltec.png"
+             alt="Baltec"
+             class="baltec-logo" />
+
+        <div class="form-container">
+
+            <header class="page-header">
+                <h1>@PageTitleText</h1>
+                <p class="subtitle">
+                    Controle financeiro da Baltec.
+                </p>
+            </header>
+
+            <div class="card">
+
+                <h2>@SectionSubtitleText</h2>
+                <p class="desc">
+                    Acompanhe as movimentações financeiras da empresa.
+                </p>
+
+                <div class="table-responsive">
+                    <table class="finance-table">
+
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Descrição</th>
+                                <th>Status</th>
+                                <th class="amount-col">Valor</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            @if (IsContasPagar)
+                            {
+                                <tr>
+                                    <td>22/06/2026</td>
+                                    <td>Compra de Células de Carga - Toledo do Brasil</td>
+                                    <td><span class="badge badge-pending">Pendente</span></td>
+                                    <td class="amount-col negative">- R$ 5.800,00</td>
+                                </tr>
+
+                                <tr>
+                                    <td>18/06/2026</td>
+                                    <td>Fornecedor de Indicadores Digitais</td>
+                                    <td><span class="badge badge-paid">Pago</span></td>
+                                    <td class="amount-col negative">- R$ 3.200,00</td>
+                                </tr>
+
+                                <tr>
+                                    <td>15/06/2026</td>
+                                    <td>Combustível para Atendimento Técnico</td>
+                                    <td><span class="badge badge-paid">Pago</span></td>
+                                    <td class="amount-col negative">- R$ 750,00</td>
+                                </tr>
+
+                                <tr>
+                                    <td>12/06/2026</td>
+                                    <td>Aluguel do Centro Técnico</td>
+                                    <td><span class="badge badge-paid">Pago</span></td>
+                                    <td class="amount-col negative">- R$ 2.500,00</td>
+                                </tr>
+                            }
+                            else if (IsContasReceber)
+                            {
+                                <tr>
+                                    <td>25/06/2026</td>
+                                    <td>Venda de Balança Rodoviária - Transportadora Norte</td>
+                                    <td><span class="badge badge-pending">A Receber</span></td>
+                                    <td class="amount-col positive">+ R$ 18.000,00</td>
+                                </tr>
+
+                                <tr>
+                                    <td>20/06/2026</td>
+                                    <td>Serviço de Calibração - Mercado Central</td>
+                                    <td><span class="badge badge-paid">Recebido</span></td>
+                                    <td class="amount-col positive">+ R$ 1.200,00</td>
+                                </tr>
+
+                                <tr>
+                                    <td>17/06/2026</td>
+                                    <td>Contrato de Manutenção Preventiva - Cooperativa Agropecuária</td>
+                                    <td><span class="badge badge-paid">Recebido</span></td>
+                                    <td class="amount-col positive">+ R$ 4.500,00</td>
+                                </tr>
+
+                                <tr>
+                                    <td>14/06/2026</td>
+                                    <td>Venda de Balança Comercial 30kg - Supermercado Ideal</td>
+                                    <td><span class="badge badge-paid">Recebido</span></td>
+                                    <td class="amount-col positive">+ R$ 2.850,00</td>
+                                </tr>
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td>01/06/2026</td>
+                                    <td>Saldo Inicial do Período</td>
+                                    <td><span class="badge badge-info">Saldo</span></td>
+                                    <td class="amount-col positive">+ R$ 35.000,00</td>
+                                </tr>
+
+                                <tr>
+                                    <td>15/06/2026</td>
+                                    <td>Total de Despesas Operacionais</td>
+                                    <td><span class="badge badge-pending">Saídas</span></td>
+                                    <td class="amount-col negative">- R$ 12.250,00</td>
+                                </tr>
+
+                                <tr>
+                                    <td>15/06/2026</td>
+                                    <td>Total de Vendas e Serviços</td>
+                                    <td><span class="badge badge-paid">Entradas</span></td>
+                                    <td class="amount-col positive">+ R$ 26.550,00</td>
+                                </tr>
+
+                                <tr class="total-row">
+                                    <td colspan="3">
+                                        <strong>Saldo Disponível Atual</strong>
+                                    </td>
+                                    <td class="amount-col positive">
+                                        <strong>+ R$ 49.300,00</strong>
+                                    </td>
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+                </div>
+
+                <div class="form-actions">
+                    <a href="/inicio" class="btn btn-primary">
+                        Voltar ao Painel
+                    </a>
+                </div>
+
+            </div>
         </div>
 
-        <div class="form-actions" style="margin-top: 2rem;">
-            <a href="/inicio" class="btn btn-primary">Voltar ao Painel</a>
-        </div>
     </div>
-</div>
+</main>
 
 @code {
-    [Inject]
-    private NavigationManager NavigationManager { get; set; } = default!;
 
-    private bool IsContasPagar => NavigationManager.Uri.Contains("contas-pagar");
-    private bool IsContasReceber => NavigationManager.Uri.Contains("contas-receber");
+    private bool IsContasPagar =>
+        NavigationManager.Uri.Contains("contas-pagar");
 
-    private string PageTitleText => IsContasPagar ? "Contas a Pagar" 
-                                  : IsContasReceber ? "Contas a Receber" 
-                                  : "Fluxo de Caixa";
+    private bool IsContasReceber =>
+        NavigationManager.Uri.Contains("contas-receber");
 
-    private string SectionSubtitleText => IsContasPagar ? "Lançamentos de Despesas" 
-                                        : IsContasReceber ? "Previsão de Receitas" 
-                                        : "Demonstrativo Consolidado";
+    private string PageTitleText =>
+        IsContasPagar ? "Contas a Pagar" :
+        IsContasReceber ? "Contas a Receber" :
+        "Fluxo de Caixa";
+
+    private string SectionSubtitleText =>
+        IsContasPagar ? "Despesas e Obrigações Financeiras" :
+        IsContasReceber ? "Receitas e Valores a Receber" :
+        "Resumo Financeiro Consolidado";
 }
+
