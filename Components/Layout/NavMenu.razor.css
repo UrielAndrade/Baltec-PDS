@@ -138,3 +138,18 @@ button.nav-link {
     background: rgba(255, 255, 255, 0.08);
     font-weight: 600;
 }
+
+.nav-separator {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.15);
+    margin: 1rem 1.5rem 0.5rem 1.5rem;
+}
+
+.nav-section-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: rgba(255, 255, 255, 0.65);
+    padding: 0.5rem 1.5rem 0.25rem 1.5rem;
+}

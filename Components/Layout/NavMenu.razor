@@ -75,43 +75,48 @@
             </a>
         </div>
 
+        <div class="nav-separator"></div>
+        <div class="nav-section-title">Financeiro</div>
+
         <div class="nav-item">
-            <button class="nav-link btn-expand @(IsActive("/financeiro") ? "active" : "")" @onclick="ToggleFinanceiro">
+            <a class="nav-link @(IsActive("/financeiro/contas-pagar") ? "active" : "")" href="/financeiro/contas-pagar">
+                <div class="nav-link-left">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="5" width="20" height="14" rx="2" ry="2"></rect>
+                        <line x1="2" y1="10" x2="22" y2="10"></line>
+                    </svg>
+                    <span>Contas a Pagar</span>
+                </div>
+            </a>
+        </div>
+
+        <div class="nav-item">
+            <a class="nav-link @(IsActive("/financeiro/contas-receber") ? "active" : "")" href="/financeiro/contas-receber">
                 <div class="nav-link-left">
                     <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="12" y1="1" x2="12" y2="23"></line>
                         <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
                     </svg>
-                    <span>Financeiro</span>
+                    <span>Contas a Receber</span>
                 </div>
-                <svg class="caret-icon @(isFinanceiroExpanded ? "expanded" : "")" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="6 9 12 15 18 9"></polyline>
-                </svg>
-            </button>
-            
-            <div class="submenu @(isFinanceiroExpanded ? "show" : "")">
-                <a class="submenu-link @(IsActive("/financeiro/contas-pagar") ? "active" : "")" href="/financeiro/contas-pagar">
-                    Contas a Pagar
-                </a>
-                <a class="submenu-link @(IsActive("/financeiro/contas-receber") ? "active" : "")" href="/financeiro/contas-receber">
-                    Contas a Receber
-                </a>
-                <a class="submenu-link @(IsActive("/financeiro/fluxo-caixa") ? "active" : "")" href="/financeiro/fluxo-caixa">
-                    Fluxo de Caixa
-                </a>
-            </div>
+            </a>
+        </div>
+
+        <div class="nav-item">
+            <a class="nav-link @(IsActive("/financeiro/fluxo-caixa") ? "active" : "")" href="/financeiro/fluxo-caixa">
+                <div class="nav-link-left">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                        <polyline points="17 6 23 6 23 12"></polyline>
+                    </svg>
+                    <span>Fluxo de Caixa</span>
+                </div>
+            </a>
         </div>
     </nav>
 </div>
 
 @code {
-    private bool isFinanceiroExpanded = false;
-
-    private void ToggleFinanceiro()
-    {
-        isFinanceiroExpanded = !isFinanceiroExpanded;
-    }
-
     private bool IsActive(string relativePath)
     {
         var relativeUri = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
