@@ -23,7 +23,7 @@
     height: auto;
     width: 80%;
     max-width: 180px;
-    filter: brightness(0); /* Makes the logo dark/black as in the design */
+    filter: brightness(0) invert(1);
 }
 
 .sidebar-nav {
