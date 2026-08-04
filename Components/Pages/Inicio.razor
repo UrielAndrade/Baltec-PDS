@@ -1,4 +1,6 @@
 @page "/inicio"
+@rendermode InteractiveServer
+@inject IJSRuntime JS
 
 <PageTitle>Início - Baltec</PageTitle>
 
@@ -16,6 +18,7 @@
         </div>
     </header>
 
+    <!-- METRICS GRID -->
     <div class="metrics-grid">
         <div class="metric-card">
             <div class="card-icon green">
@@ -45,7 +48,7 @@
             </div>
             <div class="card-content">
                 <h3>Ordens de Serviço</h3>
-                <span class="value">18</span>
+                <span class="value">34</span>
                 <span class="trend">5 pendentes</span>
             </div>
         </div>
@@ -73,12 +76,97 @@
             </div>
             <div class="card-content">
                 <h3>Faturamento Mensal</h3>
-                <span class="value">R$ 15.820</span>
+                <span class="value">R$ 42.000</span>
                 <span class="trend positive">↑ 8% vs meta</span>
             </div>
         </div>
     </div>
 
+    <!-- CHARTS ROW -->
+    <section class="charts-row">
+        <div class="chart-card chart-large">
+            <div class="chart-header">
+                <h2>Ordens de Serviço por Mês</h2>
+                <div class="chart-legend">
+                    <span class="legend-dot" style="background:#4FC3F7"></span><span>2023</span>
+                    <span class="legend-dot" style="background:#81C784"></span><span>2024</span>
+                    <span class="legend-dot" style="background:#FFB74D"></span><span>2025</span>
+                </div>
+            </div>
+            <div class="chart-wrapper">
+                <canvas id="chartOS"></canvas>
+            </div>
+        </div>
+
+        <div class="chart-card chart-small">
+            <div class="chart-header">
+                <h2>Produtos por Categoria</h2>
+            </div>
+            <div class="chart-wrapper">
+                <canvas id="chartBarras"></canvas>
+            </div>
+        </div>
+    </section>
+
+    <!-- RECENT TABLE -->
+    <section class="table-card">
+        <div class="table-header">
+            <h2>Últimas Ordens de Serviço</h2>
+            <a class="btn-ver-todas" href="/ordem-servico">
+                Ver todas
+            </a>
+        </div>
+        <table class="os-table">
+            <thead>
+                <tr>
+                    <th>Nº OS</th>
+                    <th>Cliente</th>
+                    <th>Equipamento</th>
+                    <th>Data</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>#0034</td>
+                    <td>Empresa Alpha</td>
+                    <td>Balança Toledo</td>
+                    <td>14/06/2026</td>
+                    <td><span class="badge badge-done">Concluído</span></td>
+                </tr>
+                <tr>
+                    <td>#0033</td>
+                    <td>Indústrias Beta</td>
+                    <td>Balança Filizola</td>
+                    <td>13/06/2026</td>
+                    <td><span class="badge badge-progress">Em andamento</span></td>
+                </tr>
+                <tr>
+                    <td>#0032</td>
+                    <td>Comércio Gama</td>
+                    <td>Célula de carga</td>
+                    <td>12/06/2026</td>
+                    <td><span class="badge badge-done">Concluído</span></td>
+                </tr>
+                <tr>
+                    <td>#0031</td>
+                    <td>Metalúrgica Delta</td>
+                    <td>Balança Plataforma</td>
+                    <td>11/06/2026</td>
+                    <td><span class="badge badge-pending">Pendente</span></td>
+                </tr>
+                <tr>
+                    <td>#0030</td>
+                    <td>Frigorífico Sigma</td>
+                    <td>Balança Rodoviária</td>
+                    <td>10/06/2026</td>
+                    <td><span class="badge badge-done">Concluído</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <!-- FOOTER SECTIONS -->
     <div class="dashboard-sections">
         <div class="section-card main-section">
             <h2>Atividades Recentes</h2>
@@ -122,3 +210,13 @@
         </div>
     </div>
 </div>
+
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("renderCharts");
+        }
+    }
+}
