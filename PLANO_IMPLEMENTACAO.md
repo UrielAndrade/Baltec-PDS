@@ -150,7 +150,7 @@ graph TD
 
 ---
 
-### **PESSOA 3 — Catálogo de Componentes, Peças e Controle de Estoque**
+### **LETÍCIA — Catálogo de Componentes, Peças e Controle de Estoque**
 
 > **Objetivo Central:** Administrar peças de reposição, categorias e registrar todas as entradas/saídas de estoque.
 
