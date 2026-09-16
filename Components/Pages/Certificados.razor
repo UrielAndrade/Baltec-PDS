@@ -1,0 +1,728 @@
+@page "/calibracao"
+@rendermode InteractiveServer
+@using Baltec.models
+@using Baltec.DAO
+@inject CertificadoCalibracaoDAO CertificadoDAO
+@inject IJSRuntime JS
+@inject NavigationManager Nav
+
+<PageTitle>Certificados de Calibração - Baltec</PageTitle>
+
+<div class="page-container">
+    <!-- HEADER -->
+    <header class="page-header">
+        <div class="header-left">
+            <div class="title-with-badge">
+                <h1>Certificados de Calibração & Metrologia</h1>
+                <span class="badge-tag">RBC / ISO 17025</span>
+            </div>
+            <p class="subtitle">Aferição de conformidade com normas metrológicas, controle de validade e emissão oficial de documentos.</p>
+        </div>
+        <div class="header-actions">
+            <button class="btn btn-outline" @onclick="VoltarInicio">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 12H5M12 19l-7-7 7-7"/>
+                </svg>
+                Voltar ao Início
+            </button>
+            <button class="btn btn-primary" @onclick="AbrirModalNovo">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                Emitir Novo Certificado
+            </button>
+        </div>
+    </header>
+
+    <!-- STATS / SUMMARY CARDS -->
+    <div class="stats-grid">
+        <div class="stat-card total">
+            <div class="stat-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                </svg>
+            </div>
+            <div class="stat-info">
+                <span class="stat-label">Total Emitidos</span>
+                <span class="stat-value">@listaCertificados.Count</span>
+            </div>
+        </div>
+
+        <div class="stat-card valid">
+            <div class="stat-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+            </div>
+            <div class="stat-info">
+                <span class="stat-label">Válidos</span>
+                <span class="stat-value">@listaCertificados.Count(c => GetStatusValidade(c.DataProximaCalibracao) == StatusCertificado.Valido)</span>
+            </div>
+        </div>
+
+        <div class="stat-card warning">
+            <div class="stat-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+            </div>
+            <div class="stat-info">
+                <span class="stat-label">Prestes a Vencer (30d)</span>
+                <span class="stat-value">@listaCertificados.Count(c => GetStatusValidade(c.DataProximaCalibracao) == StatusCertificado.PrestesAVencer)</span>
+            </div>
+        </div>
+
+        <div class="stat-card expired">
+            <div class="stat-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="15" y1="9" x2="9" y2="15"></line>
+                    <line x1="9" y1="9" x2="15" y2="15"></line>
+                </svg>
+            </div>
+            <div class="stat-info">
+                <span class="stat-label">Vencidos</span>
+                <span class="stat-value">@listaCertificados.Count(c => GetStatusValidade(c.DataProximaCalibracao) == StatusCertificado.Vencido)</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN TABLE CARD -->
+    <div class="table-card">
+        <div class="table-toolbar">
+            <div class="search-box">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input type="text" placeholder="Buscar por número, modelo ou cliente..." @bind="termoBusca" @bind:event="oninput" />
+            </div>
+
+            <div class="filter-pills">
+                <button class="pill @(filtroStatus == "todos" ? "active" : "")" @onclick='() => filtroStatus = "todos"'>Todos</button>
+                <button class="pill pill-valido @(filtroStatus == "valido" ? "active" : "")" @onclick='() => filtroStatus = "valido"'>Válidos</button>
+                <button class="pill pill-prestes @(filtroStatus == "prestes" ? "active" : "")" @onclick='() => filtroStatus = "prestes"'>Prestes a Vencer</button>
+                <button class="pill pill-vencido @(filtroStatus == "vencido" ? "active" : "")" @onclick='() => filtroStatus = "vencido"'>Vencidos</button>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="cert-table">
+                <thead>
+                    <tr>
+                        <th>Nº Certificado</th>
+                        <th>Equipamento</th>
+                        <th>Cliente</th>
+                        <th>Data Calibração</th>
+                        <th>Próxima Calibração</th>
+                        <th>Temp. / Umidade</th>
+                        <th>Status</th>
+                        <th class="text-right">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!CertificadosFiltrados.Any())
+                    {
+                        <tr>
+                            <td colspan="8" class="empty-state">
+                                <div class="empty-content">
+                                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                        <line x1="9" y1="15" x2="15" y2="15"></line>
+                                    </svg>
+                                    <p>Nenhum certificado encontrado.</p>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var cert in CertificadosFiltrados)
+                        {
+                            var status = GetStatusValidade(cert.DataProximaCalibracao);
+                            <tr>
+                                <td class="font-bold highlight-code">@cert.NumeroCertificado</td>
+                                <td>
+                                    <div class="equipamento-cell">
+                                        <span class="equip-modelo">@(string.IsNullOrEmpty(cert.EquipamentoModelo) ? "Balança Industrial" : cert.EquipamentoModelo)</span>
+                                        <span class="equip-serie">S/N: @(string.IsNullOrEmpty(cert.EquipamentoSerie) ? "N/A" : cert.EquipamentoSerie)</span>
+                                    </div>
+                                </td>
+                                <td>@(string.IsNullOrEmpty(cert.ClienteNome) ? "Cliente Genérico" : cert.ClienteNome)</td>
+                                <td>@cert.DataCalibracao.ToString("dd/MM/yyyy")</td>
+                                <td>
+                                    <span class="date-due">@cert.DataProximaCalibracao.ToString("dd/MM/yyyy")</span>
+                                </td>
+                                <td>
+                                    <span class="cond-tag">@cert.TemperaturaAmbiente.ToString("F1")°C | @cert.UmidadeRelativa.ToString("F1")%</span>
+                                </td>
+                                <td>
+                                    @if (status == StatusCertificado.Valido)
+                                    {
+                                        <span class="status-badge badge-success">Válido</span>
+                                    }
+                                    else if (status == StatusCertificado.PrestesAVencer)
+                                    {
+                                        <span class="status-badge badge-warning">Prestes a Vencer</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="status-badge badge-danger">Vencido</span>
+                                    }
+                                </td>
+                                <td class="text-right">
+                                    <button class="btn-action" title="Visualizar Certificado" @onclick="() => AbrirModalPreview(cert)">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                            <circle cx="12" cy="12" r="3"></circle>
+                                        </svg>
+                                        <span>Ver Certificado</span>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- ================= MODAL NOVO CERTIFICADO ================= -->
+@if (exibirModalNovo)
+{
+    <div class="modal-backdrop" @onclick="FecharModalNovo">
+        <div class="modal-content" @onclick:stopPropagation="true">
+            <div class="modal-header">
+                <h2>Emitir Novo Certificado de Calibração</h2>
+                <button class="modal-close" @onclick="FecharModalNovo">&times;</button>
+            </div>
+
+            <EditForm Model="novoCertificado" OnValidSubmit="SalvarCertificado">
+                <div class="modal-body form-grid">
+                    <div class="form-group col-full">
+                        <label>Número do Certificado</label>
+                        <input type="text" class="form-control field-disabled" @bind="novoCertificado.NumeroCertificado" readonly />
+                        <small class="help-text">Gerado automaticamente pelo sistema.</small>
+                    </div>
+
+                    <div class="form-group col-half">
+                        <label>Equipamento Calibrado *</label>
+                        <select class="form-control" @bind="novoCertificado.FkEquipamento" required>
+                            <option value="0">Selecione o equipamento...</option>
+                            @foreach (var eq in listaEquipamentos)
+                            {
+                                <option value="@eq.Id">@eq.Modelo (@eq.ClienteNome) - S/N: @eq.NumeroSerie</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="form-group col-half">
+                        <label>Ordem de Serviço (Opcional)</label>
+                        <select class="form-control" @bind="novoCertificado.FkOrdemServico">
+                            <option value="">Nenhuma OS associada</option>
+                            @foreach (var os in listaOS)
+                            {
+                                <option value="@os.Id">@os.NumeroOS</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="form-group col-half">
+                        <label>Data da Calibração *</label>
+                        <input type="date" class="form-control" value="@dataCalibracaoInput" @onchange="OnDataCalibracaoChanged" required />
+                    </div>
+
+                    <div class="form-group col-half">
+                        <label>Próxima Calibração (Validade +1 ano)</label>
+                        <input type="date" class="form-control field-highlight" value="@dataProximaCalibracaoInput" readonly />
+                        <small class="help-text text-accent">Calculado automaticamente para +1 ano.</small>
+                    </div>
+
+                    <div class="form-group col-half">
+                        <label>Temperatura Ambiente (°C) *</label>
+                        <input type="number" step="0.1" class="form-control" @bind="novoCertificado.TemperaturaAmbiente" required />
+                    </div>
+
+                    <div class="form-group col-half">
+                        <label>Umidade Relativa (%) *</label>
+                        <input type="number" step="0.1" class="form-control" @bind="novoCertificado.UmidadeRelativa" required />
+                    </div>
+
+                    <div class="form-group col-full">
+                        <label>Técnico Responsável (Metrologista) *</label>
+                        <select class="form-control" @bind="novoCertificado.FkTecnicoResponsavel" required>
+                            <option value="0">Selecione o técnico responsável...</option>
+                            @foreach (var tec in listaTecnicos)
+                            {
+                                <option value="@tec.Id">@tec.Nome</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="FecharModalNovo">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        Salvar e Emitir Certificado
+                    </button>
+                </div>
+            </EditForm>
+        </div>
+    </div>
+}
+
+<!-- ================= MODAL PREVIEW / IMPRESSÃO CERTIFICADO ================= -->
+@if (exibirModalPreview && certificadoSelecionado != null)
+{
+    <div class="modal-backdrop" @onclick="FecharModalPreview">
+        <div class="modal-content preview-modal-content" @onclick:stopPropagation="true">
+            
+            <div class="modal-header no-print">
+                <h2>Pré-Visualização do Documento Oficial</h2>
+                <div class="header-buttons">
+                    <button class="btn btn-primary" @onclick="ImprimirCertificado">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                            <rect x="6" y="14" width="12" height="8"></rect>
+                        </svg>
+                        Imprimir / Gerar PDF
+                    </button>
+                    <button class="modal-close" @onclick="FecharModalPreview">&times;</button>
+                </div>
+            </div>
+
+            <div class="modal-body preview-modal-body">
+                <!-- FOCO DA IMPRESSÃO -->
+                <div class="certificado-documento" id="documento-calibracao">
+                    
+                    <!-- CABEÇALHO OFICIAL -->
+                    <div class="cert-header">
+                        <div class="cert-brand">
+                            <img src="/imgs/baltec.svg" alt="Baltec Logo" class="cert-logo" />
+                            <div class="cert-company-details">
+                                <span class="company-name">BALTEC METROLOGIA E CALIBRAÇÃO LTDA.</span>
+                                <span class="company-info">Laboratório Acreditado pela Cgcre / Inmetro conforme ISO/IEC 17025</span>
+                                <span class="company-info">CNPJ: 12.345.678/0001-90 | R. da Metrologia, 100 - Industrial</span>
+                            </div>
+                        </div>
+                        <div class="cert-doc-number">
+                            <span class="doc-title">CERTIFICADO DE CALIBRAÇÃO</span>
+                            <span class="doc-code">Nº @certificadoSelecionado.NumeroCertificado</span>
+                            <span class="doc-date">Emissão: @certificadoSelecionado.DataEmissao.ToString("dd/MM/yyyy")</span>
+                        </div>
+                    </div>
+
+                    <hr class="cert-divider" />
+
+                    <!-- DADOS DO CLIENTE E EQUIPAMENTO -->
+                    <div class="cert-section-grid">
+                        <div class="cert-box">
+                            <div class="box-header">1. DADOS DO CLIENTE</div>
+                            <div class="box-content">
+                                <div class="field-row"><strong>Razão Social:</strong> @(string.IsNullOrEmpty(certificadoSelecionado.ClienteNome) ? "Indústria e Comércio Baltec S/A" : certificadoSelecionado.ClienteNome)</div>
+                                <div class="field-row"><strong>Endereço:</strong> Av. das Indústrias, 450 - Distrito Industrial</div>
+                                <div class="field-row"><strong>Ordem de Serviço:</strong> @(string.IsNullOrEmpty(certificadoSelecionado.NumeroOS) ? "OS-2026-004" : certificadoSelecionado.NumeroOS)</div>
+                            </div>
+                        </div>
+
+                        <div class="cert-box">
+                            <div class="box-header">2. IDENTIFICAÇÃO DO EQUIPAMENTO</div>
+                            <div class="box-content">
+                                <div class="field-row"><strong>Descrição/Modelo:</strong> @(string.IsNullOrEmpty(certificadoSelecionado.EquipamentoModelo) ? "Balança Rodoviária Eletrônica 80t" : certificadoSelecionado.EquipamentoModelo)</div>
+                                <div class="field-row"><strong>Nº de Série:</strong> @(string.IsNullOrEmpty(certificadoSelecionado.EquipamentoSerie) ? "BLT-994827" : certificadoSelecionado.EquipamentoSerie)</div>
+                                <div class="field-row"><strong>Fabricante / Marca:</strong> Baltec Precision</div>
+                                <div class="field-row"><strong>Resolução / Carga Máx:</strong> 10g / 30kg</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CONDIÇÕES AMBIENTAIS E DATAS -->
+                    <div class="cert-box full-width">
+                        <div class="box-header">3. CONDIÇÕES AMBIENTAIS E DATAS DA AFERIÇÃO</div>
+                        <div class="box-content grid-3-col">
+                            <div><strong>Data da Calibração:</strong> @certificadoSelecionado.DataCalibracao.ToString("dd/MM/yyyy")</div>
+                            <div><strong>Próxima Calibração:</strong> <span class="highlight-date">@certificadoSelecionado.DataProximaCalibracao.ToString("dd/MM/yyyy")</span></div>
+                            <div><strong>Temperatura Ambiente:</strong> @certificadoSelecionado.TemperaturaAmbiente.ToString("F1") °C</div>
+                            <div><strong>Umidade Relativa:</strong> @certificadoSelecionado.UmidadeRelativa.ToString("F1") %</div>
+                            <div><strong>Local da Calibração:</strong> Instalações do Cliente (In situ)</div>
+                            <div><strong>Procedimento:</strong> IT-MET-004 Rev 03</div>
+                        </div>
+                    </div>
+
+                    <!-- PADRÕES DE MEDIÇÃO UTILIZADOS (EXIGÊNCIA METROLÓGICA) -->
+                    <div class="cert-box full-width">
+                        <div class="box-header">4. PADRÕES DE MEDIÇÃO RASTREADOS (RBC)</div>
+                        <div class="box-content">
+                            <table class="cert-table-inner">
+                                <thead>
+                                    <tr>
+                                        <th>Identificação do Padrão</th>
+                                        <th>Descrição do Padrão</th>
+                                        <th>Certificado de Rastreabilidade</th>
+                                        <th>Validade Padrão</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>PAD-M1-500KG</td>
+                                        <td>Conjunto de Pesos Padrão Classe M1 (10kg a 500kg)</td>
+                                        <td>RBC Nº M-7749/2025</td>
+                                        <td>15/12/2026</td>
+                                    </tr>
+                                    <tr>
+                                        <td>PAD-E2-1KG</td>
+                                        <td>Massa Padrão Inox Classe E2 (1kg)</td>
+                                        <td>RBC Nº M-8812/2025</td>
+                                        <td>20/11/2026</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- RESULTADOS DA MEDIÇÃO -->
+                    <div class="cert-box full-width">
+                        <div class="box-header">5. RESULTADOS E INCERTEZA EXPANDIDA DE MEDIÇÃO</div>
+                        <div class="box-content">
+                            <table class="cert-table-inner text-center">
+                                <thead>
+                                    <tr>
+                                        <th>Carga Nominal (kg)</th>
+                                        <th>Indicação Crescente (kg)</th>
+                                        <th>Erro de Indicação (kg)</th>
+                                        <th>Incerteza Expandida U (kg)</th>
+                                        <th>Fator k (95,45%)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>0,000</td>
+                                        <td>0,000</td>
+                                        <td>0,000</td>
+                                        <td>0,001</td>
+                                        <td>2,00</td>
+                                    </tr>
+                                    <tr>
+                                        <td>10,000</td>
+                                        <td>10,002</td>
+                                        <td>+0,002</td>
+                                        <td>0,002</td>
+                                        <td>2,00</td>
+                                    </tr>
+                                    <tr>
+                                        <td>20,000</td>
+                                        <td>20,001</td>
+                                        <td>+0,001</td>
+                                        <td>0,002</td>
+                                        <td>2,00</td>
+                                    </tr>
+                                    <tr>
+                                        <td>30,000</td>
+                                        <td>30,003</td>
+                                        <td>+0,003</td>
+                                        <td>0,003</td>
+                                        <td>2,00</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- DECLARAÇÃO DE CONFORMIDADE E ASSINATURA -->
+                    <div class="cert-footer-section">
+                        <div class="cert-declaration">
+                            <strong>Declaração de Conformidade Metrológica:</strong>
+                            <p>Os erros encontrados no equipamento aferido encontram-se dentro da margem de erro máximo permissível (EMP) estabelecida pela Portaria Inmetro/Dimel para esta classe de exatidão.</p>
+                        </div>
+
+                        <div class="cert-signature-area">
+                            <div class="signature-box">
+                                <div class="signature-line">
+                                    <span class="digital-sign-stamp">✓ ASSINADO DIGITALMENTE</span>
+                                    <span class="sign-name">@(string.IsNullOrEmpty(certificadoSelecionado.TecnicoNome) ? "Eng. Roberto Silva - CRQ 04421" : certificadoSelecionado.TecnicoNome)</span>
+                                </div>
+                                <span class="sign-title">Metrologista Responsável Técnico</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- RODAPÉ FINAL -->
+                    <div class="cert-bottom-info">
+                        Este certificado atende aos requisitos de acreditação da Cgcre e não pode ser reproduzido parcialmente sem autorização do laboratório.
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="modal-footer no-print">
+                <button type="button" class="btn btn-secondary" @onclick="FecharModalPreview">Fechar</button>
+                <button type="button" class="btn btn-primary" @onclick="ImprimirCertificado">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                        <rect x="6" y="14" width="12" height="8"></rect>
+                    </svg>
+                    Imprimir Certificado
+                </button>
+            </div>
+
+        </div>
+    </div>
+}
+
+@code {
+    private List<CertificadoCalibracao> listaCertificados = new();
+    private List<EquipamentoOption> listaEquipamentos = new();
+    private List<TecnicoOption> listaTecnicos = new();
+    private List<OrdemServicoOption> listaOS = new();
+
+    private string termoBusca = "";
+    private string filtroStatus = "todos";
+
+    private bool exibirModalNovo = false;
+    private bool exibirModalPreview = false;
+
+    private CertificadoCalibracao novoCertificado = new();
+    private CertificadoCalibracao? certificadoSelecionado;
+
+    private string dataCalibracaoInput = DateTime.Today.ToString("yyyy-MM-dd");
+    private string dataProximaCalibracaoInput = DateTime.Today.AddYears(1).ToString("yyyy-MM-dd");
+
+    public enum StatusCertificado
+    {
+        Valido,
+        PrestesAVencer,
+        Vencido
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CarregarDadosAsync();
+    }
+
+    private async Task CarregarDadosAsync()
+    {
+        listaCertificados = await CertificadoDAO.ListarTodosAsync();
+        listaEquipamentos = await CertificadoDAO.ListarEquipamentosAuxAsync();
+        listaTecnicos = await CertificadoDAO.ListarTecnicosAuxAsync();
+        listaOS = await CertificadoDAO.ListarOrdensServicoAuxAsync();
+
+        // Dados padrão simulados de demonstração se a lista do banco estiver vazia
+        if (!listaCertificados.Any())
+        {
+            listaCertificados = new List<CertificadoCalibracao>
+            {
+                new CertificadoCalibracao
+                {
+                    Id = 1,
+                    NumeroCertificado = "CERT-2026-0001",
+                    ClienteNome = "Frigorífico Silva S/A",
+                    EquipamentoModelo = "Balança Plataforma 500kg Toledo",
+                    EquipamentoSerie = "TL-994812",
+                    DataCalibracao = DateTime.Today.AddMonths(-2),
+                    DataProximaCalibracao = DateTime.Today.AddMonths(10),
+                    TemperaturaAmbiente = 22.5m,
+                    UmidadeRelativa = 55.0m,
+                    TecnicoNome = "Eng. Marcos Oliveira",
+                    DataEmissao = DateTime.Today.AddMonths(-2)
+                },
+                new CertificadoCalibracao
+                {
+                    Id = 2,
+                    NumeroCertificado = "CERT-2026-0002",
+                    ClienteNome = "Farmacêutica Viva Ltda",
+                    EquipamentoModelo = "Balança Analítica Shimadzu 220g",
+                    EquipamentoSerie = "SH-102938",
+                    DataCalibracao = DateTime.Today.AddDays(-350),
+                    DataProximaCalibracao = DateTime.Today.AddDays(15),
+                    TemperaturaAmbiente = 21.0m,
+                    UmidadeRelativa = 48.5m,
+                    TecnicoNome = "Carlos Metrologia",
+                    DataEmissao = DateTime.Today.AddDays(-350)
+                },
+                new CertificadoCalibracao
+                {
+                    Id = 3,
+                    NumeroCertificado = "CERT-2025-0089",
+                    ClienteNome = "Metalúrgica AçoForte",
+                    EquipamentoModelo = "Célula de Carga Kratos 5t",
+                    EquipamentoSerie = "KT-7721",
+                    DataCalibracao = DateTime.Today.AddYears(-1).AddDays(-10),
+                    DataProximaCalibracao = DateTime.Today.AddDays(-10),
+                    TemperaturaAmbiente = 24.2m,
+                    UmidadeRelativa = 60.0m,
+                    TecnicoNome = "Eng. Marcos Oliveira",
+                    DataEmissao = DateTime.Today.AddYears(-1).AddDays(-10)
+                }
+            };
+        }
+
+        if (!listaEquipamentos.Any())
+        {
+            listaEquipamentos = new List<EquipamentoOption>
+            {
+                new EquipamentoOption { Id = 1, Modelo = "Balança Toledo 2090", NumeroSerie = "TOL-88391", ClienteNome = "Indústria Alpha" },
+                new EquipamentoOption { Id = 2, Modelo = "Balança Filizola Platinum", NumeroSerie = "FLZ-55102", ClienteNome = "Empresa Beta" },
+                new EquipamentoOption { Id = 3, Modelo = "Balança Analítica Marte", NumeroSerie = "MRT-1192", ClienteNome = "Laboratório Gama" }
+            };
+        }
+
+        if (!listaTecnicos.Any())
+        {
+            listaTecnicos = new List<TecnicoOption>
+            {
+                new TecnicoOption { Id = 1, Nome = "Eng. Roberto Silva - Metrologista Responsável" },
+                new TecnicoOption { Id = 2, Nome = "Carlos Eduardo - Técnico de Calibração" }
+            };
+        }
+    }
+
+    private IEnumerable<CertificadoCalibracao> CertificadosFiltrados
+    {
+        get
+        {
+            var resultado = listaCertificados.AsEnumerable();
+
+            if (!string.IsNullOrWhiteSpace(termoBusca))
+            {
+                var termo = termoBusca.Trim().ToLower();
+                resultado = resultado.Where(c =>
+                    c.NumeroCertificado.ToLower().Contains(termo) ||
+                    (c.EquipamentoModelo != null && c.EquipamentoModelo.ToLower().Contains(termo)) ||
+                    (c.ClienteNome != null && c.ClienteNome.ToLower().Contains(termo)));
+            }
+
+            if (filtroStatus == "valido")
+            {
+                resultado = resultado.Where(c => GetStatusValidade(c.DataProximaCalibracao) == StatusCertificado.Valido);
+            }
+            else if (filtroStatus == "prestes")
+            {
+                resultado = resultado.Where(c => GetStatusValidade(c.DataProximaCalibracao) == StatusCertificado.PrestesAVencer);
+            }
+            else if (filtroStatus == "vencido")
+            {
+                resultado = resultado.Where(c => GetStatusValidade(c.DataProximaCalibracao) == StatusCertificado.Vencido);
+            }
+
+            return resultado;
+        }
+    }
+
+    private StatusCertificado GetStatusValidade(DateTime dataProximaCalibracao)
+    {
+        var diasRestantes = (dataProximaCalibracao.Date - DateTime.Today).TotalDays;
+        if (diasRestantes < 0) return StatusCertificado.Vencido;
+        if (diasRestantes <= 30) return StatusCertificado.PrestesAVencer;
+        return StatusCertificado.Valido;
+    }
+
+    private async Task AbrirModalNovo()
+    {
+        var proximoNumero = await CertificadoDAO.GerarProximoNumeroCertificadoAsync();
+        var dataHoje = DateTime.Today;
+
+        novoCertificado = new CertificadoCalibracao
+        {
+            NumeroCertificado = proximoNumero,
+            DataCalibracao = dataHoje,
+            DataProximaCalibracao = dataHoje.AddYears(1),
+            TemperaturaAmbiente = 22.0m,
+            UmidadeRelativa = 55.0m,
+            FkEquipamento = listaEquipamentos.FirstOrDefault()?.Id ?? 0,
+            FkTecnicoResponsavel = listaTecnicos.FirstOrDefault()?.Id ?? 0
+        };
+
+        dataCalibracaoInput = dataHoje.ToString("yyyy-MM-dd");
+        dataProximaCalibracaoInput = dataHoje.AddYears(1).ToString("yyyy-MM-dd");
+
+        exibirModalNovo = true;
+    }
+
+    private void FecharModalNovo()
+    {
+        exibirModalNovo = false;
+    }
+
+    private void OnDataCalibracaoChanged(ChangeEventArgs e)
+    {
+        if (DateTime.TryParse(e.Value?.ToString(), out DateTime dataCalib))
+        {
+            novoCertificado.DataCalibracao = dataCalib;
+            novoCertificado.DataProximaCalibracao = dataCalib.AddYears(1);
+            dataCalibracaoInput = dataCalib.ToString("yyyy-MM-dd");
+            dataProximaCalibracaoInput = novoCertificado.DataProximaCalibracao.ToString("yyyy-MM-dd");
+        }
+    }
+
+    private async Task SalvarCertificado()
+    {
+        if (novoCertificado.FkEquipamento <= 0)
+        {
+            await JS.InvokeVoidAsync("alert", "Selecione um equipamento válido.");
+            return;
+        }
+
+        if (novoCertificado.FkTecnicoResponsavel <= 0)
+        {
+            await JS.InvokeVoidAsync("alert", "Selecione um técnico responsável.");
+            return;
+        }
+
+        var equip = listaEquipamentos.FirstOrDefault(e => e.Id == novoCertificado.FkEquipamento);
+        if (equip != null)
+        {
+            novoCertificado.EquipamentoModelo = equip.Modelo;
+            novoCertificado.EquipamentoSerie = equip.NumeroSerie;
+            novoCertificado.ClienteNome = equip.ClienteNome;
+        }
+
+        var tec = listaTecnicos.FirstOrDefault(t => t.Id == novoCertificado.FkTecnicoResponsavel);
+        if (tec != null)
+        {
+            novoCertificado.TecnicoNome = tec.Nome;
+        }
+
+        novoCertificado.DataEmissao = DateTime.Now;
+
+        await CertificadoDAO.InserirAsync(novoCertificado);
+
+        // Atualizar lista local
+        listaCertificados.Insert(0, novoCertificado);
+
+        exibirModalNovo = false;
+        await JS.InvokeVoidAsync("alert", $"Certificado {novoCertificado.NumeroCertificado} emitido com sucesso!");
+    }
+
+    private void AbrirModalPreview(CertificadoCalibracao cert)
+    {
+        certificadoSelecionado = cert;
+        exibirModalPreview = true;
+    }
+
+    private void FecharModalPreview()
+    {
+        exibirModalPreview = false;
+        certificadoSelecionado = null;
+    }
+
+    private async Task ImprimirCertificado()
+    {
+        await JS.InvokeVoidAsync("window.print");
+    }
+
+    private void VoltarInicio()
+    {
+        Nav.NavigateTo("/home");
+    }
+}

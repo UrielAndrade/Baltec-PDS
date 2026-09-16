@@ -10,6 +10,7 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddSingleton<DatabaseConnection>();
 builder.Services.AddScoped<UsuarioDAO>();
+builder.Services.AddScoped<CertificadoCalibracaoDAO>();
 
 var app = builder.Build();
 
