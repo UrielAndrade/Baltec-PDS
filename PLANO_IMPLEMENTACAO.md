@@ -109,7 +109,7 @@ graph TD
 
 ---
 
-### **PESSOA 2 — Gestão de Clientes e Balanças/Equipamentos**
+### **Kamilly — Gestão de Clientes e Balanças/Equipamentos**
 
 > **Objetivo Central:** Gerenciar os clientes donos dos equipamentos e todas as balanças cadastradas no sistema.
 
