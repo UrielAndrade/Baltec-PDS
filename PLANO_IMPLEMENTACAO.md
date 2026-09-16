@@ -67,8 +67,7 @@ graph TD
 
 ---
 
-### **PESSOA 1 — Infraestrutura, Conexão MySQL, Segurança e Autenticação**
-
+### **Alisson — Infraestrutura, Conexão MySQL, Segurança e Autenticação** 
 > **Objetivo Central:** Fornecer o mecanismo central de conexão com o MySQL, classe base de comandos, gerenciamento de credenciais e finalizar o fluxo de login/cadastro com persistência real.
 
 #### Arquivos a Criar/Modificar:
