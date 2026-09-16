@@ -1,6 +1,9 @@
 @page "/cadastro"
+@using Baltec.DAO
+@using Baltec.models
 @rendermode InteractiveServer
 @inject NavigationManager Nav
+@inject UsuarioDAO UsuarioDAO
 
 <PageTitle>Cadastro - Baltec</PageTitle>
 
@@ -36,12 +39,15 @@
 
             <div class="input-group">
                 <label for="cargo">Cargo / Função</label>
-                <select id="cargo" @bind="cargo">
-                    <option value="">Selecione...</option>
-                    <option value="tecnico">Técnico de Calibração</option>
-                    <option value="engenheiro">Engenheiro</option>
-                    <option value="administrativo">Administrativo</option>
-                    <option value="gerente">Gerente</option>
+                <select id="cargo" @bind="cargoId">
+                    <option value="0">Selecione...</option>
+                    @if (listaCargos != null)
+                    {
+                        @foreach (var c in listaCargos)
+                        {
+                            <option value="@c.Id">@c.Nome</option>
+                        }
+                    }
                 </select>
             </div>
 
@@ -107,7 +113,7 @@
     private string cpf = "";
     private string telefone = "";
     private string email = "";
-    private string cargo = "";
+    private int cargoId = 0;
     private string senha = "";
     private string confirmarSenha = "";
     private bool mostrarSenha = false;
@@ -115,6 +121,12 @@
     private string erro = "";
     private bool sucesso = false;
     private bool carregando = false;
+    private List<Cargo>? listaCargos;
+
+    protected override async Task OnInitializedAsync()
+    {
+        listaCargos = await UsuarioDAO.ListarCargosAsync();
+    }
 
     private void ToggleSenha() => mostrarSenha = !mostrarSenha;
     private void ToggleConfSenha() => mostrarConfSenha = !mostrarConfSenha;
@@ -125,21 +137,50 @@
 
         if (string.IsNullOrWhiteSpace(nome))       { erro = "Informe seu nome completo."; return; }
         if (string.IsNullOrWhiteSpace(email))       { erro = "Informe um email válido."; return; }
-        if (string.IsNullOrWhiteSpace(cargo))       { erro = "Selecione um cargo."; return; }
+        if (cargoId <= 0)                           { erro = "Selecione um cargo."; return; }
         if (senha.Length < 6)                       { erro = "A senha deve ter no mínimo 6 caracteres."; return; }
         if (senha != confirmarSenha)                { erro = "As senhas não coincidem."; return; }
 
         carregando = true;
         StateHasChanged();
 
-        // Simulação de chamada à API (2s)
-        await Task.Delay(2000);
+        if (await UsuarioDAO.EmailExisteAsync(email))
+        {
+            erro = "Já existe um usuário com este email.";
+            carregando = false;
+            return;
+        }
+
+        if (!string.IsNullOrWhiteSpace(cpf) && await UsuarioDAO.CpfExisteAsync(cpf))
+        {
+            erro = "Já existe um usuário com este CPF.";
+            carregando = false;
+            return;
+        }
+
+        var usuario = new Usuario
+        {
+            NomeCompleto = nome,
+            Cpf = cpf,
+            Telefone = telefone,
+            Email = email,
+            FkCargo = cargoId
+        };
+
+        var cadastrado = await UsuarioDAO.CadastrarAsync(usuario, senha);
 
         carregando = false;
-        sucesso = true;
-        StateHasChanged();
-
-        await Task.Delay(1800);
-        Nav.NavigateTo("/");
+        
+        if (cadastrado)
+        {
+            sucesso = true;
+            StateHasChanged();
+            await Task.Delay(1800);
+            Nav.NavigateTo("/");
+        }
+        else
+        {
+            erro = "Erro ao cadastrar usuário. Tente novamente.";
+        }
     }
 }

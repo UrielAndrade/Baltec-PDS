@@ -242,3 +242,60 @@ CREATE TABLE auditoria_log (
     data_hora DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (fk_usuario) REFERENCES usuario(id)
 );
+
+-- ==========================================
+-- DADOS INICIAIS (SEED) PARA O SISTEMA
+-- ==========================================
+
+INSERT INTO cargo (nome, descricao) VALUES 
+('Técnico de Calibração', 'Técnico responsável pelas aferições'),
+('Engenheiro', 'Engenheiro metrologista'),
+('Administrativo', 'Equipe de escritório e atendimento'),
+('Gerente', 'Gerente da unidade');
+
+INSERT INTO perfil (nome, descricao) VALUES 
+('Admin', 'Acesso total ao sistema'),
+('Tecnico', 'Acesso às OS e calibrações'),
+('Atendimento', 'Acesso a clientes e balanças');
+
+INSERT INTO tipo_servico (nome) VALUES 
+('Calibração de Balança Analítica'),
+('Manutenção Preventiva'),
+('Manutenção Corretiva'),
+('Aferição de Padrões');
+
+INSERT INTO status_os (nome) VALUES 
+('Pendente'),
+('Em Andamento'),
+('Aguardando Peça'),
+('Concluído'),
+('Cancelado');
+
+INSERT INTO grau_urgencia (nome) VALUES 
+('Baixa'),
+('Média'),
+('Alta'),
+('Crítica');
+
+INSERT INTO tipo_movimentacao (nome) VALUES 
+('Entrada (Compra)'),
+('Saída (OS)'),
+('Ajuste de Estoque (+/-)');
+
+INSERT INTO categoria_componente (nome) VALUES 
+('Sensores'),
+('Placas de Circuito'),
+('Cabos'),
+('Pés de Borracha'),
+('Displays');
+
+INSERT INTO tipo_transacao_financeira (nome) VALUES 
+('Receita'),
+('Despesa');
+
+INSERT INTO status_transacao_financeira (nome) VALUES 
+('Pendente'),
+('Pago'),
+('Atrasado'),
+('Cancelado');
+

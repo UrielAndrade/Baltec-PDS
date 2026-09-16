@@ -1,6 +1,8 @@
 @page "/"
+@using Baltec.DAO
 @rendermode InteractiveServer
 @inject NavigationManager Navigation
+@inject UsuarioDAO UsuarioDAO
 
 <PageTitle>Login - Baltec</PageTitle>
 
@@ -44,13 +46,21 @@
 
     private void ToggleSenha() => mostrarSenha = !mostrarSenha;
 
-    private void Entrar()
+    private async Task Entrar()
     {
         if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(senha))
         {
             erro = "Preencha o email e a senha.";
             return;
         }
+        
+        var usuario = await UsuarioDAO.AutenticarAsync(email, senha);
+        if (usuario == null)
+        {
+            erro = "Credenciais inválidas.";
+            return;
+        }
+
         Navigation.NavigateTo("/inicio");
     }
 }
