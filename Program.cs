@@ -1,10 +1,15 @@
 using Baltec.Components;
+using Baltec.configs;
+using Baltec.DAO;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+builder.Services.AddSingleton<DatabaseConnection>();
+builder.Services.AddScoped<UsuarioDAO>();
 
 var app = builder.Build();
 
