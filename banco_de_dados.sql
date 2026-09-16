@@ -1,4 +1,4 @@
-create database baltec;
+ï»¿create database baltec;
 
 CREATE TABLE cargo (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -22,8 +22,8 @@ CREATE TABLE perfil_permissao (
     id INT AUTO_INCREMENT PRIMARY KEY,
     fk_perfil INT NOT NULL,
     fk_permissao INT NOT NULL,
-    FOREIGN KEY (fk_perfil) REFERENCES perfil(id),
-    FOREIGN KEY (fk_permissao) REFERENCES permissao(id)
+    FOREIGN KEY (fk_perfil) REFERENCEs perfil(id),
+    FOREIGN KEY (fk_permissao) REFERENCEs permissao(id)
 );
 
 CREATE TABLE categoria_componente (
@@ -66,7 +66,7 @@ CREATE TABLE configuracao_sistema (
     chave VARCHAR(100) NOT NULL UNIQUE,
     valor TEXT NOT NULL,
     descricao VARCHAR(255) NULL,
-    data_atualizacao DATETIME DEFAULT CURRENT_TIMESTAMP
+    data_atualizacao DATETIME DEFAULT CURRENT_TIMEsTAMP
 );
 
 CREATE TABLE usuario (
@@ -77,17 +77,17 @@ CREATE TABLE usuario (
     email VARCHAR(100) NOT NULL UNIQUE,
     fk_cargo INT NOT NULL,
     senha_hash VARCHAR(255) NOT NULL,
-    data_cadastro DATETIME DEFAULT CURRENT_TIMESTAMP,
+    data_cadastro DATETIME DEFAULT CURRENT_TIMEsTAMP,
     ativo BOOLEAN DEFAULT TRUE,
-    FOREIGN KEY (fk_cargo) REFERENCES cargo(id)
+    FOREIGN KEY (fk_cargo) REFERENCEs cargo(id)
 );
 
 CREATE TABLE usuario_perfil (
     id INT AUTO_INCREMENT PRIMARY KEY,
     fk_usuario INT NOT NULL,
     fk_perfil INT NOT NULL,
-    FOREIGN KEY (fk_usuario) REFERENCES usuario(id),
-    FOREIGN KEY (fk_perfil) REFERENCES perfil(id)
+    FOREIGN KEY (fk_usuario) REFERENCEs usuario(id),
+    FOREIGN KEY (fk_perfil) REFERENCEs perfil(id)
 );
 
 CREATE TABLE cliente (
@@ -100,7 +100,7 @@ CREATE TABLE cliente (
     endereco VARCHAR(255) NULL,
     cidade VARCHAR(100) NULL,
     estado VARCHAR(2) NULL,
-    data_cadastro DATETIME DEFAULT CURRENT_TIMESTAMP,
+    data_cadastro DATETIME DEFAULT CURRENT_TIMEsTAMP,
     ativo BOOLEAN DEFAULT TRUE
 );
 
@@ -114,7 +114,7 @@ CREATE TABLE fornecedor (
     endereco VARCHAR(255) NULL,
     cidade VARCHAR(100) NULL,
     estado VARCHAR(2) NULL,
-    data_cadastro DATETIME DEFAULT CURRENT_TIMESTAMP,
+    data_cadastro DATETIME DEFAULT CURRENT_TIMEsTAMP,
     ativo BOOLEAN DEFAULT TRUE
 );
 
@@ -127,9 +127,9 @@ CREATE TABLE equipamento (
     divisao_escala_g DECIMAL(10,3) NOT NULL,
     numero_serie VARCHAR(50) NOT NULL UNIQUE,
     setor_localizacao VARCHAR(100) NOT NULL,
-    data_cadastro DATETIME DEFAULT CURRENT_TIMESTAMP,
+    data_cadastro DATETIME DEFAULT CURRENT_TIMEsTAMP,
     ativo BOOLEAN DEFAULT TRUE,
-    FOREIGN KEY (fk_cliente) REFERENCES cliente(id)
+    FOREIGN KEY (fk_cliente) REFERENCEs cliente(id)
 );
 
 CREATE TABLE componente (
@@ -139,9 +139,9 @@ CREATE TABLE componente (
     fk_categoria INT NOT NULL,
     quantidade_estoque INT NOT NULL DEFAULT 0,
     preco_unitario DECIMAL(18,2) NOT NULL,
-    data_cadastro DATETIME DEFAULT CURRENT_TIMESTAMP,
+    data_cadastro DATETIME DEFAULT CURRENT_TIMEsTAMP,
     ativo BOOLEAN DEFAULT TRUE,
-    FOREIGN KEY (fk_categoria) REFERENCES categoria_componente(id)
+    FOREIGN KEY (fk_categoria) REFERENCEs categoria_componente(id)
 );
 
 CREATE TABLE ordem_servico (
@@ -153,13 +153,13 @@ CREATE TABLE ordem_servico (
     fk_tecnico INT NOT NULL,
     descricao_problema TEXT NOT NULL,
     fk_status INT NOT NULL,
-    data_abertura DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    data_abertura DATETIME NOT NULL DEFAULT CURRENT_TIMEsTAMP,
     data_conclusao DATETIME NULL,
-    FOREIGN KEY (fk_cliente) REFERENCES cliente(id),
-    FOREIGN KEY (fk_equipamento) REFERENCES equipamento(id),
-    FOREIGN KEY (fk_tipo_servico) REFERENCES tipo_servico(id),
-    FOREIGN KEY (fk_tecnico) REFERENCES usuario(id),
-    FOREIGN KEY (fk_status) REFERENCES status_os(id)
+    FOREIGN KEY (fk_cliente) REFERENCEs cliente(id),
+    FOREIGN KEY (fk_equipamento) REFERENCEs equipamento(id),
+    FOREIGN KEY (fk_tipo_servico) REFERENCEs tipo_servico(id),
+    FOREIGN KEY (fk_tecnico) REFERENCEs usuario(id),
+    FOREIGN KEY (fk_status) REFERENCEs status_os(id)
 );
 
 CREATE TABLE ordem_servico_peca (
@@ -170,12 +170,12 @@ CREATE TABLE ordem_servico_peca (
     fk_urgencia INT NOT NULL,
     observacoes TEXT NOT NULL,
     fk_status INT NOT NULL,
-    data_solicitacao DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    data_solicitacao DATETIME NOT NULL DEFAULT CURRENT_TIMEsTAMP,
     data_resolucao DATETIME NULL,
-    FOREIGN KEY (fk_ordem_servico_principal) REFERENCES ordem_servico(id),
-    FOREIGN KEY (fk_componente) REFERENCES componente(id),
-    FOREIGN KEY (fk_urgencia) REFERENCES grau_urgencia(id),
-    FOREIGN KEY (fk_status) REFERENCES status_os(id)
+    FOREIGN KEY (fk_ordem_servico_principal) REFERENCEs ordem_servico(id),
+    FOREIGN KEY (fk_componente) REFERENCEs componente(id),
+    FOREIGN KEY (fk_urgencia) REFERENCEs grau_urgencia(id),
+    FOREIGN KEY (fk_status) REFERENCEs status_os(id)
 );
 
 CREATE TABLE certificado_calibracao (
@@ -188,10 +188,10 @@ CREATE TABLE certificado_calibracao (
     temperatura_ambiente DECIMAL(5,2) NOT NULL,
     umidade_relativa DECIMAL(5,2) NOT NULL,
     fk_tecnico_responsavel INT NOT NULL,
-    data_emissao DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (fk_ordem_servico) REFERENCES ordem_servico(id),
-    FOREIGN KEY (fk_equipamento) REFERENCES equipamento(id),
-    FOREIGN KEY (fk_tecnico_responsavel) REFERENCES usuario(id)
+    data_emissao DATETIME NOT NULL DEFAULT CURRENT_TIMEsTAMP,
+    FOREIGN KEY (fk_ordem_servico) REFERENCEs ordem_servico(id),
+    FOREIGN KEY (fk_equipamento) REFERENCEs equipamento(id),
+    FOREIGN KEY (fk_tecnico_responsavel) REFERENCEs usuario(id)
 );
 
 CREATE TABLE movimentacao_estoque (
@@ -204,12 +204,12 @@ CREATE TABLE movimentacao_estoque (
     fk_fornecedor INT NULL,
     fk_ordem_servico INT NULL,
     fk_usuario_responsavel INT NOT NULL,
-    data_movimentacao DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (fk_componente) REFERENCES componente(id),
-    FOREIGN KEY (fk_tipo_movimentacao) REFERENCES tipo_movimentacao(id),
-    FOREIGN KEY (fk_fornecedor) REFERENCES fornecedor(id),
-    FOREIGN KEY (fk_ordem_servico) REFERENCES ordem_servico(id),
-    FOREIGN KEY (fk_usuario_responsavel) REFERENCES usuario(id)
+    data_movimentacao DATETIME NOT NULL DEFAULT CURRENT_TIMEsTAMP,
+    FOREIGN KEY (fk_componente) REFERENCEs componente(id),
+    FOREIGN KEY (fk_tipo_movimentacao) REFERENCEs tipo_movimentacao(id),
+    FOREIGN KEY (fk_fornecedor) REFERENCEs fornecedor(id),
+    FOREIGN KEY (fk_ordem_servico) REFERENCEs ordem_servico(id),
+    FOREIGN KEY (fk_usuario_responsavel) REFERENCEs usuario(id)
 );
 
 CREATE TABLE transacao_financeira (
@@ -223,12 +223,12 @@ CREATE TABLE transacao_financeira (
     fk_cliente INT NULL,
     fk_fornecedor INT NULL,
     fk_ordem_servico INT NULL,
-    data_cadastro DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (fk_tipo_transacao) REFERENCES tipo_transacao_financeira(id),
-    FOREIGN KEY (fk_status) REFERENCES status_transacao_financeira(id),
-    FOREIGN KEY (fk_cliente) REFERENCES cliente(id),
-    FOREIGN KEY (fk_fornecedor) REFERENCES fornecedor(id),
-    FOREIGN KEY (fk_ordem_servico) REFERENCES ordem_servico(id)
+    data_cadastro DATETIME NOT NULL DEFAULT CURRENT_TIMEsTAMP,
+    FOREIGN KEY (fk_tipo_transacao) REFERENCEs tipo_transacao_financeira(id),
+    FOREIGN KEY (fk_status) REFERENCEs status_transacao_financeira(id),
+    FOREIGN KEY (fk_cliente) REFERENCEs cliente(id),
+    FOREIGN KEY (fk_fornecedor) REFERENCEs fornecedor(id),
+    FOREIGN KEY (fk_ordem_servico) REFERENCEs ordem_servico(id)
 );
 
 CREATE TABLE auditoria_log (
@@ -239,63 +239,65 @@ CREATE TABLE auditoria_log (
     dados_antigos TEXT NULL,
     dados_novos TEXT NULL,
     fk_usuario INT NULL,
-    data_hora DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (fk_usuario) REFERENCES usuario(id)
+    data_hora DATETIME NOT NULL DEFAULT CURRENT_TIMEsTAMP,
+    FOREIGN KEY (fk_usuario) REFERENCEs usuario(id)
 );
 
 -- ==========================================
--- DADOS INICIAIS (SEED) PARA O SISTEMA
+-- DADOs INICIAIs (sEED) PARA O sIsTEMA
 -- ==========================================
 
-INSERT INTO cargo (nome, descricao) VALUES 
-('Técnico de Calibração', 'Técnico responsável pelas aferições'),
+INsERT INTO cargo (nome, descricao) VALUEs 
+('Tï¿½cnico de Calibraï¿½ï¿½o', 'Tï¿½cnico responsï¿½vel pelas aferiï¿½ï¿½es'),
 ('Engenheiro', 'Engenheiro metrologista'),
-('Administrativo', 'Equipe de escritório e atendimento'),
+('Administrativo', 'Equipe de escritï¿½rio e atendimento'),
 ('Gerente', 'Gerente da unidade');
 
-INSERT INTO perfil (nome, descricao) VALUES 
+INsERT INTO perfil (nome, descricao) VALUEs 
 ('Admin', 'Acesso total ao sistema'),
-('Tecnico', 'Acesso às OS e calibrações'),
-('Atendimento', 'Acesso a clientes e balanças');
+('Tecnico', 'Acesso ï¿½s Os e calibraï¿½ï¿½es'),
+('Atendimento', 'Acesso a clientes e balanï¿½as');
 
-INSERT INTO tipo_servico (nome) VALUES 
-('Calibração de Balança Analítica'),
-('Manutenção Preventiva'),
-('Manutenção Corretiva'),
-('Aferição de Padrões');
+INsERT INTO tipo_servico (nome) VALUEs 
+('Calibraï¿½ï¿½o de Balanï¿½a Analï¿½tica'),
+('Manutenï¿½ï¿½o Preventiva'),
+('Manutenï¿½ï¿½o Corretiva'),
+('Aferiï¿½ï¿½o de Padrï¿½es');
 
-INSERT INTO status_os (nome) VALUES 
+INsERT INTO status_os (nome) VALUEs 
 ('Pendente'),
 ('Em Andamento'),
-('Aguardando Peça'),
-('Concluído'),
+('Aguardando Peï¿½a'),
+('Concluï¿½do'),
 ('Cancelado');
 
-INSERT INTO grau_urgencia (nome) VALUES 
+INsERT INTO grau_urgencia (nome) VALUEs 
 ('Baixa'),
-('Média'),
+('Mï¿½dia'),
 ('Alta'),
-('Crítica');
+('Crï¿½tica');
 
-INSERT INTO tipo_movimentacao (nome) VALUES 
+INsERT INTO tipo_movimentacao (nome) VALUEs 
 ('Entrada (Compra)'),
-('Saída (OS)'),
+('saï¿½da (Os)'),
 ('Ajuste de Estoque (+/-)');
 
-INSERT INTO categoria_componente (nome) VALUES 
-('Sensores'),
+INsERT INTO categoria_componente (nome) VALUEs 
+('sensores'),
 ('Placas de Circuito'),
 ('Cabos'),
-('Pés de Borracha'),
+('Pï¿½s de Borracha'),
 ('Displays');
 
-INSERT INTO tipo_transacao_financeira (nome) VALUES 
+INsERT INTO tipo_transacao_financeira (nome) VALUEs 
 ('Receita'),
 ('Despesa');
 
-INSERT INTO status_transacao_financeira (nome) VALUES 
+INsERT INTO status_transacao_financeira (nome) VALUEs 
 ('Pendente'),
 ('Pago'),
 ('Atrasado'),
 ('Cancelado');
+
+
 
