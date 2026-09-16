@@ -228,7 +228,7 @@ graph TD
 
 ---
 
-### **PESSOA 5 — Ordens de Serviço de Peças (Requisições Técnicas)**
+### ** Victor Henrique  — Ordens de Serviço de Peças (Requisições Técnicas)**
 
 > **Objetivo Central:** Permitir que técnicos requisitem peças específicas para uma OS em andamento com grau de urgência.
 
