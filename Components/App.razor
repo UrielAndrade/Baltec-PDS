@@ -99,6 +99,21 @@
                 });
             }
         };
+
+        // Mobile Sidebar Toggle
+        window.toggleSidebar = function () {
+            var container = document.querySelector('.app-container');
+            if(container) {
+                container.classList.toggle('sidebar-open');
+            }
+        };
+
+        window.closeSidebar = function () {
+            var container = document.querySelector('.app-container');
+            if(container && container.classList.contains('sidebar-open')) {
+                container.classList.remove('sidebar-open');
+            }
+        };
     </script>
 </body>
 
