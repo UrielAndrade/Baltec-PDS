@@ -4,7 +4,32 @@ Este guia rápido foi criado para que **todos os desenvolvedores** (estudantes/e
 
 ---
 
-## 🛠️ Opção 1: Usando o XAMPP (Mais fácil para iniciantes)
+## 🚀 Opção 1: Usando Docker (Modo Híbrido - Altamente Recomendado)
+
+Com o Docker instalado, você não precisa instalar XAMPP nem MySQL na sua máquina. O banco e o phpMyAdmin sobem configurados com apenas **um comando**:
+
+1. Na raiz do projeto, abra o terminal e execute:
+   ```bash
+   docker compose up -d
+   ```
+2. **Pronto!**
+   - O **MySQL 8.0** estará rodando em `localhost:3306` (usuário `root`, senha `root`).
+   - O banco `baltec`, todas as tabelas e dados iniciais (seed) são criados automaticamente.
+   - O **phpMyAdmin** estará acessível no navegador em: [http://localhost:8081](http://localhost:8081).
+3. Para rodar a aplicação Blazor com *Hot Reload*:
+   ```bash
+   dotnet watch run
+   ```
+   *(A conexão com o banco já está pré-configurada no `appsettings.Development.json`!)*
+
+4. Para parar os contêineres quando terminar:
+   ```bash
+   docker compose down
+   ```
+
+---
+
+## 🛠️ Opção 2: Usando o XAMPP (Legado / Alternativo)
 
 O XAMPP é um pacote que já vem com o MySQL e uma interface visual chamada phpMyAdmin.
 
