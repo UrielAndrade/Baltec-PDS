@@ -46,7 +46,7 @@
         </div>
 
         <div class="nav-item">
-            <a class="nav-link @(IsActive("/ordem-servico") ? "active" : "")" href="/ordem-servico">
+            <a class="nav-link @(IsActive("/os") || IsActive("/ordem-servico") ? "active" : "")" href="/os">
                 <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="4" y1="6" x2="4" y2="18"></line>
                     <line x1="9" y1="6" x2="20" y2="6"></line>
