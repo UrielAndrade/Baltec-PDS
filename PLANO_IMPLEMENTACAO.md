@@ -259,7 +259,7 @@ graph TD
 
 ---
 
-### **PESSOA 6 — Certificados de Calibração & Metrologia**
+### ** Samuel Borges — Certificados de Calibração & Metrologia**
 
 > **Objetivo Central:** Aferição de conformidade com normas metrológicas, cálculo da validade do certificado e emissão do documento.
 
@@ -288,7 +288,7 @@ graph TD
 
 ---
 
-### **PESSOA 7 — Módulo Financeiro e Alimentação do Painel (Dashboard)**
+### ** Arthur Braga — Módulo Financeiro e Alimentação do Painel (Dashboard)**
 
 > **Objetivo Central:** Gestão de receitas/despesas e substituição dos dados mocados da tela inicial por dados reais do banco.
 
@@ -329,12 +329,12 @@ graph TD
 
 ## 3. Matriz de Rastreabilidade de Arquivos
 
-| Pessoa | Modelos (`models/`) | Camada de Dados (`DAO/` & `configs/`) | Telas (`Components/Pages/`) |
-| :--- | :--- | :--- | :--- |
-| **Pessoa 1** | `Usuario.cs`, `Cargo.cs` | `DatabaseConnection.cs`, `BaseDAO.cs`, `UsuarioDAO.cs` | `Login.razor`, `Cadastro.razor` |
-| **Pessoa 2** | `Cliente.cs`, `Equipamento.cs` | `ClienteDAO.cs`, `EquipamentoDAO.cs` | `Balancas.razor`, `Balancas.razor.css` |
-| **Pessoa 3** | `Componente.cs`, `CategoriaComponente.cs`, `MovimentacaoEstoque.cs` | `ComponenteDAO.cs`, `MovimentacaoEstoqueDAO.cs` | `Componentes.razor`, `Componentes.razor.css` |
-| **Pessoa 4** | `OrdemServico.cs`, `TipoServico.cs`, `StatusOS.cs` | `OrdemServicoDAO.cs` | `OrdensServico.razor`, `OrdensServico.razor.css` |
-| **Pessoa 5** | `OrdemServicoPeca.cs`, `GrauUrgencia.cs` | `OrdemServicoPecaDAO.cs` | `OSPecas.razor`, `OSPecas.razor.css` |
-| **Pessoa 6** | `CertificadoCalibracao.cs` | `CertificadoCalibracaoDAO.cs` | `Certificados.razor`, `Certificados.razor.css` |
-| **Pessoa 7** | `TransacaoFinanceira.cs`, `DashboardDTO.cs` | `FinanceiroDAO.cs`, `DashboardDAO.cs` | `Financeiro.razor`, refatoração de `Home.razor` |
+| Pessoa       | Modelos (`models/`)                                                 | Camada de Dados (`DAO/` & `configs/`)                  | Telas (`Components/Pages/`)                      |
+| :----------- | :------------------------------------------------------------------ | :----------------------------------------------------- | :----------------------------------------------- |
+| **Pessoa 1** | `Usuario.cs`, `Cargo.cs`                                            | `DatabaseConnection.cs`, `BaseDAO.cs`, `UsuarioDAO.cs` | `Login.razor`, `Cadastro.razor`                  |
+| **Pessoa 2** | `Cliente.cs`, `Equipamento.cs`                                      | `ClienteDAO.cs`, `EquipamentoDAO.cs`                   | `Balancas.razor`, `Balancas.razor.css`           |
+| **Pessoa 3** | `Componente.cs`, `CategoriaComponente.cs`, `MovimentacaoEstoque.cs` | `ComponenteDAO.cs`, `MovimentacaoEstoqueDAO.cs`        | `Componentes.razor`, `Componentes.razor.css`     |
+| **Pessoa 4** | `OrdemServico.cs`, `TipoServico.cs`, `StatusOS.cs`                  | `OrdemServicoDAO.cs`                                   | `OrdensServico.razor`, `OrdensServico.razor.css` |
+| **Pessoa 5** | `OrdemServicoPeca.cs`, `GrauUrgencia.cs`                            | `OrdemServicoPecaDAO.cs`                               | `OSPecas.razor`, `OSPecas.razor.css`             |
+| **Pessoa 6** | `CertificadoCalibracao.cs`                                          | `CertificadoCalibracaoDAO.cs`                          | `Certificados.razor`, `Certificados.razor.css`   |
+| **Pessoa 7** | `TransacaoFinanceira.cs`, `DashboardDTO.cs`                         | `FinanceiroDAO.cs`, `DashboardDAO.cs`                  | `Financeiro.razor`, refatoração de `Home.razor`  |
