@@ -1,5 +1,5 @@
 .sidebar {
-    width: 20rem; /* 320px for a solid sidebar width */
+    width: 14rem;
     min-height: 100vh;
     background: var(--g5, #1B984D);
     color: #ffffff;
@@ -12,7 +12,7 @@
 }
 
 .sidebar-brand {
-    padding: 2.5rem 1.5rem;
+    padding: 1.25rem 1rem;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -21,9 +21,8 @@
 
 .logo {
     height: auto;
-    width: 80%;
-    max-width: 180px;
-    filter: brightness(0) invert(1);
+    width: 85%;
+    max-width: 140px;
 }
 
 .sidebar-nav {
@@ -40,10 +39,10 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 1.15rem 1.5rem;
+    padding: 0.8rem 1rem;
     color: rgba(255, 255, 255, 0.95);
     text-decoration: none;
-    font-size: 1rem;
+    font-size: 0.82rem;
     font-weight: 500;
     border-bottom: 1px solid rgba(255, 255, 255, 0.15);
     background: transparent;
@@ -79,7 +78,7 @@ button.nav-link {
     background: rgba(255, 255, 255, 0.08);
     color: #ffffff;
     border-left-color: rgba(255, 255, 255, 0.4);
-    padding-left: 1.75rem; /* Micro-interaction slide effect */
+    padding-left: 1.25rem;
 }
 
 .nav-link:hover .nav-icon {

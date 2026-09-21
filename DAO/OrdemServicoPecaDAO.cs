@@ -1,4 +1,3 @@
-```csharp
 using Baltec.configs;
 using Baltec.models;
 using MySqlConnector;
@@ -428,4 +427,3 @@ public class OrdemServicoPecaDAO
         };
     }
 }
-```

@@ -1,4 +1,3 @@
-```csharp
 using Baltec.Components;
 using Baltec.configs;
 using Baltec.DAO;
@@ -36,9 +35,4 @@ app.UseAntiforgery();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
-<<<<<<< Updated upstream
 app.Run();
-```
-=======
-app.Run();
->>>>>>> Stashed changes
