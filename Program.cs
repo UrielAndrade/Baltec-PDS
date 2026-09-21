@@ -1,3 +1,4 @@
+```csharp
 using Baltec.Components;
 using Baltec.configs;
 using Baltec.DAO;
@@ -9,7 +10,14 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 builder.Services.AddSingleton<DatabaseConnection>();
+
 builder.Services.AddScoped<UsuarioDAO>();
+builder.Services.AddScoped<CertificadoCalibracaoDAO>();
+builder.Services.AddScoped<ClienteDAO>();
+builder.Services.AddScoped<EquipamentoDAO>();
+
+// DAO para requisições de peças das Ordens de Serviço
+builder.Services.AddScoped<OrdemServicoPecaDAO>();
 
 var app = builder.Build();
 
@@ -17,7 +25,6 @@ var app = builder.Build();
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
@@ -29,4 +36,9 @@ app.UseAntiforgery();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
+<<<<<<< Updated upstream
 app.Run();
+```
+=======
+app.Run();
+>>>>>>> Stashed changes

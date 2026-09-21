@@ -55,3 +55,20 @@ CodeCoverage/
 *.VisualState.xml
 TestResult.xml
 nunit-*.xml
+
+# Visual Studio
+.vs/
+.vscode/
+
+# Build
+bin/
+obj/
+
+# Rider
+.idea/
+
+# Arquivos temporários
+*.user
+*.suo
+*.userosscache
+*.sln.docstates

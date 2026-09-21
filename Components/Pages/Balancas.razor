@@ -1,0 +1,359 @@
+@page "/balanca"
+@using Baltec.models
+@using Baltec.DAO
+
+<PageTitle>Cadastro de Balanças - Baltec</PageTitle>
+
+<div class="form-container">
+
+    <header class="page-header">
+        <div>
+            <h1>Balanças</h1>
+            <p class="subtitle">
+                Gerencie as balanças cadastradas no sistema.
+            </p>
+        </div>
+
+        <button class="btn btn-primary" @onclick="AbrirModal">
+            + Nova Balança
+        </button>
+    </header>
+
+    <!-- Barra de pesquisa -->
+    <div class="card search-card">
+        <div class="search-box">
+            <label for="pesquisa">Pesquisar</label>
+
+            <input type="text"
+                   id="pesquisa"
+                   placeholder="Número de série ou modelo..."
+                   @bind="Pesquisa"
+                   @bind:event="oninput" />
+        </div>
+    </div>
+
+    <!-- Tabela -->
+    <div class="card">
+        <div class="table-responsive">
+
+            <table class="table">
+
+                <thead>
+                    <tr>
+                        <th>Modelo</th>
+                        <th>Fabricante</th>
+                        <th>Capacidade</th>
+                        <th>Nº Série</th>
+                        <th>Cliente proprietário</th>
+                        <th>Setor / Localização</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @if (EquipamentosFiltrados.Any())
+                    {
+                        @foreach (var equipamento in EquipamentosFiltrados)
+                        {
+                            <tr>
+                                <td>@equipamento.Modelo</td>
+
+                                <td>@equipamento.MarcaFabricante</td>
+
+                                <td>
+                                    @equipamento.CapacidadeMaximaKg.ToString("0.###") kg
+                                </td>
+
+                                <td>@equipamento.NumeroSerie</td>
+
+                                <td>@equipamento.ClienteNome</td>
+
+                                <td>@equipamento.SetorLocalizacao</td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="6" class="empty-message">
+                                Nenhuma balança encontrada.
+                            </td>
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+    </div>
+</div>
+
+
+<!-- MODAL -->
+@if (MostrarModal)
+{
+    <div class="modal-overlay">
+
+        <div class="modal-container">
+
+            <div class="modal-header">
+                <div>
+                    <h2>Nova Balança</h2>
+                    <p>Cadastre uma nova balança no sistema.</p>
+                </div>
+
+                <button class="modal-close" @onclick="FecharModal">
+                    ×
+                </button>
+            </div>
+
+
+            <div class="modal-body">
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+                        <label for="modelo">Modelo</label>
+
+                        <input type="text"
+                               id="modelo"
+                               placeholder="Ex: Filizola Platinum"
+                               @bind="NovaBalanca.Modelo"
+                               required />
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="marca">Marca / Fabricante</label>
+
+                        <input type="text"
+                               id="marca"
+                               placeholder="Ex: Filizola"
+                               @bind="NovaBalanca.MarcaFabricante"
+                               required />
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="capacidade">
+                            Capacidade Máxima (kg)
+                        </label>
+
+                        <input type="number"
+                               id="capacidade"
+                               step="0.001"
+                               placeholder="Ex: 30"
+                               @bind="NovaBalanca.CapacidadeMaximaKg"
+                               required />
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="divisao">
+                            Divisão / Escala (g)
+                        </label>
+
+                        <input type="number"
+                               id="divisao"
+                               step="0.001"
+                               placeholder="Ex: 5"
+                               @bind="NovaBalanca.DivisaoEscalaG"
+                               required />
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="numSerie">
+                            Número de Série
+                        </label>
+
+                        <input type="text"
+                               id="numSerie"
+                               placeholder="Ex: SN-2026-987"
+                               @bind="NovaBalanca.NumeroSerie"
+                               required />
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="setor">
+                            Setor / Localização
+                        </label>
+
+                        <input type="text"
+                               id="setor"
+                               placeholder="Ex: Expedição"
+                               @bind="NovaBalanca.SetorLocalizacao"
+                               required />
+                    </div>
+
+
+                    <!-- Cliente -->
+                    <div class="form-group full-width">
+
+                        <label for="cliente">
+                            Cliente proprietário
+                        </label>
+
+                        <select id="cliente"
+                                @bind="NovaBalanca.FkCliente">
+
+                            <option value="0">
+                                Selecione um cliente
+                            </option>
+
+                            @foreach (var cliente in Clientes)
+                            {
+                                <option value="@cliente.Id">
+                                    @cliente.RazaoSocial
+                                </option>
+                            }
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Cadastro rápido -->
+                <div class="quick-client">
+
+                    <p>
+                        O cliente ainda não está cadastrado?
+                    </p>
+
+                    <button class="btn btn-secondary"
+                            @onclick="CadastrarClienteRapido">
+                        + Cadastrar cliente
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <div class="modal-footer">
+
+                <button class="btn btn-secondary"
+                        @onclick="FecharModal">
+                    Cancelar
+                </button>
+
+                <button class="btn btn-primary"
+                        @onclick="SalvarBalanca">
+                    Salvar Balança
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+}
+
+
+@code {
+
+    [Inject]
+    private EquipamentoDAO EquipamentoDAO { get; set; } = default!;
+
+    [Inject]
+    private ClienteDAO ClienteDAO { get; set; } = default!;
+
+    [Inject]
+    private NavigationManager NavigationManager { get; set; } = default!;
+
+
+    private List<Equipamento> Equipamentos = new();
+
+    private List<Cliente> Clientes = new();
+
+    private Equipamento NovaBalanca = new()
+    {
+        Ativo = true,
+        DataCadastro = DateTime.Now
+    };
+
+
+    private string Pesquisa = "";
+
+    private bool MostrarModal = false;
+
+
+    private IEnumerable<Equipamento> EquipamentosFiltrados =>
+        Equipamentos.Where(e =>
+            string.IsNullOrWhiteSpace(Pesquisa)
+            ||
+            e.Modelo.Contains(
+                Pesquisa,
+                StringComparison.OrdinalIgnoreCase
+            )
+            ||
+            e.NumeroSerie.Contains(
+                Pesquisa,
+                StringComparison.OrdinalIgnoreCase
+            )
+        );
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CarregarDados();
+    }
+
+
+    private async Task CarregarDados()
+    {
+        Equipamentos =
+            await EquipamentoDAO.ListarTodosComClienteAsync();
+
+        Clientes =
+            await ClienteDAO.ListarTodosAsync();
+    }
+
+
+    private void AbrirModal()
+    {
+        NovaBalanca = new Equipamento
+        {
+            Ativo = true,
+            DataCadastro = DateTime.Now
+        };
+
+        MostrarModal = true;
+    }
+
+
+    private void FecharModal()
+    {
+        MostrarModal = false;
+    }
+
+
+    private async Task SalvarBalanca()
+    {
+        if (NovaBalanca.FkCliente <= 0)
+        {
+            return;
+        }
+
+        bool sucesso =
+            await EquipamentoDAO.InserirAsync(NovaBalanca);
+
+        if (sucesso)
+        {
+            MostrarModal = false;
+
+            await CarregarDados();
+        }
+    }
+
+
+    private void CadastrarClienteRapido()
+    {
+        NavigationManager.NavigateTo("/cadastro-cliente");
+    }
+
+}
