@@ -1,0 +1,864 @@
+@page "/os"
+@rendermode InteractiveServer
+
+@using Baltec.models
+@using Baltec.DAO
+
+@inject OrdemServicoDAO OsDAO
+@inject NavigationManager Nav
+
+<PageTitle>Ordens de Serviço - Baltec</PageTitle>
+
+<div class="os-container">
+    <!-- CABEÇALHO -->
+    <header class="page-header">
+        <div class="header-titles">
+            <div class="title-row">
+                <h1>Ordens de Serviço</h1>
+                <span class="badge-total">@ordensFiltradas.Count() OS</span>
+            </div>
+            <p class="subtitle">Central de controle e acompanhamento de ordens de serviço técnicas da Baltec.</p>
+        </div>
+
+        <div class="header-actions">
+            <button class="btn btn-outline" @onclick='() => Nav.NavigateTo("/home")'>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 12H5M12 19l-7-7 7-7"/>
+                </svg>
+                Painel
+            </button>
+            <button class="btn btn-primary" @onclick="AbrirModalNovaOS">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                + Abrir Nova Ordem de Serviço
+            </button>
+        </div>
+    </header>
+
+    <!-- CARDS DE RESUMO (KPIS) -->
+    <section class="kpi-grid">
+        <div class="kpi-card total" @onclick='() => SelecionarFiltroStatus(null)'>
+            <div class="kpi-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                </svg>
+            </div>
+            <div class="kpi-info">
+                <span class="kpi-title">Total de OS</span>
+                <span class="kpi-number">@todasOrdens.Count</span>
+            </div>
+        </div>
+
+        <div class="kpi-card pendente @(filtroStatusId == 1 ? "kpi-active" : "")" @onclick='() => SelecionarFiltroStatus(1)'>
+            <div class="kpi-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+            </div>
+            <div class="kpi-info">
+                <span class="kpi-title">Pendentes</span>
+                <span class="kpi-number">@todasOrdens.Count(x => x.FkStatus == 1)</span>
+            </div>
+        </div>
+
+        <div class="kpi-card andamento @(filtroStatusId == 2 ? "kpi-active" : "")" @onclick='() => SelecionarFiltroStatus(2)'>
+            <div class="kpi-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                </svg>
+            </div>
+            <div class="kpi-info">
+                <span class="kpi-title">Em Andamento</span>
+                <span class="kpi-number">@todasOrdens.Count(x => x.FkStatus == 2)</span>
+            </div>
+        </div>
+
+        <div class="kpi-card concluido @(filtroStatusId == 4 ? "kpi-active" : "")" @onclick='() => SelecionarFiltroStatus(4)'>
+            <div class="kpi-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+            </div>
+            <div class="kpi-info">
+                <span class="kpi-title">Concluídas</span>
+                <span class="kpi-number">@todasOrdens.Count(x => x.FkStatus == 4)</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- BARRA DE FILTROS E BUSCA -->
+    <div class="filters-card">
+        <!-- Abas de Filtros Rápidos por Status -->
+        <div class="status-tabs">
+            <button type="button" class="tab-btn @(filtroStatusId == null ? "active" : "")" @onclick='() => SelecionarFiltroStatus(null)'>
+                Todas <span class="tab-count">@todasOrdens.Count</span>
+            </button>
+            <button type="button" class="tab-btn tab-pendente @(filtroStatusId == 1 ? "active" : "")" @onclick='() => SelecionarFiltroStatus(1)'>
+                Pendente <span class="tab-count">@todasOrdens.Count(x => x.FkStatus == 1)</span>
+            </button>
+            <button type="button" class="tab-btn tab-andamento @(filtroStatusId == 2 ? "active" : "")" @onclick='() => SelecionarFiltroStatus(2)'>
+                Em Andamento <span class="tab-count">@todasOrdens.Count(x => x.FkStatus == 2)</span>
+            </button>
+            <button type="button" class="tab-btn tab-concluido @(filtroStatusId == 4 ? "active" : "")" @onclick='() => SelecionarFiltroStatus(4)'>
+                Concluído <span class="tab-count">@todasOrdens.Count(x => x.FkStatus == 4)</span>
+            </button>
+        </div>
+
+        <!-- Campo de Pesquisa Geral -->
+        <div class="search-wrapper">
+            <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input type="text"
+                   class="search-input"
+                   placeholder="Buscar por Nº OS, cliente, equipamento ou técnico..."
+                   @bind="termoBusca"
+                   @bind:event="oninput" />
+            @if (!string.IsNullOrWhiteSpace(termoBusca))
+            {
+                <button class="clear-search" @onclick='() => termoBusca = ""'>&times;</button>
+            }
+        </div>
+    </div>
+
+    <!-- TABELA DE ORDENS DE SERVIÇO -->
+    <div class="card table-card">
+        @if (carregando)
+        {
+            <div class="state-container">
+                <div class="spinner"></div>
+                <p>Carregando ordens de serviço...</p>
+            </div>
+        }
+        else if (!ordensFiltradas.Any())
+        {
+            <div class="state-container empty-state">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="1.5">
+                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                    <line x1="8" y1="21" x2="16" y2="21"></line>
+                    <line x1="12" y1="17" x2="12" y2="21"></line>
+                </svg>
+                <h3>Nenhuma Ordem de Serviço encontrada</h3>
+                <p>Nenhuma OS corresponde aos filtros selecionados ou nenhuma foi aberta ainda.</p>
+                <button class="btn btn-primary" @onclick="AbrirModalNovaOS">
+                    + Abrir Nova Ordem de Serviço
+                </button>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="os-table">
+                    <thead>
+                        <tr>
+                            <th>Nº OS</th>
+                            <th>Cliente</th>
+                            <th>Equipamento / Modelo</th>
+                            <th>Tipo de Serviço</th>
+                            <th>Técnico Responsável</th>
+                            <th>Abertura</th>
+                            <th>Status</th>
+                            <th class="text-right">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var os in ordensFiltradas)
+                        {
+                            <tr>
+                                <td class="os-number">
+                                    <span class="badge-os">@os.NumeroOS</span>
+                                </td>
+                                <td class="os-cliente">
+                                    <strong>@(string.IsNullOrEmpty(os.ClienteNome) ? $"Cliente #{os.FkCliente}" : os.ClienteNome)</strong>
+                                </td>
+                                <td class="os-equipamento">
+                                    <div>@(string.IsNullOrEmpty(os.EquipamentoModelo) ? $"Equipamento #{os.FkEquipamento}" : os.EquipamentoModelo)</div>
+                                    @if (!string.IsNullOrEmpty(os.EquipamentoSerie))
+                                    {
+                                        <span class="sub-text">Série: @os.EquipamentoSerie</span>
+                                    }
+                                </td>
+                                <td class="os-tipo">
+                                    <span class="tag-tipo">@(string.IsNullOrEmpty(os.TipoServicoNome) ? $"Tipo #{os.FkTipoServico}" : os.TipoServicoNome)</span>
+                                </td>
+                                <td class="os-tecnico">
+                                    <div class="tecnico-box">
+                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                            <circle cx="12" cy="7" r="4"></circle>
+                                        </svg>
+                                        <span>@(string.IsNullOrEmpty(os.TecnicoNome) ? $"Técnico #{os.FkTecnico}" : os.TecnicoNome)</span>
+                                    </div>
+                                </td>
+                                <td class="os-data">
+                                    @os.DataAbertura.ToString("dd/MM/yyyy")
+                                    @if (os.DataConclusao.HasValue)
+                                    {
+                                        <div class="sub-text text-green">Fim: @os.DataConclusao.Value.ToString("dd/MM/yyyy")</div>
+                                    }
+                                </td>
+                                <td class="os-status">
+                                    <span class="status-badge status-@os.FkStatus">
+                                        @ObterNomeStatus(os)
+                                    </span>
+                                </td>
+                                <td class="os-actions text-right">
+                                    <div class="action-buttons">
+                                        <!-- Botão Avançar Status -->
+                                        @if (os.FkStatus == 1) // Pendente -> Avança para Em Andamento
+                                        {
+                                            <button class="btn-action btn-avancar" title="Iniciar Atendimento (Em Andamento)" @onclick="() => AvancarStatus(os)">
+                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                                                </svg>
+                                                Iniciar
+                                            </button>
+                                        }
+                                        else if (os.FkStatus == 2 || os.FkStatus == 3) // Em Andamento ou Aguardando Peça -> Concluir
+                                        {
+                                            <button class="btn-action btn-concluir" title="Concluir Ordem de Serviço" @onclick="() => ConcluirOS(os)">
+                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                                </svg>
+                                                Concluir
+                                            </button>
+                                        }
+
+                                        <!-- Detalhes -->
+                                        <button class="btn-action btn-detalhes" title="Ver detalhes completos da OS" @onclick="() => VisualizarDetalhes(os)">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                                <circle cx="12" cy="12" r="3"></circle>
+                                            </svg>
+                                            Ver
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- ========================================== -->
+<!-- MODAL: + ABRIR NOVA ORDEM DE SERVIÇO       -->
+<!-- ========================================== -->
+@if (mostrarModalNovaOS)
+{
+    <div class="modal-backdrop" @onclick="FecharModalNovaOS">
+        <div class="modal-dialog" @onclick:stopPropagation="true">
+            <div class="modal-header">
+                <div class="modal-title-box">
+                    <span class="modal-badge">Nova OS</span>
+                    <h2>Abertura de Ordem de Serviço</h2>
+                </div>
+                <button type="button" class="btn-close" @onclick="FecharModalNovaOS">&times;</button>
+            </div>
+
+            <div class="modal-body">
+                @if (!string.IsNullOrEmpty(mensagemErroForm))
+                {
+                    <div class="form-alert error">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="8" x2="12" y2="12"></line>
+                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                        </svg>
+                        <span>@mensagemErroForm</span>
+                    </div>
+                }
+
+                <div class="form-grid">
+                    <!-- Número da OS Previsto -->
+                    <div class="form-group full-width">
+                        <label>Número Identificador da OS</label>
+                        <input type="text" class="input-readonly" value="@proximoNumeroOS" readonly />
+                        <span class="field-hint">Gerado automaticamente em sequência metrológica.</span>
+                    </div>
+
+                    <!-- 1. SELETOR DINÂMICO: CLIENTE -->
+                    <div class="form-group">
+                        <label for="selectCliente">1. Cliente Solicitante *</label>
+                        <select id="selectCliente" class="form-control" value="@novoClienteId" @onchange="OnClienteChanged">
+                            <option value="0">Selecione o Cliente...</option>
+                            @foreach (var cli in listaClientes)
+                            {
+                                <option value="@cli.Id">@cli.RazaoSocial @(!string.IsNullOrEmpty(cli.Cidade) ? $"({cli.Cidade}-{cli.Estado})" : "")</option>
+                            }
+                        </select>
+                        <span class="field-hint">Selecione o cliente para listar as balanças vinculadas.</span>
+                    </div>
+
+                    <!-- 2. SELETOR DINÂMICO: EQUIPAMENTOS DAQUELE CLIENTE -->
+                    <div class="form-group">
+                        <label for="selectEquipamento">2. Equipamento / Balança do Cliente *</label>
+                        <select id="selectEquipamento"
+                                class="form-control"
+                                value="@novoEquipamentoId"
+                                @onchange="OnEquipamentoChanged"
+                                disabled="@(novoClienteId == 0)">
+                            @if (novoClienteId == 0)
+                            {
+                                <option value="0">Aguardando seleção do cliente...</option>
+                            }
+                            else if (!equipamentosDoCliente.Any())
+                            {
+                                <option value="0">Nenhum equipamento cadastrado para este cliente</option>
+                            }
+                            else
+                            {
+                                <option value="0">Selecione a balança...</option>
+                                @foreach (var eq in equipamentosDoCliente)
+                                {
+                                    <option value="@eq.Id">
+                                        @eq.Modelo - Série: @eq.NumeroSerie (@eq.SetorLocalizacao)
+                                    </option>
+                                }
+                            }
+                        </select>
+                        @if (novoClienteId > 0 && !equipamentosDoCliente.Any())
+                        {
+                            <span class="field-hint text-warning">Cadastre um equipamento para este cliente no menu Balanças.</span>
+                        }
+                    </div>
+
+                    <!-- 3. SELETOR DINÂMICO: TÉCNICO RESPONSÁVEL -->
+                    <div class="form-group">
+                        <label for="selectTecnico">3. Técnico Responsável *</label>
+                        <select id="selectTecnico" class="form-control" @bind="novoTecnicoId">
+                            <option value="0">Selecione o técnico atribuído...</option>
+                            @foreach (var tec in listaTecnicos)
+                            {
+                                <option value="@tec.Id">@tec.NomeCompleto (@tec.CargoNome)</option>
+                            }
+                        </select>
+                    </div>
+
+                    <!-- 4. SELETOR DINÂMICO: TIPO DE SERVIÇO -->
+                    <div class="form-group">
+                        <label for="selectTipoServico">4. Tipo de Serviço *</label>
+                        <select id="selectTipoServico" class="form-control" @bind="novoTipoServicoId">
+                            <option value="0">Selecione o tipo de serviço técnico...</option>
+                            @foreach (var tipo in listaTiposServico)
+                            {
+                                <option value="@tipo.Id">@tipo.Nome</option>
+                            }
+                        </select>
+                    </div>
+
+                    <!-- DESCRIÇÃO DO PROBLEMA -->
+                    <div class="form-group full-width">
+                        <label for="descricaoProblema">Descrição Detalhada do Problema / Atividade *</label>
+                        <textarea id="descricaoProblema"
+                                  class="form-control"
+                                  rows="4"
+                                  placeholder="Descreva detalhadamente a solicitação do cliente, sintomas relatados na balança ou especificações do serviço..."
+                                  @bind="novaDescricao"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" @onclick="FecharModalNovaOS" disabled="@salvando">
+                    Cancelar
+                </button>
+                <button type="button" class="btn btn-primary" @onclick="SalvarNovaOS" disabled="@salvando">
+                    @if (salvando)
+                    {
+                        <span class="btn-spinner"></span>
+                        <span>Abrindo OS...</span>
+                    }
+                    else
+                    {
+                        <span>Confirmar e Abrir OS</span>
+                    }
+                </button>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- ========================================== -->
+<!-- MODAL: VISUALIZAR DETALHES E STATUS DA OS  -->
+<!-- ========================================== -->
+@if (mostrarModalDetalhes && osSelecionada != null)
+{
+    <div class="modal-backdrop" @onclick="FecharModalDetalhes">
+        <div class="modal-dialog modal-lg" @onclick:stopPropagation="true">
+            <div class="modal-header">
+                <div class="modal-title-box">
+                    <span class="modal-badge">Ordem de Serviço</span>
+                    <h2>@osSelecionada.NumeroOS</h2>
+                </div>
+                <button type="button" class="btn-close" @onclick="FecharModalDetalhes">&times;</button>
+            </div>
+
+            <div class="modal-body">
+                <div class="details-status-strip">
+                    <div class="strip-label">Status Atual da Ordem:</div>
+                    <span class="status-badge status-@osSelecionada.FkStatus large">
+                        @ObterNomeStatus(osSelecionada)
+                    </span>
+
+                    <div class="strip-actions">
+                        @if (osSelecionada.FkStatus == 1) // Pendente
+                        {
+                            <button class="btn btn-sm btn-info" @onclick="() => AvancarStatus(osSelecionada)">
+                                Mudar para "Em Andamento"
+                            </button>
+                        }
+                        else if (osSelecionada.FkStatus == 2) // Em Andamento
+                        {
+                            <button class="btn btn-sm btn-purple" @onclick="() => AlterarStatusDireto(osSelecionada, 3)">
+                                Aguardar Peça
+                            </button>
+                            <button class="btn btn-sm btn-success" @onclick="() => ConcluirOS(osSelecionada)">
+                                Concluir OS Agora
+                            </button>
+                        }
+                        else if (osSelecionada.FkStatus == 3) // Aguardando Peça
+                        {
+                            <button class="btn btn-sm btn-info" @onclick="() => AlterarStatusDireto(osSelecionada, 2)">
+                                Retomar "Em Andamento"
+                            </button>
+                            <button class="btn btn-sm btn-success" @onclick="() => ConcluirOS(osSelecionada)">
+                                Concluir OS
+                            </button>
+                        }
+                        else if (osSelecionada.FkStatus == 4) // Concluído
+                        {
+                            <span class="text-green font-bold">✓ Ordem Finalizada com Sucesso</span>
+                        }
+                    </div>
+                </div>
+
+                <div class="details-grid">
+                    <div class="detail-box">
+                        <span class="box-title">Cliente</span>
+                        <p class="box-val highlight">@(osSelecionada.ClienteNome ?? $"Cliente #{osSelecionada.FkCliente}")</p>
+                    </div>
+
+                    <div class="detail-box">
+                        <span class="box-title">Equipamento / Balança</span>
+                        <p class="box-val">@(osSelecionada.EquipamentoModelo ?? $"Equipamento #{osSelecionada.FkEquipamento}")</p>
+                        @if (!string.IsNullOrEmpty(osSelecionada.EquipamentoSerie))
+                        {
+                            <span class="sub-text">Nº de Série: @osSelecionada.EquipamentoSerie</span>
+                        }
+                    </div>
+
+                    <div class="detail-box">
+                        <span class="box-title">Técnico Responsável</span>
+                        <p class="box-val">@(osSelecionada.TecnicoNome ?? $"Técnico #{osSelecionada.FkTecnico}")</p>
+                    </div>
+
+                    <div class="detail-box">
+                        <span class="box-title">Tipo de Serviço</span>
+                        <p class="box-val">@(osSelecionada.TipoServicoNome ?? $"Tipo #{osSelecionada.FkTipoServico}")</p>
+                    </div>
+
+                    <div class="detail-box">
+                        <span class="box-title">Data de Abertura</span>
+                        <p class="box-val">@osSelecionada.DataAbertura.ToString("dd/MM/yyyy HH:mm")</p>
+                    </div>
+
+                    <div class="detail-box">
+                        <span class="box-title">Data de Conclusão</span>
+                        <p class="box-val">
+                            @(osSelecionada.DataConclusao.HasValue ? osSelecionada.DataConclusao.Value.ToString("dd/MM/yyyy HH:mm") : "Ainda não concluída")
+                        </p>
+                    </div>
+
+                    <div class="detail-box full-width">
+                        <span class="box-title">Descrição do Problema / Atividade Técnica</span>
+                        <p class="box-desc">@osSelecionada.DescricaoProblema</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" @onclick="FecharModalDetalhes">
+                    Fechar
+                </button>
+                @if (osSelecionada.FkStatus != 4 && osSelecionada.FkStatus != 5)
+                {
+                    <button type="button" class="btn btn-success" @onclick="() => ConcluirOS(osSelecionada)">
+                        Concluir Ordem de Serviço
+                    </button>
+                }
+            </div>
+        </div>
+    </div>
+}
+
+<!-- TOAST FLUTUANTE -->
+@if (mostrarToast)
+{
+    <div class="toast-notification @(toastTipo == "success" ? "toast-success" : "toast-info")">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            @if (toastTipo == "success")
+            {
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            }
+            else
+            {
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="16" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+            }
+        </svg>
+        <span>@mensagemToast</span>
+    </div>
+}
+
+@code {
+    private List<OrdemServico> todasOrdens = new();
+    private List<TipoServico> listaTiposServico = new();
+    private List<StatusOS> listaStatus = new();
+    private List<Cliente> listaClientes = new();
+    private List<Equipamento> equipamentosDoCliente = new();
+    private List<Usuario> listaTecnicos = new();
+
+    private bool carregando = true;
+    private bool salvando = false;
+
+    // Filtros e busca
+    private int? filtroStatusId = null;
+    private string termoBusca = "";
+
+    // Modais
+    private bool mostrarModalNovaOS = false;
+    private bool mostrarModalDetalhes = false;
+    private OrdemServico? osSelecionada = null;
+
+    // Campos do formulário de nova OS
+    private string proximoNumeroOS = "";
+    private int novoClienteId = 0;
+    private int novoEquipamentoId = 0;
+    private int novoTecnicoId = 0;
+    private int novoTipoServicoId = 0;
+    private string novaDescricao = "";
+    private string mensagemErroForm = "";
+
+    // Toast
+    private bool mostrarToast = false;
+    private string mensagemToast = "";
+    private string toastTipo = "success";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CarregarDadosIniciaisAsync();
+    }
+
+    private async Task CarregarDadosIniciaisAsync()
+    {
+        carregando = true;
+        try
+        {
+            todasOrdens = await OsDAO.ListarTodasAsync();
+            listaTiposServico = await OsDAO.ListarTiposServicoAsync();
+            listaStatus = await OsDAO.ListarStatusPossiveisAsync();
+            listaClientes = await OsDAO.ListarClientesAuxAsync();
+            listaTecnicos = await OsDAO.ListarTecnicosAuxAsync();
+        }
+        finally
+        {
+            carregando = false;
+        }
+    }
+
+    private IEnumerable<OrdemServico> ordensFiltradas
+    {
+        get
+        {
+            var query = todasOrdens.AsEnumerable();
+
+            if (filtroStatusId.HasValue && filtroStatusId.Value > 0)
+            {
+                query = query.Where(o => o.FkStatus == filtroStatusId.Value);
+            }
+
+            if (!string.IsNullOrWhiteSpace(termoBusca))
+            {
+                var termo = termoBusca.Trim().ToLower();
+                query = query.Where(o =>
+                    (o.NumeroOS != null && o.NumeroOS.ToLower().Contains(termo)) ||
+                    (o.ClienteNome != null && o.ClienteNome.ToLower().Contains(termo)) ||
+                    (o.EquipamentoModelo != null && o.EquipamentoModelo.ToLower().Contains(termo)) ||
+                    (o.EquipamentoSerie != null && o.EquipamentoSerie.ToLower().Contains(termo)) ||
+                    (o.TecnicoNome != null && o.TecnicoNome.ToLower().Contains(termo)) ||
+                    (o.TipoServicoNome != null && o.TipoServicoNome.ToLower().Contains(termo)) ||
+                    (o.DescricaoProblema != null && o.DescricaoProblema.ToLower().Contains(termo))
+                );
+            }
+
+            return query.OrderByDescending(o => o.Id);
+        }
+    }
+
+    private void SelecionarFiltroStatus(int? statusId)
+    {
+        filtroStatusId = statusId;
+    }
+
+    private async Task AbrirModalNovaOS()
+    {
+        mensagemErroForm = "";
+        novoClienteId = 0;
+        novoEquipamentoId = 0;
+        novoTecnicoId = 0;
+        novoTipoServicoId = 0;
+        novaDescricao = "";
+        equipamentosDoCliente.Clear();
+
+        proximoNumeroOS = await OsDAO.GerarProximoNumeroOSAsync();
+        mostrarModalNovaOS = true;
+    }
+
+    private void FecharModalNovaOS()
+    {
+        mostrarModalNovaOS = false;
+    }
+
+    private async Task OnClienteChanged(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value?.ToString(), out int id))
+        {
+            novoClienteId = id;
+            novoEquipamentoId = 0;
+
+            if (novoClienteId > 0)
+            {
+                equipamentosDoCliente = await OsDAO.ListarEquipamentosAuxAsync(novoClienteId);
+                if (equipamentosDoCliente.Count == 1)
+                {
+                    novoEquipamentoId = equipamentosDoCliente[0].Id;
+                }
+            }
+            else
+            {
+                equipamentosDoCliente.Clear();
+            }
+        }
+        else
+        {
+            novoClienteId = 0;
+            novoEquipamentoId = 0;
+            equipamentosDoCliente.Clear();
+        }
+    }
+
+    private void OnEquipamentoChanged(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value?.ToString(), out int id))
+        {
+            novoEquipamentoId = id;
+        }
+    }
+
+    private async Task SalvarNovaOS()
+    {
+        mensagemErroForm = "";
+
+        if (novoClienteId <= 0)
+        {
+            mensagemErroForm = "Selecione o cliente solicitante.";
+            return;
+        }
+
+        if (novoEquipamentoId <= 0)
+        {
+            mensagemErroForm = "Selecione a balança / equipamento do cliente.";
+            return;
+        }
+
+        if (novoTecnicoId <= 0)
+        {
+            mensagemErroForm = "Selecione o técnico responsável.";
+            return;
+        }
+
+        if (novoTipoServicoId <= 0)
+        {
+            mensagemErroForm = "Selecione o tipo de serviço técnico.";
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(novaDescricao))
+        {
+            mensagemErroForm = "Informe a descrição do problema ou serviço a ser realizado.";
+            return;
+        }
+
+        salvando = true;
+        try
+        {
+            var clienteSelecionado = listaClientes.FirstOrDefault(c => c.Id == novoClienteId);
+            var equipamentoSelecionado = equipamentosDoCliente.FirstOrDefault(eq => eq.Id == novoEquipamentoId);
+            var tecnicoSelecionado = listaTecnicos.FirstOrDefault(u => u.Id == novoTecnicoId);
+            var tipoSelecionado = listaTiposServico.FirstOrDefault(t => t.Id == novoTipoServicoId);
+
+            var novaOS = new OrdemServico
+            {
+                NumeroOS = proximoNumeroOS,
+                FkCliente = novoClienteId,
+                ClienteNome = clienteSelecionado?.RazaoSocial,
+                FkEquipamento = novoEquipamentoId,
+                EquipamentoModelo = equipamentoSelecionado?.Modelo,
+                EquipamentoSerie = equipamentoSelecionado?.NumeroSerie,
+                FkTecnico = novoTecnicoId,
+                TecnicoNome = tecnicoSelecionado?.NomeCompleto,
+                FkTipoServico = novoTipoServicoId,
+                TipoServicoNome = tipoSelecionado?.Nome,
+                DescricaoProblema = novaDescricao.Trim(),
+                FkStatus = 1, // 1 = Pendente
+                StatusNome = "Pendente",
+                DataAbertura = DateTime.Now
+            };
+
+            var sucesso = await OsDAO.InserirAsync(novaOS);
+            if (sucesso)
+            {
+                todasOrdens = await OsDAO.ListarTodasAsync();
+                FecharModalNovaOS();
+                await ExibirToast($"Ordem de Serviço {novaOS.NumeroOS} aberta com sucesso!");
+            }
+            else
+            {
+                mensagemErroForm = "Ocorreu um erro ao gravar a Ordem de Serviço.";
+            }
+        }
+        catch (Exception ex)
+        {
+            mensagemErroForm = $"Erro ao salvar: {ex.Message}";
+        }
+        finally
+        {
+            salvando = false;
+        }
+    }
+
+    private async Task AvancarStatus(OrdemServico os)
+    {
+        int proximoStatus;
+        string nomeStatus;
+
+        if (os.FkStatus == 1) // Pendente -> Em Andamento
+        {
+            proximoStatus = 2;
+            nomeStatus = "Em Andamento";
+        }
+        else if (os.FkStatus == 2 || os.FkStatus == 3) // Em Andamento / Aguardando Peça -> Concluído
+        {
+            proximoStatus = 4;
+            nomeStatus = "Concluído";
+        }
+        else
+        {
+            return;
+        }
+
+        DateTime? dataFim = proximoStatus == 4 ? DateTime.Now : null;
+        var ok = await OsDAO.AtualizarStatusAsync(os.Id, proximoStatus, dataFim);
+        if (ok)
+        {
+            os.FkStatus = proximoStatus;
+            os.StatusNome = nomeStatus;
+            os.DataConclusao = dataFim;
+            todasOrdens = await OsDAO.ListarTodasAsync();
+            await ExibirToast($"Status da OS {os.NumeroOS} alterado para '{nomeStatus}'.");
+        }
+    }
+
+    private async Task ConcluirOS(OrdemServico os)
+    {
+        var ok = await OsDAO.AtualizarStatusAsync(os.Id, 4, DateTime.Now);
+        if (ok)
+        {
+            os.FkStatus = 4;
+            os.StatusNome = "Concluído";
+            os.DataConclusao = DateTime.Now;
+            todasOrdens = await OsDAO.ListarTodasAsync();
+            if (mostrarModalDetalhes && osSelecionada?.Id == os.Id)
+            {
+                osSelecionada.FkStatus = 4;
+                osSelecionada.StatusNome = "Concluído";
+                osSelecionada.DataConclusao = DateTime.Now;
+            }
+            await ExibirToast($"Ordem de Serviço {os.NumeroOS} foi CONCLUÍDA!");
+        }
+    }
+
+    private async Task AlterarStatusDireto(OrdemServico os, int novoStatus)
+    {
+        DateTime? dataFim = novoStatus == 4 ? DateTime.Now : null;
+        var ok = await OsDAO.AtualizarStatusAsync(os.Id, novoStatus, dataFim);
+        if (ok)
+        {
+            var stObj = listaStatus.FirstOrDefault(s => s.Id == novoStatus);
+            os.FkStatus = novoStatus;
+            os.StatusNome = stObj?.Nome ?? $"Status {novoStatus}";
+            os.DataConclusao = dataFim;
+
+            if (osSelecionada?.Id == os.Id)
+            {
+                osSelecionada.FkStatus = novoStatus;
+                osSelecionada.StatusNome = os.StatusNome;
+                osSelecionada.DataConclusao = dataFim;
+            }
+
+            todasOrdens = await OsDAO.ListarTodasAsync();
+            await ExibirToast($"Status atualizado para '{os.StatusNome}'.");
+        }
+    }
+
+    private void VisualizarDetalhes(OrdemServico os)
+    {
+        osSelecionada = os;
+        mostrarModalDetalhes = true;
+    }
+
+    private void FecharModalDetalhes()
+    {
+        mostrarModalDetalhes = false;
+        osSelecionada = null;
+    }
+
+    private string ObterNomeStatus(OrdemServico os)
+    {
+        if (!string.IsNullOrEmpty(os.StatusNome))
+            return os.StatusNome;
+
+        return os.FkStatus switch
+        {
+            1 => "Pendente",
+            2 => "Em Andamento",
+            3 => "Aguardando Peça",
+            4 => "Concluído",
+            5 => "Cancelado",
+            _ => $"Status {os.FkStatus}"
+        };
+    }
+
+    private async Task ExibirToast(string mensagem, string tipo = "success")
+    {
+        mensagemToast = mensagem;
+        toastTipo = tipo;
+        mostrarToast = true;
+        StateHasChanged();
+
+        await Task.Delay(3500);
+        mostrarToast = false;
+        StateHasChanged();
+    }
+}
