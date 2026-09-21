@@ -1,13 +1,18 @@
 .sidebar {
     width: 14rem;
-    min-height: 100vh;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 100;
+    flex-shrink: 0;
     background: var(--g5, #1B984D);
     color: #ffffff;
     display: flex;
     flex-direction: column;
+    overflow-y: auto;
     box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    border-right: 1px solid rgba(255, 255, 255, 0.1);
     box-sizing: border-box;
 }
 
