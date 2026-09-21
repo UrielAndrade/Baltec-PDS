@@ -7,9 +7,9 @@
 }
 else
 {
-    <div class="app-container @(isSidebarOpen ? "sidebar-open" : "")">
+    <div class="app-container">
         <div class="mobile-topbar">
-            <button class="menu-toggle-btn" @onclick="ToggleSidebar">
+            <button class="menu-toggle-btn" onclick="toggleSidebar()">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="24" height="24">
                     <line x1="3" y1="12" x2="21" y2="12"></line>
                     <line x1="3" y1="6" x2="21" y2="6"></line>
@@ -19,14 +19,11 @@ else
             <span class="mobile-logo-text">Painel Baltec</span>
         </div>
         <NavMenu />
-        <main class="content-container" @onclick="CloseSidebarOnContentClick">
+        <main class="content-container" onclick="closeSidebar()">
             @Body
         </main>
         
-        @if (isSidebarOpen)
-        {
-            <div class="sidebar-overlay" @onclick="ToggleSidebar"></div>
-        }
+        <div class="sidebar-overlay" onclick="closeSidebar()"></div>
     </div>
 }
 
@@ -37,21 +34,6 @@ else
 </div>
 
 @code {
-    private bool isSidebarOpen = false;
-
-    private void ToggleSidebar()
-    {
-        isSidebarOpen = !isSidebarOpen;
-    }
-
-    private void CloseSidebarOnContentClick()
-    {
-        if (isSidebarOpen)
-        {
-            isSidebarOpen = false;
-        }
-    }
-
     private bool IsPublicPage => IsUrlPublic(NavigationManager.Uri);
 
     private bool IsUrlPublic(string uri)
@@ -71,7 +53,6 @@ else
 
     private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
     {
-        isSidebarOpen = false; // Fecha a barra lateral ao navegar
         StateHasChanged();
     }
 
