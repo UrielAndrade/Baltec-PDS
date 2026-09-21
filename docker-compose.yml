@@ -1,0 +1,75 @@
+services:
+  # ---------------------------------------------------------------------------
+  # BANCO DE DADOS: MySQL 8.0 com inicialização automática do schema
+  # ---------------------------------------------------------------------------
+  baltec-db:
+    image: mysql:8.0
+    container_name: baltec_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: baltec
+    ports:
+      - "3306:3306"
+    volumes:
+      - baltec_mysql_data:/var/lib/mysql
+      - ./configs/banco_de_dados.sql:/docker-entrypoint-initdb.d/01_init.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - baltec_net
+
+  # ---------------------------------------------------------------------------
+  # INTERFACE VISUAL DO BANCO: phpMyAdmin (substituto do phpMyAdmin do XAMPP)
+  # Acesse em: http://localhost:8081
+  # ---------------------------------------------------------------------------
+  baltec-pma:
+    image: phpmyadmin:latest
+    container_name: baltec_phpmyadmin
+    restart: unless-stopped
+    environment:
+      PMA_HOST: baltec-db
+      PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: root
+      UPLOAD_LIMIT: 64M
+    ports:
+      - "8081:80"
+    depends_on:
+      baltec-db:
+        condition: service_healthy
+    networks:
+      - baltec_net
+
+  # ---------------------------------------------------------------------------
+  # APLICAÇÃO C# BLAZOR (Opcional no modo Híbrido)
+  # Ativado com: docker compose --profile full up -d --build
+  # ---------------------------------------------------------------------------
+  baltec-app:
+    profiles: ["full", "app"]
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: baltec_blazor_app
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ConnectionStrings__DefaultConnection=Server=baltec-db;Port=3306;Database=baltec;User=root;Password=root;
+    depends_on:
+      baltec-db:
+        condition: service_healthy
+    networks:
+      - baltec_net
+
+volumes:
+  baltec_mysql_data:
+
+networks:
+  baltec_net:
+    driver: bridge
