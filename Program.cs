@@ -17,6 +17,7 @@ builder.Services.AddScoped<EquipamentoDAO>();
 
 // DAO para requisições de peças das Ordens de Serviço
 builder.Services.AddScoped<OrdemServicoPecaDAO>();
+builder.Services.AddScoped<OrdemServicoDAO>();
 
 var app = builder.Build();
 
