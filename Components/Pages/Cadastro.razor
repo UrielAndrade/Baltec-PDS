@@ -125,7 +125,14 @@
 
     protected override async Task OnInitializedAsync()
     {
-        listaCargos = await UsuarioDAO.ListarCargosAsync();
+        try
+        {
+            listaCargos = await UsuarioDAO.ListarCargosAsync();
+        }
+        catch (Exception)
+        {
+            listaCargos = new List<Cargo>();
+        }
     }
 
     private void ToggleSenha() => mostrarSenha = !mostrarSenha;

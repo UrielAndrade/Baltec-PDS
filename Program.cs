@@ -20,15 +20,13 @@ builder.Services.AddScoped<EquipamentoDAO>();
 builder.Services.AddScoped<OrdemServicoPecaDAO>();
 builder.Services.AddScoped<OrdemServicoDAO>();
 
-<<<<<<< HEAD
 // DAOs do Módulo Financeiro e Dashboard
 builder.Services.AddScoped<FinanceiroDAO>();
 builder.Services.AddScoped<DashboardDAO>();
-=======
+
 // DAOs para componentes e controle de estoque
 builder.Services.AddScoped<ComponenteDAO>();
 builder.Services.AddScoped<MovimentacaoEstoqueDAO>();
->>>>>>> 0daf68eed219af1c361955705474cf8b69a03e80
 
 var app = builder.Build();
 

@@ -62,9 +62,11 @@ public class DashboardDAO : BaseDAO
 
         // 4. Financeiro
         decimal faturamento = 0;
+        var transacoes = new List<TransacaoFinanceira>();
         try
         {
             faturamento = await _finDAO.ObterFaturamentoMesAtualAsync();
+            transacoes = await _finDAO.ListarTodasAsync();
         }
         catch (Exception ex)
         {
