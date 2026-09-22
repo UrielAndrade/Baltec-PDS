@@ -1,0 +1,552 @@
+﻿@page "/componente"
+
+@using Baltec.models
+@using Baltec.DAO
+
+@inject ComponenteDAO ComponenteDAO
+@inject MovimentacaoEstoqueDAO MovimentacaoDAO
+
+<PageTitle>Componentes</PageTitle>
+
+<div class="pagina-componentes">
+
+    <div class="cabecalho">
+
+        <div>
+            <h1>Componentes</h1>
+            <p>Cadastro e controle de estoque de peças.</p>
+        </div>
+
+        <button class="btn-principal" @onclick="AbrirCadastro">
+            + Novo componente
+        </button>
+
+    </div>
+
+
+    @if (!string.IsNullOrEmpty(mensagem))
+    {
+        <div class="mensagem">
+            @mensagem
+        </div>
+    }
+
+
+    <div class="card">
+
+        <div class="card-topo">
+
+            <h2>Estoque de componentes</h2>
+
+            <button class="btn-atualizar"
+                    @onclick="CarregarDados">
+                Atualizar
+            </button>
+
+        </div>
+
+
+        @if (componentes == null)
+        {
+            <p>Carregando...</p>
+        }
+        else if (componentes.Count == 0)
+        {
+            <div class="vazio">
+                Nenhum componente cadastrado.
+            </div>
+        }
+        else
+        {
+            <div class="tabela-container">
+
+                <table>
+
+                    <thead>
+                        <tr>
+                            <th>Peça</th>
+                            <th>Código</th>
+                            <th>Categoria</th>
+                            <th>Estoque</th>
+                            <th>Preço</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var componente in componentes)
+                        {
+                            <tr>
+
+                                <td>
+                                    <strong>
+                                        @componente.Nome
+                                    </strong>
+                                </td>
+
+                                <td>
+                                    @componente.CodigoItem
+                                </td>
+
+                                <td>
+                                    @componente.CategoriaNome
+                                </td>
+
+                                <td>
+
+                                    @if (componente.QuantidadeEstoque < 5)
+                                    {
+                                        <span class="estoque baixo">
+                                            @componente.QuantidadeEstoque
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="estoque normal">
+                                            @componente.QuantidadeEstoque
+                                        </span>
+                                    }
+
+                                </td>
+
+                                <td>
+                                    @componente.PrecoUnitario.ToString("C2")
+                                </td>
+
+                                <td>
+
+                                    <button class="btn-estoque"
+                                            @onclick="() => AbrirMovimentacao(componente)">
+                                        Ajustar estoque
+                                    </button>
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        }
+
+    </div>
+
+</div>
+
+
+@if (mostrarModalCadastro)
+{
+    <div class="modal-fundo">
+
+        <div class="modal">
+
+            <div class="modal-cabecalho">
+
+                <h2>Novo componente</h2>
+
+                <button @onclick="FecharModais">
+                    ×
+                </button>
+
+            </div>
+
+
+            <div class="campo">
+
+                <label>Nome da peça</label>
+
+                <input @bind="novoComponente.Nome"
+                       placeholder="Ex: Sensor de carga" />
+
+            </div>
+
+
+            <div class="campo">
+
+                <label>Código do item</label>
+
+                <input @bind="novoComponente.CodigoItem"
+                       placeholder="Ex: SEN001" />
+
+            </div>
+
+
+            <div class="campo">
+
+                <label>Categoria</label>
+
+                <select @bind="novoComponente.FkCategoria">
+
+                    <option value="0">
+                        Selecione uma categoria
+                    </option>
+
+                    @foreach (var categoria in categorias)
+                    {
+                        <option value="@categoria.Id">
+                            @categoria.Nome
+                        </option>
+                    }
+
+                </select>
+
+            </div>
+
+
+            <div class="campo">
+
+                <label>Quantidade inicial</label>
+
+                <input type="number"
+                       min="0"
+                       @bind="novoComponente.QuantidadeEstoque" />
+
+            </div>
+
+
+            <div class="campo">
+
+                <label>Preço unitário</label>
+
+                <input type="number"
+                       min="0"
+                       step="0.01"
+                       @bind="novoComponente.PrecoUnitario" />
+
+            </div>
+
+
+            <div class="modal-botoes">
+
+                <button class="btn-cancelar"
+                        @onclick="FecharModais">
+                    Cancelar
+                </button>
+
+                <button class="btn-salvar"
+                        @onclick="CadastrarComponente">
+                    Cadastrar
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+}
+
+
+@if (mostrarModalEstoque)
+{
+    <div class="modal-fundo">
+
+        <div class="modal">
+
+            <div class="modal-cabecalho">
+
+                <h2>Ajustar estoque</h2>
+
+                <button @onclick="FecharModais">
+                    ×
+                </button>
+
+            </div>
+
+
+            @if (componenteSelecionado != null)
+            {
+                <p class="componente-selecionado">
+                    <strong>
+                        @componenteSelecionado.Nome
+                    </strong>
+
+                    <br />
+
+                    Estoque atual:
+                    @componenteSelecionado.QuantidadeEstoque
+                </p>
+
+
+                <div class="campo">
+
+                    <label>Tipo de movimentação</label>
+
+                    <select @bind="tipoMovimentacao">
+
+                        <option value="1">
+                            Entrada
+                        </option>
+
+                        <option value="2">
+                            Saída
+                        </option>
+
+                        <option value="3">
+                            Ajuste
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label>Quantidade</label>
+
+                    <input type="number"
+                           min="1"
+                           @bind="quantidadeMovimentacao" />
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label>Motivo</label>
+
+                    <input @bind="motivoMovimentacao"
+                           placeholder="Informe o motivo" />
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label>Custo unitário</label>
+
+                    <input type="number"
+                           min="0"
+                           step="0.01"
+                           @bind="custoMovimentacao" />
+
+                </div>
+
+
+                <div class="modal-botoes">
+
+                    <button class="btn-cancelar"
+                            @onclick="FecharModais">
+                        Cancelar
+                    </button>
+
+                    <button class="btn-salvar"
+                            @onclick="SalvarMovimentacao">
+                        Salvar
+                    </button>
+
+                </div>
+            }
+
+        </div>
+
+    </div>
+}
+
+
+@code {
+
+    private List<Componente> componentes = new();
+
+    private List<CategoriaComponente> categorias = new();
+
+    private Componente novoComponente = new();
+
+    private Componente? componenteSelecionado;
+
+    private bool mostrarModalCadastro = false;
+
+    private bool mostrarModalEstoque = false;
+
+    private string mensagem = "";
+
+    private int tipoMovimentacao = 1;
+
+    private int quantidadeMovimentacao = 1;
+
+    private string motivoMovimentacao = "";
+
+    private decimal custoMovimentacao = 0;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CarregarDados();
+    }
+
+
+    private async Task CarregarDados()
+    {
+        componentes = await ComponenteDAO.ListarTodosAsync();
+
+        categorias = await ComponenteDAO.ListarCategoriasAsync();
+    }
+
+
+    private void AbrirCadastro()
+    {
+        novoComponente = new Componente();
+
+        mostrarModalCadastro = true;
+
+        mensagem = "";
+    }
+
+
+    private void AbrirMovimentacao(Componente componente)
+    {
+        componenteSelecionado = componente;
+
+        tipoMovimentacao = 1;
+
+        quantidadeMovimentacao = 1;
+
+        motivoMovimentacao = "";
+
+        custoMovimentacao = componente.PrecoUnitario;
+
+        mostrarModalEstoque = true;
+
+        mensagem = "";
+    }
+
+
+    private void FecharModais()
+    {
+        mostrarModalCadastro = false;
+
+        mostrarModalEstoque = false;
+
+        componenteSelecionado = null;
+    }
+
+
+    private async Task CadastrarComponente()
+    {
+        if (string.IsNullOrWhiteSpace(novoComponente.Nome))
+        {
+            mensagem = "Informe o nome do componente.";
+
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(novoComponente.CodigoItem))
+        {
+            mensagem = "Informe o código do item.";
+
+            return;
+        }
+
+        if (novoComponente.FkCategoria == 0)
+        {
+            mensagem = "Selecione uma categoria.";
+
+            return;
+        }
+
+        if (novoComponente.PrecoUnitario < 0)
+        {
+            mensagem = "O preço não pode ser negativo.";
+
+            return;
+        }
+
+
+        var componenteExistente =
+            await ComponenteDAO.BuscarPorCodigoAsync(
+                novoComponente.CodigoItem);
+
+        if (componenteExistente != null)
+        {
+            mensagem = "Já existe um componente com esse código.";
+
+            return;
+        }
+
+
+        bool sucesso =
+            await ComponenteDAO.InserirAsync(novoComponente);
+
+
+        if (sucesso)
+        {
+            FecharModais();
+
+            await CarregarDados();
+
+            mensagem = "Componente cadastrado com sucesso.";
+        }
+        else
+        {
+            mensagem = "Não foi possível cadastrar o componente.";
+        }
+    }
+
+
+    private async Task SalvarMovimentacao()
+    {
+        if (componenteSelecionado == null)
+        {
+            return;
+        }
+
+        if (quantidadeMovimentacao <= 0)
+        {
+            mensagem = "Informe uma quantidade válida.";
+
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(motivoMovimentacao))
+        {
+            mensagem = "Informe o motivo da movimentação.";
+
+            return;
+        }
+
+
+        MovimentacaoEstoque movimentacao =
+            new MovimentacaoEstoque
+            {
+                FkComponente = componenteSelecionado.Id,
+
+                FkTipoMovimentacao = tipoMovimentacao,
+
+                MotivoMovimentacao = motivoMovimentacao,
+
+                Quantidade = quantidadeMovimentacao,
+
+                CustoUnitario = custoMovimentacao,
+
+                // Temporariamente usando usuário 1.
+                // Troque pelo usuário logado quando
+                // o sistema de login estiver pronto.
+                FkUsuarioResponsavel = 1
+            };
+
+
+        bool sucesso =
+            await MovimentacaoDAO.RegistrarMovimentacaoAsync(
+                movimentacao);
+
+
+        if (sucesso)
+        {
+            FecharModais();
+
+            await CarregarDados();
+
+            mensagem = "Estoque atualizado com sucesso.";
+        }
+        else
+        {
+            mensagem =
+                "Não foi possível atualizar o estoque. " +
+                "Verifique se há quantidade suficiente.";
+        }
+    }
+}
