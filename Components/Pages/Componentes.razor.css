@@ -1,0 +1,218 @@
+﻿.pagina-componentes {
+    padding: 30px;
+    background: #f5f6f8;
+    min-height: 100vh;
+}
+
+.cabecalho {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.cabecalho h1 {
+    margin: 0;
+    color: #222;
+}
+
+.cabecalho p {
+    margin-top: 5px;
+    color: #777;
+}
+
+.btn-principal {
+    background: #3f51b5;
+    color: white;
+    border: none;
+    padding: 12px 18px;
+    border-radius: 7px;
+    cursor: pointer;
+}
+
+.btn-principal:hover {
+    background: #303f9f;
+}
+
+.card {
+    background: white;
+    border-radius: 10px;
+    padding: 22px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.card-topo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.card-topo h2 {
+    margin: 0;
+    font-size: 20px;
+}
+
+.btn-atualizar {
+    border: 1px solid #ddd;
+    background: white;
+    padding: 8px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.tabela-container {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th {
+    text-align: left;
+    padding: 14px 10px;
+    background: #f5f5f5;
+    color: #555;
+}
+
+td {
+    padding: 14px 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.estoque {
+    display: inline-block;
+    min-width: 35px;
+    text-align: center;
+    padding: 5px 9px;
+    border-radius: 20px;
+    font-weight: bold;
+}
+
+.estoque.normal {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+.estoque.baixo {
+    background: #ffebee;
+    color: #c62828;
+}
+
+.btn-estoque {
+    background: #eef1ff;
+    color: #3f51b5;
+    border: none;
+    padding: 7px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.btn-estoque:hover {
+    background: #dfe4ff;
+}
+
+.vazio {
+    padding: 40px;
+    text-align: center;
+    color: #777;
+}
+
+.mensagem {
+    background: #e8f5e9;
+    color: #2e7d32;
+    padding: 12px;
+    border-radius: 7px;
+    margin-bottom: 20px;
+}
+
+.modal-fundo {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal {
+    width: 450px;
+    max-width: 90%;
+    background: white;
+    border-radius: 10px;
+    padding: 25px;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+}
+
+.modal-cabecalho {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.modal-cabecalho h2 {
+    margin: 0;
+}
+
+.modal-cabecalho button {
+    border: none;
+    background: transparent;
+    font-size: 25px;
+    cursor: pointer;
+}
+
+.campo {
+    margin-bottom: 15px;
+}
+
+.campo label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: bold;
+    color: #444;
+}
+
+.campo input,
+.campo select {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.modal-botoes {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.btn-cancelar {
+    border: 1px solid #ccc;
+    background: white;
+    padding: 10px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.btn-salvar {
+    border: none;
+    background: #3f51b5;
+    color: white;
+    padding: 10px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.componente-selecionado {
+    background: #f5f6f8;
+    padding: 12px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+}
