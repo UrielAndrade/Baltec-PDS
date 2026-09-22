@@ -18,7 +18,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="_framework/blazor.web.js"></script>
     <script>
-        window.renderCharts = function () {
+        window.renderCharts = function (osValores, catNomes, catQtds) {
             // Destrói instâncias anteriores se existirem
             ['chartOS', 'chartBarras'].forEach(id => {
                 const el = document.getElementById(id);
@@ -27,6 +27,11 @@
                     if (existing) existing.destroy();
                 }
             });
+
+            // Dados dinâmicos ou padrões
+            const dadosOS2026 = (osValores && osValores.length === 12) ? osValores : [30,34,26,38,42,34,36,40,32,28,35,42];
+            const labelsCategorias = (catNomes && catNomes.length) ? catNomes : ['Calibração Analítica','Manutenção Preventiva','Manutenção Corretiva','Aferição de Padrões'];
+            const dadosCategorias = (catQtds && catQtds.length) ? catQtds : [85, 60, 95, 40];
 
             // --- Gráfico: OS por Mês ---
             const ctxOS = document.getElementById('chartOS');
@@ -37,20 +42,20 @@
                         labels: ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'],
                         datasets: [
                             {
-                                label: '2023',
+                                label: '2024',
                                 data: [18,22,15,28,30,24,20,26,22,18,25,30],
                                 backgroundColor: 'rgba(79,195,247,0.75)',
                                 borderRadius: 4,
                             },
                             {
-                                label: '2024',
+                                label: '2025',
                                 data: [25,28,22,32,35,28,30,34,28,24,30,38],
                                 backgroundColor: 'rgba(129,199,132,0.75)',
                                 borderRadius: 4,
                             },
                             {
-                                label: '2025',
-                                data: [30,34,26,38,42,34,36,40,32,28,35,42],
+                                label: '2026',
+                                data: dadosOS2026,
                                 backgroundColor: 'rgba(255,183,77,0.75)',
                                 borderRadius: 4,
                             }
@@ -74,15 +79,15 @@
                 new Chart(ctxBarras, {
                     type: 'bar',
                     data: {
-                        labels: ['Produto A','Produto B','Produto C','Produto D'],
+                        labels: labelsCategorias,
                         datasets: [{
                             label: 'Qtd',
-                            data: [85, 60, 95, 40],
+                            data: dadosCategorias,
                             backgroundColor: [
-                                'rgba(156,39,176,0.7)',
-                                'rgba(156,39,176,0.5)',
-                                'rgba(156,39,176,0.7)',
-                                'rgba(156,39,176,0.4)',
+                                'rgba(156,39,176,0.75)',
+                                'rgba(2,132,199,0.75)',
+                                'rgba(16,185,129,0.75)',
+                                'rgba(245,158,11,0.75)',
                             ],
                             borderRadius: 5,
                         }]

@@ -19,6 +19,10 @@ builder.Services.AddScoped<EquipamentoDAO>();
 builder.Services.AddScoped<OrdemServicoPecaDAO>();
 builder.Services.AddScoped<OrdemServicoDAO>();
 
+// DAOs do Módulo Financeiro e Dashboard
+builder.Services.AddScoped<FinanceiroDAO>();
+builder.Services.AddScoped<DashboardDAO>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

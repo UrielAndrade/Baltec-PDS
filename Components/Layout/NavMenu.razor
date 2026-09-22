@@ -79,6 +79,20 @@
         <div class="nav-section-title">Financeiro</div>
 
         <div class="nav-item">
+            <a class="nav-link @(IsActive("/financeiro") ? "active" : "")" href="/financeiro">
+                <div class="nav-link-left">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 3v18h18"/>
+                        <path d="M18 17V9"/>
+                        <path d="M13 17V5"/>
+                        <path d="M8 17v-3"/>
+                    </svg>
+                    <span>Visão Geral</span>
+                </div>
+            </a>
+        </div>
+
+        <div class="nav-item">
             <a class="nav-link @(IsActive("/financeiro/contas-pagar") ? "active" : "")" href="/financeiro/contas-pagar">
                 <div class="nav-link-left">
                     <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -124,6 +138,11 @@
         if (relativePath == "/inicio")
         {
             return relativeUri == "inicio" || string.IsNullOrEmpty(relativeUri);
+        }
+
+        if (relativePath == "/financeiro")
+        {
+            return relativeUri == "financeiro";
         }
 
         return relativeUri.StartsWith(relativePath.TrimStart('/'));

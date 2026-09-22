@@ -7,7 +7,7 @@ namespace Baltec.DAO
     public class EquipamentoDAO
     {
         private readonly string connectionString =
-            "Server=localhost;Database=baltec;Uid=root;Pwd=;";
+            "Server=localhost;Database=baltec;Uid=root;Pwd=;Connection Timeout=1;";
 
         public async Task<List<Equipamento>> ListarTodosComClienteAsync()
         {
