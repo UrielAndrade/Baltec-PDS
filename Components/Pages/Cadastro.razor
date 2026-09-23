@@ -57,9 +57,9 @@
                     <div class="password-wrapper">
                         <input id="senha-cad" type="@(mostrarSenha ? "text" : "password")"
                                @bind="senha" placeholder="Mínimo 6 caracteres" />
-                        <span class="input-icon" @onclick="ToggleSenha">
-                            <img src="/imgs/eye.svg" alt="Mostrar senha" />
-                        </span>
+                        <button type="button" class="input-icon" @onclick="ToggleSenha" aria-label="@(mostrarSenha ? "Ocultar senha" : "Mostrar senha")" aria-pressed="@mostrarSenha">
+                            <img src="/imgs/eye.svg" alt="" aria-hidden="true" />
+                        </button>
                     </div>
                 </div>
                 <div class="input-group">
@@ -67,9 +67,9 @@
                     <div class="password-wrapper">
                         <input id="conf-senha" type="@(mostrarConfSenha ? "text" : "password")"
                                @bind="confirmarSenha" placeholder="Repita a senha" />
-                        <span class="input-icon" @onclick="ToggleConfSenha">
-                            <img src="/imgs/eye.svg" alt="Mostrar senha" />
-                        </span>
+                        <button type="button" class="input-icon" @onclick="ToggleConfSenha" aria-label="@(mostrarConfSenha ? "Ocultar senha de confirmação" : "Mostrar senha de confirmação")" aria-pressed="@mostrarConfSenha">
+                            <img src="/imgs/eye.svg" alt="" aria-hidden="true" />
+                        </button>
                     </div>
                 </div>
             </div>
