@@ -18,9 +18,12 @@
                 <div class="password-wrapper">
                     <input id="senha" type="@(mostrarSenha ? "text" : "password")"
                            @bind="senha" placeholder="Digite sua senha" />
-                    <span class="input-icon" @onclick="ToggleSenha">
-                        <img src="/imgs/eye.svg" alt="Mostrar senha" />
-                    </span>
+                    <button type="button" class="input-icon"
+                            aria-label="@(mostrarSenha ? "Ocultar senha" : "Mostrar senha")"
+                            title="@(mostrarSenha ? "Ocultar senha" : "Mostrar senha")"
+                            @onclick="ToggleSenha">
+                        <img src="/imgs/eye.svg" alt="" aria-hidden="true" />
+                    </button>
                 </div>
             </div>
 
