@@ -100,13 +100,34 @@ main.page-background {
 }
 
 /* ===== EYE ICON ===== */
-.input-icon {
+button.input-icon {
     position: absolute;
     right: 10px;
     display: flex;
     align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    padding: 2px;
+    margin: 0;
+    width: auto;
+    height: auto;
+    border-radius: 4px;
     cursor: pointer;
     user-select: none;
+}
+
+button.input-icon:hover {
+    filter: none;
+}
+
+button.input-icon:active {
+    transform: none;
+}
+
+button.input-icon:focus-visible {
+    outline: 2px solid #1B984D;
+    outline-offset: 2px;
 }
 
 .input-icon img {
