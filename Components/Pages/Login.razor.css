@@ -100,13 +100,25 @@ main.page-background {
 }
 
 /* ===== EYE ICON ===== */
-.input-icon {
+button.input-icon {
     position: absolute;
     right: 10px;
     display: flex;
     align-items: center;
     cursor: pointer;
     user-select: none;
+    background: transparent;
+    border: none;
+    padding: 2px;
+    margin: 0;
+    width: auto;
+    height: auto;
+}
+
+button.input-icon:focus-visible {
+    outline: 2px solid #1B984D;
+    outline-offset: 2px;
+    border-radius: 4px;
 }
 
 .input-icon img {
@@ -132,7 +144,7 @@ main.page-background {
 }
 
 /* ===== BUTTON ===== */
-.login-form button {
+.login-form button[type="submit"] {
     margin-top: 4px;
     width: 100%;
     height: 2.75rem;
@@ -147,11 +159,11 @@ main.page-background {
     transition: filter 0.2s, transform 0.1s;
 }
 
-.login-form button:hover {
+.login-form button[type="submit"]:hover {
     filter: brightness(1.1);
 }
 
-.login-form button:active {
+.login-form button[type="submit"]:active {
     transform: scale(0.98);
 }
 
