@@ -1,0 +1,185 @@
+﻿@page "/cadastro-cliente"
+
+@using Baltec.models
+@using Baltec.DAO
+
+<PageTitle>Cadastro de Cliente - Baltec</PageTitle>
+
+<div class="form-container">
+
+    <header class="page-header">
+        <div>
+            <h1>Cadastro de Cliente</h1>
+            <p class="subtitle">
+                Cadastre empresas, indústrias, comércios ou produtores.
+            </p>
+        </div>
+    </header>
+
+    <div class="card">
+
+        <div class="form-grid">
+
+            <div class="form-group">
+                <label>Razão Social</label>
+                <input type="text"
+                       @bind="NovoCliente.RazaoSocial"
+                       placeholder="Digite a razão social" />
+            </div>
+
+            <div class="form-group">
+                <label>Nome Fantasia</label>
+                <input type="text"
+                       @bind="NovoCliente.NomeFantasia"
+                       placeholder="Digite o nome fantasia" />
+            </div>
+
+            <div class="form-group">
+                <label>CNPJ/CPF</label>
+                <input type="text"
+                       @bind="NovoCliente.CnpjCpf"
+                       placeholder="Digite o CNPJ ou CPF" />
+            </div>
+
+            <div class="form-group">
+                <label>Telefone</label>
+                <input type="text"
+                       @bind="NovoCliente.Telefone"
+                       placeholder="Digite o telefone" />
+            </div>
+
+            <div class="form-group">
+                <label>E-mail</label>
+                <input type="email"
+                       @bind="NovoCliente.Email"
+                       placeholder="Digite o e-mail" />
+            </div>
+
+            <div class="form-group">
+                <label>Endereço</label>
+                <input type="text"
+                       @bind="NovoCliente.Endereco"
+                       placeholder="Digite o endereço" />
+            </div>
+
+            <div class="form-group">
+                <label>Cidade</label>
+                <input type="text"
+                       @bind="NovoCliente.Cidade"
+                       placeholder="Digite a cidade" />
+            </div>
+
+            <div class="form-group">
+                <label>Estado</label>
+                <input type="text"
+                       maxlength="2"
+                       @bind="NovoCliente.Estado"
+                       placeholder="UF" />
+            </div>
+
+        </div>
+
+        @if (!string.IsNullOrWhiteSpace(MensagemErro))
+        {
+            <div class="alert alert-danger">
+                @MensagemErro
+            </div>
+        }
+
+        @if (!string.IsNullOrWhiteSpace(MensagemSucesso))
+        {
+            <div class="alert alert-success">
+                @MensagemSucesso
+            </div>
+        }
+
+        <div class="form-actions">
+
+            <button class="btn btn-primary"
+                    @onclick="SalvarCliente">
+                Salvar Cliente
+            </button>
+
+            <a href="/balanca"
+                   class="btn btn-secondary">
+                Cancelar
+            </a>
+
+        </div>
+
+    </div>
+</div>
+
+@code {
+
+    [Inject]
+    private ClienteDAO ClienteDAO { get; set; } = default!;
+
+    private Cliente NovoCliente = new()
+    {
+        Ativo = true,
+        DataCadastro = DateTime.Now
+    };
+
+    private string MensagemErro = "";
+    private string MensagemSucesso = "";
+
+    private async Task SalvarCliente()
+    {
+        MensagemErro = "";
+        MensagemSucesso = "";
+
+        if (string.IsNullOrWhiteSpace(NovoCliente.RazaoSocial))
+        {
+            MensagemErro = "Informe a razão social.";
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(NovoCliente.CnpjCpf))
+        {
+            MensagemErro = "Informe o CNPJ ou CPF.";
+            return;
+        }
+
+        NovoCliente.CnpjCpf =
+            NovoCliente.CnpjCpf.Trim();
+
+        bool documentoExiste =
+            await ClienteDAO.ExisteCnpjCpfAsync(
+                NovoCliente.CnpjCpf
+            );
+
+        if (documentoExiste)
+        {
+            MensagemErro =
+                "Este CNPJ/CPF já está cadastrado.";
+
+            return;
+        }
+
+        NovoCliente.DataCadastro = DateTime.Now;
+        NovoCliente.Ativo = true;
+
+        bool sucesso =
+            await ClienteDAO.InserirAsync(
+                NovoCliente
+            );
+
+        if (sucesso)
+        {
+            MensagemSucesso =
+                "Cliente cadastrado com sucesso!";
+
+            NovoCliente = new Cliente
+            {
+                Ativo = true,
+                DataCadastro = DateTime.Now
+            };
+        }
+        else
+        {
+            MensagemErro =
+                "Não foi possível cadastrar o cliente.";
+        }
+    }
+}

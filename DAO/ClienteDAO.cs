@@ -65,7 +65,34 @@ namespace Baltec.DAO
 
             return clientes;
         }
+        public async Task<bool> ExisteCnpjCpfAsync(string cnpjCpf, int? idExcluir = null)
+        {
+            using var conexao = new MySqlConnection(connectionString);
+            await conexao.OpenAsync();
 
+            string sql = @"
+        SELECT COUNT(*)
+        FROM cliente
+        WHERE cnpj_cpf = @cnpjCpf";
+
+            if (idExcluir.HasValue)
+            {
+                sql += " AND id <> @idExcluir";
+            }
+
+            using var comando = new MySqlCommand(sql, conexao);
+
+            comando.Parameters.AddWithValue("@cnpjCpf", cnpjCpf);
+
+            if (idExcluir.HasValue)
+            {
+                comando.Parameters.AddWithValue("@idExcluir", idExcluir.Value);
+            }
+
+            var resultado = await comando.ExecuteScalarAsync();
+
+            return Convert.ToInt32(resultado) > 0;
+        }
         public async Task<Cliente?> BuscarPorIdAsync(int id)
         {
             using var conexao = new MySqlConnection(connectionString);

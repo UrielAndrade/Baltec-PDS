@@ -1,5 +1,4 @@
 namespace Baltec.models
-
 {
     public class Cliente
     {
