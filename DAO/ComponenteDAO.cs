@@ -1,4 +1,4 @@
-﻿using Baltec.models;
+using Baltec.models;
 
 using MySqlConnector;
 

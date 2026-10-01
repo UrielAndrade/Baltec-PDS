@@ -216,3 +216,16 @@ td {
     border-radius: 6px;
     margin-bottom: 20px;
 }
+.btn-principal {
+    display: inline-block;
+    text-decoration: none;
+}
+
+.btn-principal:hover {
+    color: white;
+}
+
+.btn-salvar:disabled {
+    opacity: .65;
+    cursor: not-allowed;
+}
