@@ -153,7 +153,7 @@ public class OrdemServicoDAO : BaseDAO
         }
     }
 
-    private async Task EnsureTablesCreatedAsync(MySqlConnection conn)
+    private async Task CriarTabelasAsync(MySqlConnection conn)
     {
         using var cmd = conn.CreateCommand();
         cmd.CommandText = @"
@@ -223,7 +223,7 @@ public class OrdemServicoDAO : BaseDAO
         try
         {
             using var conn = await OpenConnectionAsync();
-            await EnsureTablesCreatedAsync(conn);
+            await CriarTabelasAsync(conn);
 
             var lista = new List<OrdemServico>();
             using var cmd = conn.CreateCommand();
@@ -298,7 +298,7 @@ public class OrdemServicoDAO : BaseDAO
         try
         {
             using var conn = await OpenConnectionAsync();
-            await EnsureTablesCreatedAsync(conn);
+            await CriarTabelasAsync(conn);
 
             using var cmd = conn.CreateCommand();
             cmd.CommandText = @"
@@ -359,7 +359,7 @@ public class OrdemServicoDAO : BaseDAO
         try
         {
             using var conn = await OpenConnectionAsync();
-            await EnsureTablesCreatedAsync(conn);
+            await CriarTabelasAsync(conn);
 
             using var cmd = conn.CreateCommand();
             cmd.CommandText = @"
@@ -430,7 +430,7 @@ public class OrdemServicoDAO : BaseDAO
         try
         {
             using var conn = await OpenConnectionAsync();
-            await EnsureTablesCreatedAsync(conn);
+            await CriarTabelasAsync(conn);
 
             using var cmd = conn.CreateCommand();
             cmd.CommandText = @"
@@ -509,7 +509,7 @@ public class OrdemServicoDAO : BaseDAO
         try
         {
             using var conn = await OpenConnectionAsync();
-            await EnsureTablesCreatedAsync(conn);
+            await CriarTabelasAsync(conn);
 
             using var cmd = conn.CreateCommand();
             cmd.CommandText = @"
@@ -561,7 +561,7 @@ public class OrdemServicoDAO : BaseDAO
         try
         {
             using var conn = await OpenConnectionAsync();
-            await EnsureTablesCreatedAsync(conn);
+            await CriarTabelasAsync(conn);
 
             var lista = new List<TipoServico>();
             using var cmd = conn.CreateCommand();
@@ -601,7 +601,7 @@ public class OrdemServicoDAO : BaseDAO
         try
         {
             using var conn = await OpenConnectionAsync();
-            await EnsureTablesCreatedAsync(conn);
+            await CriarTabelasAsync(conn);
 
             var lista = new List<StatusOS>();
             using var cmd = conn.CreateCommand();
