@@ -1,0 +1,104 @@
+﻿.cadastro-componente {
+    padding: 30px;
+    background: #f5f6f8;
+    min-height: 100vh;
+}
+
+.cabecalho-cadastro {
+    margin-bottom: 25px;
+}
+
+.cabecalho-cadastro h1 {
+    margin: 0;
+    color: #222;
+}
+
+.cabecalho-cadastro p {
+    margin-top: 6px;
+    color: #777;
+}
+
+.cadastro-card {
+    max-width: 900px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.campo {
+    margin-bottom: 4px;
+}
+
+.campo label {
+    display: block;
+    margin-bottom: 7px;
+    font-weight: 600;
+    color: #444;
+}
+
+.campo .form-control,
+.campo .form-select {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+.validation-message {
+    display: block;
+    margin-top: 5px;
+    color: #c62828;
+    font-size: 13px;
+}
+
+.mensagem.erro {
+    background: #ffebee;
+    color: #b71c1c;
+    padding: 12px;
+    border-radius: 7px;
+    margin-bottom: 20px;
+}
+
+.acoes-cadastro {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 25px;
+}
+
+.btn-salvar,
+.btn-cancelar {
+    border-radius: 6px;
+    padding: 10px 16px;
+    cursor: pointer;
+}
+
+.btn-salvar {
+    border: none;
+    background: #3f51b5;
+    color: white;
+}
+
+.btn-salvar:disabled {
+    opacity: .65;
+    cursor: not-allowed;
+}
+
+.btn-cancelar {
+    border: 1px solid #ccc;
+    background: white;
+}
+
+@media (max-width: 700px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .cadastro-componente {
+        padding: 20px;
+    }
+}

@@ -2,6 +2,7 @@
 @using Baltec.models
 @using Baltec.DAO
 
+
 <PageTitle>Cadastro de Balanças - Baltec</PageTitle>
 
 <div class="form-container">
@@ -232,7 +233,19 @@
                 </div>
 
             </div>
+            @if (!string.IsNullOrWhiteSpace(MensagemErro))
+            {
+                <div class="alert alert-danger">
+                    @MensagemErro
+                </div>
+            }
 
+            @if (!string.IsNullOrWhiteSpace(MensagemSucesso))
+            {
+                <div class="alert alert-success">
+                    @MensagemSucesso
+                </div>
+            }
 
             <div class="modal-footer">
 
@@ -255,6 +268,8 @@
 
 
 @code {
+    private string MensagemErro = "";
+    private string MensagemSucesso = "";
 
     [Inject]
     private EquipamentoDAO EquipamentoDAO { get; set; } = default!;
@@ -334,19 +349,106 @@
 
     private async Task SalvarBalanca()
     {
+        MensagemErro = "";
+        MensagemSucesso = "";
+
+        // Verifica se o cliente foi selecionado
         if (NovaBalanca.FkCliente <= 0)
         {
+            MensagemErro = "Selecione um cliente para a balança.";
             return;
         }
+
+        // Verifica campos obrigatórios
+        if (string.IsNullOrWhiteSpace(NovaBalanca.Modelo))
+        {
+            MensagemErro = "Informe o modelo da balança.";
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(NovaBalanca.MarcaFabricante))
+        {
+            MensagemErro = "Informe a marca/fabricante.";
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(NovaBalanca.NumeroSerie))
+        {
+            MensagemErro = "Informe o número de série.";
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(NovaBalanca.SetorLocalizacao))
+        {
+            MensagemErro = "Informe o setor/localização.";
+            return;
+        }
+
+        // Verifica se o número de série já existe
+        var equipamentoExistente =
+            await EquipamentoDAO.BuscarPorNumeroSerieAsync(
+                NovaBalanca.NumeroSerie.Trim()
+            );
+
+        if (equipamentoExistente != null)
+        {
+            MensagemErro =
+                "Já existe uma balança cadastrada com este número de série.";
+
+            return;
+        }
+
+        // Confirma que o cliente realmente existe
+        var cliente =
+            await ClienteDAO.BuscarPorIdAsync(
+                NovaBalanca.FkCliente
+            );
+
+        if (cliente == null)
+        {
+            MensagemErro =
+                "O cliente selecionado não está cadastrado.";
+
+            return;
+        }
+
+        NovaBalanca.NumeroSerie =
+            NovaBalanca.NumeroSerie.Trim();
+
+        NovaBalanca.Modelo =
+            NovaBalanca.Modelo.Trim();
+
+        NovaBalanca.MarcaFabricante =
+            NovaBalanca.MarcaFabricante.Trim();
+
+        NovaBalanca.SetorLocalizacao =
+            NovaBalanca.SetorLocalizacao.Trim();
+
+        NovaBalanca.DataCadastro = DateTime.Now;
+        NovaBalanca.Ativo = true;
 
         bool sucesso =
             await EquipamentoDAO.InserirAsync(NovaBalanca);
 
         if (sucesso)
         {
+            MensagemSucesso =
+                "Balança cadastrada com sucesso!";
+
             MostrarModal = false;
 
+            NovaBalanca = new Equipamento
+            {
+                Ativo = true,
+                DataCadastro = DateTime.Now
+            };
+
             await CarregarDados();
+        }
+        else
+        {
+            MensagemErro =
+                "Não foi possível cadastrar a balança.";
         }
     }
 
