@@ -7,24 +7,26 @@
 <main class="page-background">
     <div class="container">
         <img class="baltec-logo" src="/imgs/logo.svg" alt="Logo da Baltec" />
-        <form class="login-form" @onsubmit:preventDefault>
+        <form class="login-form" @onsubmit="Entrar">
             <h1>Login</h1>
             <div class="input-group">
                 <label for="email">Email</label>
-                <input id="email" type="email" @bind="email" placeholder="Digite seu email" />
+                <input id="email" type="email" @bind="email" placeholder="Digite seu email" required />
             </div>
             <div class="input-group">
                 <label for="senha">Senha</label>
                 <div class="password-wrapper">
                     <input id="senha" type="@(mostrarSenha ? "text" : "password")"
-                           @bind="senha" placeholder="Digite sua senha" />
-                    <span class="input-icon" @onclick="ToggleSenha">
-                        <img src="/imgs/eye.svg" alt="Mostrar senha" />
-                    </span>
+                           @bind="senha" placeholder="Digite sua senha" required />
+                    <button type="button" class="input-icon" @onclick="ToggleSenha"
+                            aria-label="@(mostrarSenha ? "Ocultar senha" : "Mostrar senha")"
+                            title="@(mostrarSenha ? "Ocultar senha" : "Mostrar senha")">
+                        <img src="/imgs/eye.svg" alt="" aria-hidden="true" />
+                    </button>
                 </div>
             </div>
 
-            <button type="button" @onclick="Entrar">Entrar</button>
+            <button type="submit">Entrar</button>
             <p class="register-link">Não tem uma conta? <a href="/cadastro">Cadastre-se</a></p>
         </form>
         <p class="version">Versão 1.0.0 - © 2026 Baltec</p>
