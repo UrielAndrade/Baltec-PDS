@@ -200,7 +200,7 @@
         <div class="modal-content" @onclick:stopPropagation="true">
             <div class="modal-header">
                 <h2>Emitir Novo Certificado de Calibração</h2>
-                <button class="modal-close" @onclick="FecharModalNovo">&times;</button>
+                <button class="modal-close" aria-label="Fechar" @onclick="FecharModalNovo">&times;</button>
             </div>
 
             <EditForm Model="novoCertificado" OnValidSubmit="SalvarCertificado">
@@ -297,7 +297,7 @@
                         </svg>
                         Imprimir / Gerar PDF
                     </button>
-                    <button class="modal-close" @onclick="FecharModalPreview">&times;</button>
+                    <button class="modal-close" aria-label="Fechar" @onclick="FecharModalPreview">&times;</button>
                 </div>
             </div>
 
