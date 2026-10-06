@@ -4,21 +4,21 @@ namespace Baltec.configs;
 
 public class DatabaseConnection
 {
-    private readonly string _connectionString;
+    private readonly IConfiguration _configuration;
 
     public DatabaseConnection(IConfiguration configuration)
     {
-        _connectionString = configuration.GetConnectionString("DefaultConnection") 
-            ?? throw new ArgumentException("A string de conexão 'DefaultConnection' não foi encontrada.");
+        _configuration = configuration;
     }
 
     public MySqlConnection GetConnection()
     {
-        return new MySqlConnection(_connectionString);
+        return new MySqlConnection(GetConnectionString());
     }
 
     public string GetConnectionString()
     {
-        return _connectionString;
+        return _configuration.GetConnectionString("DefaultConnection") 
+            ?? "Server=localhost;Port=3360;Database=baltec;User=root;Password=root;Connection Timeout=15;";
     }
 }
