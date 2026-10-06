@@ -6,6 +6,9 @@
 @using Baltec.models
 @using Baltec.DAO
 @inject FinanceiroDAO FinanceiroDAO
+@inject ClienteDAO ClienteDAO
+@inject FornecedorDAO FornecedorDAO
+@inject OrdemServicoDAO OrdemServicoDAO
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JS
 <PageTitle>Financeiro & Fluxo de Caixa - Baltec</PageTitle>
@@ -326,9 +329,44 @@
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        <label>Nome do Cliente ou Fornecedor (Opcional)</label>
-                        <input type="text" class="form-control" @bind="parceiroNomeInput" placeholder="Ex: Metalúrgica Delta Inox / Sensortec" />
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Vínculo com OS (Opcional)</label>
+                            <select class="form-control" @bind="novaTransacao.FkOrdemServico">
+                                <option value="">Selecione uma OS (Opcional)...</option>
+                                @foreach(var os in ordensServico)
+                                {
+                                    <option value="@os.Id">@os.NumeroOS - @os.ClienteNome</option>
+                                }
+                            </select>
+                        </div>
+
+                        @if (novaTransacao.FkTipoTransacao == 1)
+                        {
+                            <div class="form-group">
+                                <label>Cliente Associado (Opcional)</label>
+                                <select class="form-control" @bind="novaTransacao.FkCliente">
+                                    <option value="">Selecione o Cliente (Opcional)...</option>
+                                    @foreach(var c in clientes)
+                                    {
+                                        <option value="@c.Id">@c.RazaoSocial</option>
+                                    }
+                                </select>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="form-group">
+                                <label>Fornecedor Associado (Opcional)</label>
+                                <select class="form-control" @bind="novaTransacao.FkFornecedor">
+                                    <option value="">Selecione o Fornecedor (Opcional)...</option>
+                                    @foreach(var f in fornecedores)
+                                    {
+                                        <option value="@f.Id">@f.RazaoSocial</option>
+                                    }
+                                </select>
+                            </div>
+                        }
                     </div>
                 </div>
 
@@ -370,12 +408,16 @@
     // Modal
     private bool exibirModalNova = false;
     private TransacaoFinanceira novaTransacao = new();
-    private string parceiroNomeInput = string.Empty;
+
+    private List<Cliente> clientes = new();
+    private List<Fornecedor> fornecedores = new();
+    private List<OrdemServico> ordensServico = new();
 
     protected override async Task OnInitializedAsync()
     {
         AtualizarAbaPorRota();
         await CarregarDadosAsync();
+        await CarregarListasAuxiliaresAsync();
     }
 
     protected override void OnParametersSet()
@@ -420,6 +462,20 @@
         finally
         {
             carregando = false;
+        }
+    }
+
+    private async Task CarregarListasAuxiliaresAsync()
+    {
+        try
+        {
+            clientes = await ClienteDAO.ListarTodosAsync();
+            fornecedores = await FornecedorDAO.ListarTodosAsync();
+            ordensServico = await OrdemServicoDAO.ListarTodasAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Erro ao carregar listas auxiliares: {ex.Message}");
         }
     }
 
@@ -516,7 +572,6 @@
             DataVencimento = DateTime.Today.AddDays(7),
             DataCadastro = DateTime.Now
         };
-        parceiroNomeInput = string.Empty;
         exibirModalNova = true;
     }
 
@@ -539,12 +594,24 @@
         {
             if (novaTransacao.FkTipoTransacao == 1)
             {
-                novaTransacao.ClienteNome = string.IsNullOrWhiteSpace(parceiroNomeInput) ? "Cliente Baltec" : parceiroNomeInput;
+                novaTransacao.FkFornecedor = null;
+                if (novaTransacao.FkCliente.HasValue) {
+                    var cli = clientes.FirstOrDefault(c => c.Id == novaTransacao.FkCliente);
+                    novaTransacao.ClienteNome = cli?.RazaoSocial ?? "Cliente Baltec";
+                } else {
+                    novaTransacao.ClienteNome = "Cliente Baltec";
+                }
                 novaTransacao.TipoTransacaoNome = "Receita";
             }
             else
             {
-                novaTransacao.FornecedorNome = string.IsNullOrWhiteSpace(parceiroNomeInput) ? "Fornecedor / Despesa" : parceiroNomeInput;
+                novaTransacao.FkCliente = null;
+                if (novaTransacao.FkFornecedor.HasValue) {
+                    var forn = fornecedores.FirstOrDefault(f => f.Id == novaTransacao.FkFornecedor);
+                    novaTransacao.FornecedorNome = forn?.RazaoSocial ?? "Fornecedor / Despesa";
+                } else {
+                    novaTransacao.FornecedorNome = "Fornecedor / Despesa";
+                }
                 novaTransacao.TipoTransacaoNome = "Despesa";
             }
 
