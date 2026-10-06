@@ -1,0 +1,9 @@
+@page "/ordem-servico-peca"
+@inject NavigationManager NavigationManager
+
+@code {
+    protected override void OnInitialized()
+    {
+        NavigationManager.NavigateTo("/ospeca", replace: true);
+    }
+}

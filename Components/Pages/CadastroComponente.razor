@@ -1,62 +1,134 @@
+@page "/componentes/cadastro"
 @page "/cadastro-componente"
+@page "/componente"
+@rendermode InteractiveServer
 
-<PageTitle>Cadastro de Componente - Baltec</PageTitle>
+@using Baltec.models
+@using Baltec.DAO
 
-<div class="form-container">
-    <header class="page-header">
-        <h1>Cadastro de Componente</h1>
-        <p class="subtitle">Cadastre Novas Peças e Componentes Técnicos no Inventário.</p>
-    </header>
+@inject ComponenteDAO ComponenteDAO
+@inject NavigationManager NavigationManager
 
-    <div class="card">
-        <form class="app-form" @onsubmit="SaveComponente">
+<PageTitle>Novo Componente - Baltec</PageTitle>
+
+<div class="cadastro-componente">
+    <div class="cabecalho-cadastro">
+        <div>
+            <h1>Novo componente</h1>
+            <p>Cadastre uma nova peça no estoque.</p>
+        </div>
+    </div>
+
+    @if (!string.IsNullOrWhiteSpace(mensagemErro))
+    {
+        <div class="mensagem erro">@mensagemErro</div>
+    }
+
+    <div class="card cadastro-card">
+        <EditForm Model="componente" OnValidSubmit="Salvar">
+            <DataAnnotationsValidator />
+            <ValidationSummary class="mensagem erro" />
+
             <div class="form-grid">
-                <div class="form-group">
-                    <label for="nome">Nome do Componente</label>
-                    <input type="text" id="nome" placeholder="Ex: Célula de Carga 50kg" required />
+                <div class="campo">
+                    <label for="nome">Nome do componente</label>
+                    <InputText id="nome" class="form-control" @bind-Value="componente.Nome" placeholder="Ex: Célula de carga 50kg" />
+                    <ValidationMessage For="() => componente.Nome" />
                 </div>
 
-                <div class="form-group">
-                    <label for="codigo">Código do Item</label>
-                    <input type="text" id="codigo" placeholder="Ex: COMP-987-AB" required />
+                <div class="campo">
+                    <label for="codigo">Código do item</label>
+                    <InputText id="codigo" class="form-control" @bind-Value="componente.CodigoItem" placeholder="Ex: COMP-987-AB" />
+                    <ValidationMessage For="() => componente.CodigoItem" />
                 </div>
 
-                <div class="form-group">
+                <div class="campo">
                     <label for="categoria">Categoria</label>
-                    <select id="categoria" required>
-                        <option value="">Selecione...</option>
-                        <option value="sensores">Sensores / Células</option>
-                        <option value="indicadores">Indicadores de Peso</option>
-                        <option value="cabos">Cabos e Conectores</option>
-                        <option value="estrutural">Partes Estruturais</option>
-                    </select>
+                    <InputSelect id="categoria" class="form-select" @bind-Value="componente.FkCategoria">
+                        <option value="0">Selecione uma categoria</option>
+                        @foreach (var categoria in categorias)
+                        {
+                            <option value="@categoria.Id">@categoria.Nome</option>
+                        }
+                    </InputSelect>
+                    <ValidationMessage For="() => componente.FkCategoria" />
                 </div>
 
-                <div class="form-group">
-                    <label for="quantidade">Quantidade em Estoque</label>
-                    <input type="number" id="quantidade" placeholder="Ex: 15" required />
+                <div class="campo">
+                    <label for="quantidade">Quantidade inicial</label>
+                    <InputNumber id="quantidade" class="form-control" @bind-Value="componente.QuantidadeEstoque" />
+                    <ValidationMessage For="() => componente.QuantidadeEstoque" />
                 </div>
 
-                <div class="form-group">
-                    <label for="preco">Preço Unitário (R$)</label>
-                    <input type="number" step="0.01" id="preco" placeholder="Ex: 249.90" required />
+                <div class="campo">
+                    <label for="preco">Preço unitário</label>
+                    <InputNumber id="preco" class="form-control" @bind-Value="componente.PrecoUnitario" />
+                    <ValidationMessage For="() => componente.PrecoUnitario" />
                 </div>
             </div>
 
-            <div class="form-actions">
-                <button type="submit" class="btn btn-primary">Salvar Componente</button>
-                <a href="/inicio" class="btn btn-secondary">Cancelar</a>
+            <div class="acoes-cadastro">
+                <button type="submit" class="btn-salvar" disabled="@salvando">
+                    @(salvando ? "Salvando..." : "Salvar componente")
+                </button>
+                <button type="button" class="btn-cancelar" @onclick="Cancelar">Cancelar</button>
             </div>
-        </form>
+        </EditForm>
     </div>
 </div>
 
 @code {
-    private void SaveComponente()
+    private Componente componente = new();
+    private List<CategoriaComponente> categorias = new();
+    private string mensagemErro = string.Empty;
+    private bool salvando;
+
+    protected override async Task OnInitializedAsync()
     {
-        NavigationManager.NavigateTo("/inicio");
+        categorias = await ComponenteDAO.ListarCategoriasAsync();
     }
 
-    [Inject]
-    private NavigationManager NavigationManager { get; set; } = default!;
+    private async Task Salvar()
+    {
+        mensagemErro = string.Empty;
+        salvando = true;
+
+        try
+        {
+            var existente = await ComponenteDAO.BuscarPorCodigoAsync(componente.CodigoItem.Trim());
+
+            if (existente != null)
+            {
+                mensagemErro = "Já existe um componente com esse código.";
+                return;
+            }
+
+            componente.Nome = componente.Nome.Trim();
+            componente.CodigoItem = componente.CodigoItem.Trim();
+            componente.Ativo = true;
+
+            var sucesso = await ComponenteDAO.InserirAsync(componente);
+
+            if (sucesso)
+            {
+                NavigationManager.NavigateTo("/componentes");
+                return;
+            }
+
+            mensagemErro = "Não foi possível cadastrar o componente.";
+        }
+        catch (Exception ex)
+        {
+            mensagemErro = $"Erro ao cadastrar o componente: {ex.Message}";
+        }
+        finally
+        {
+            salvando = false;
+        }
+    }
+
+    private void Cancelar()
+    {
+        NavigationManager.NavigateTo("/componentes");
+    }
 }

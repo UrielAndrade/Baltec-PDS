@@ -1,0 +1,549 @@
+
+@page "/ospeca"
+@rendermode InteractiveServer
+
+@using Baltec.DAO
+@using Baltec.models
+
+@inject OrdemServicoPecaDAO OrdemServicoPecaDAO
+
+<PageTitle>Ordens de Serviço - Peças</PageTitle>
+
+<div class="ospeca-page">
+
+    <div class="page-header">
+        <div>
+            <h1>Ordens de Serviço - Peças</h1>
+            <p>Gerenciamento das solicitações de peças das ordens de serviço.</p>
+        </div>
+
+        <button class="btn-primary" @onclick="AbrirModalNova">
+            + Solicitar peça
+        </button>
+    </div>
+
+    <div class="cards">
+
+        <div class="card">
+            <span>Total</span>
+            <strong>@Solicitacoes.Count</strong>
+        </div>
+
+        <div class="card">
+            <span>Pendentes</span>
+            <strong>@Solicitacoes.Count(x => x.FkStatus == STATUS_PENDENTE)</strong>
+        </div>
+
+        <div class="card">
+            <span>Em andamento</span>
+            <strong>@Solicitacoes.Count(x => x.FkStatus == STATUS_EM_ANDAMENTO)</strong>
+        </div>
+
+        <div class="card">
+            <span>Canceladas</span>
+            <strong>@Solicitacoes.Count(x => x.FkStatus == STATUS_CANCELADO)</strong>
+        </div>
+
+    </div>
+
+    <div class="filters">
+
+        <div>
+            <label>Status</label>
+
+            <select @bind="FiltroStatus">
+                <option value="0">Todos</option>
+                <option value="1">Pendente</option>
+                <option value="2">Em Andamento</option>
+                <option value="4">Concluído</option>
+                <option value="5">Cancelado</option>
+            </select>
+        </div>
+
+        <div>
+            <label>Urgência</label>
+
+            <select @bind="FiltroUrgencia">
+                <option value="0">Todas</option>
+
+                @foreach (var urgencia in GrausUrgencia)
+                {
+                    <option value="@urgencia.Id">
+                        @urgencia.Nome
+                    </option>
+                }
+            </select>
+        </div>
+
+    </div>
+
+    @if (Carregando)
+    {
+        <div class="loading">
+            Carregando solicitações...
+        </div>
+    }
+    else if (!SolicitacoesFiltradas.Any())
+    {
+        <div class="empty">
+            Nenhuma solicitação encontrada.
+        </div>
+    }
+    else
+    {
+        <div class="table-container">
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>OS</th>
+                        <th>Componente</th>
+                        <th>Quantidade</th>
+                        <th>Urgência</th>
+                        <th>Status</th>
+                        <th>Solicitação</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @foreach (var item in SolicitacoesFiltradas)
+                    {
+                        <tr>
+
+                            <td>#@item.Id</td>
+
+                            <td>
+                                @(item.NumeroOS ?? "-")
+                            </td>
+
+                            <td>
+                                <strong>@item.ComponenteNome</strong>
+                            </td>
+
+                            <td>
+                                @item.Quantidade
+                            </td>
+
+                            <td>
+                                <span class="urgencia @ClasseUrgencia(item.FkUrgencia)">
+                                    @item.UrgenciaNome
+                                </span>
+                            </td>
+
+                            <td>
+                                <span class="status @ClasseStatus(item.FkStatus)">
+                                    @item.StatusNome
+                                </span>
+                            </td>
+
+                            <td>
+                                @item.DataSolicitacao.ToString("dd/MM/yyyy HH:mm")
+                            </td>
+
+                            <td>
+
+                                @if (item.FkStatus == STATUS_PENDENTE)
+                                {
+                                    <div class="actions">
+
+                                        <button
+                                            class="btn-success"
+                                            @onclick="() => Aprovar(item)">
+                                            Aprovar
+                                        </button>
+
+                                        <button
+                                            class="btn-danger"
+                                            @onclick="() => AbrirModalRejeitar(item)">
+                                            Rejeitar
+                                        </button>
+
+                                    </div>
+                                }
+                                else
+                                {
+                                    <span class="muted">
+                                        Sem ações
+                                    </span>
+                                }
+
+                            </td>
+
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+    }
+
+</div>
+
+@if (MostrarModalNova)
+{
+    <div class="modal-overlay">
+
+        <div class="modal">
+
+            <div class="modal-header">
+                <h2>Solicitar peça</h2>
+
+                <button @onclick="FecharModalNova">
+                    ×
+                </button>
+            </div>
+
+            <div class="form">
+
+                <label>OS</label>
+
+                <input
+                    type="number"
+                    @bind="NovaSolicitacao.FkOrdemServicoPrincipal"
+                    placeholder="ID da ordem de serviço" />
+
+                <label>ID do componente</label>
+
+                <input
+                    type="number"
+                    @bind="NovaSolicitacao.FkComponente"
+                    placeholder="ID da peça" />
+
+                <label>Quantidade</label>
+
+                <input
+                    type="number"
+                    min="1"
+                    @bind="NovaSolicitacao.Quantidade" />
+
+                <label>Urgência</label>
+
+                <select @bind="NovaSolicitacao.FkUrgencia">
+
+                    <option value="0">
+                        Selecione
+                    </option>
+
+                    @foreach (var urgencia in GrausUrgencia)
+                    {
+                        <option value="@urgencia.Id">
+                            @urgencia.Nome
+                        </option>
+                    }
+
+                </select>
+
+                <label>Observações</label>
+
+                <textarea
+                    @bind="NovaSolicitacao.Observacoes"
+                    rows="4"
+                    placeholder="Descreva a necessidade da peça...">
+                </textarea>
+
+            </div>
+
+            @if (!string.IsNullOrWhiteSpace(Mensagem))
+            {
+                <div class="message">
+                    @Mensagem
+                </div>
+            }
+
+            <div class="modal-footer">
+
+                <button
+                    class="btn-secondary"
+                    @onclick="FecharModalNova">
+                    Cancelar
+                </button>
+
+                <button
+                    class="btn-primary"
+                    @onclick="SalvarSolicitacao">
+                    Solicitar
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+}
+
+@if (MostrarModalRejeitar && SolicitacaoSelecionada != null)
+{
+    <div class="modal-overlay">
+
+        <div class="modal">
+
+            <div class="modal-header">
+
+                <h2>Rejeitar solicitação</h2>
+
+                <button @onclick="FecharModalRejeitar">
+                    ×
+                </button>
+
+            </div>
+
+            <div class="form">
+
+                <p>
+                    Solicitação #@SolicitacaoSelecionada.Id
+                </p>
+
+                <label>Motivo da rejeição</label>
+
+                <textarea
+                    @bind="MotivoRejeicao"
+                    rows="5"
+                    placeholder="Informe o motivo...">
+                </textarea>
+
+            </div>
+
+            <div class="modal-footer">
+
+                <button
+                    class="btn-secondary"
+                    @onclick="FecharModalRejeitar">
+                    Cancelar
+                </button>
+
+                <button
+                    class="btn-danger"
+                    @onclick="Rejeitar">
+                    Confirmar rejeição
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+}
+
+@code {
+
+    // Status existentes na tabela status_os
+    private const int STATUS_PENDENTE = 1;
+    private const int STATUS_EM_ANDAMENTO = 2;
+    private const int STATUS_CONCLUIDO = 4;
+    private const int STATUS_CANCELADO = 5;
+
+    private List<OrdemServicoPeca> Solicitacoes = new();
+    private List<GrauUrgencia> GrausUrgencia = new();
+
+    private bool Carregando = true;
+
+    private int FiltroStatus = 0;
+    private int FiltroUrgencia = 0;
+
+    private bool MostrarModalNova = false;
+    private bool MostrarModalRejeitar = false;
+
+    private OrdemServicoPeca NovaSolicitacao = new()
+    {
+        Quantidade = 1
+    };
+
+    private OrdemServicoPeca? SolicitacaoSelecionada;
+
+    private string MotivoRejeicao = string.Empty;
+    private string Mensagem = string.Empty;
+
+    // TODO:
+    // Trocar pelo ID real do usuário logado quando o sistema
+    // de autenticação estiver integrado nesta página.
+    private int IdUsuarioLogado = 1;
+
+    private IEnumerable<OrdemServicoPeca> SolicitacoesFiltradas =>
+        Solicitacoes.Where(x =>
+            (FiltroStatus == 0 || x.FkStatus == FiltroStatus) &&
+            (FiltroUrgencia == 0 || x.FkUrgencia == FiltroUrgencia)
+        );
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CarregarDados();
+    }
+
+    private async Task CarregarDados()
+    {
+        Carregando = true;
+
+        try
+        {
+            Solicitacoes =
+                await OrdemServicoPecaDAO.ListarTodasAsync();
+
+            GrausUrgencia =
+                await OrdemServicoPecaDAO.ListarGrausUrgenciaAsync();
+        }
+        finally
+        {
+            Carregando = false;
+        }
+    }
+
+    private void AbrirModalNova()
+    {
+        NovaSolicitacao = new OrdemServicoPeca
+        {
+            Quantidade = 1,
+            FkUrgencia = 0
+        };
+
+        Mensagem = string.Empty;
+        MostrarModalNova = true;
+    }
+
+    private void FecharModalNova()
+    {
+        MostrarModalNova = false;
+        Mensagem = string.Empty;
+    }
+
+    private async Task SalvarSolicitacao()
+    {
+        if (NovaSolicitacao.FkComponente <= 0)
+        {
+            Mensagem = "Informe o ID do componente.";
+            return;
+        }
+
+        if (NovaSolicitacao.Quantidade <= 0)
+        {
+            Mensagem = "A quantidade deve ser maior que zero.";
+            return;
+        }
+
+        if (NovaSolicitacao.FkUrgencia <= 0)
+        {
+            Mensagem = "Selecione o grau de urgência.";
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(NovaSolicitacao.Observacoes))
+        {
+            Mensagem = "Informe uma observação.";
+            return;
+        }
+
+        try
+        {
+            bool sucesso =
+                await OrdemServicoPecaDAO
+                    .SolicitarPecaAsync(NovaSolicitacao);
+
+            if (sucesso)
+            {
+                FecharModalNova();
+                await CarregarDados();
+            }
+            else
+            {
+                Mensagem = "Não foi possível criar a solicitação.";
+            }
+        }
+        catch (Exception ex)
+        {
+            Mensagem = $"Erro: {ex.Message}";
+        }
+    }
+
+    private async Task Aprovar(OrdemServicoPeca item)
+    {
+        try
+        {
+            bool sucesso =
+                await OrdemServicoPecaDAO
+                    .AprovarEBaixarEstoqueAsync(
+                        item.Id,
+                        IdUsuarioLogado);
+
+            if (sucesso)
+            {
+                await CarregarDados();
+            }
+            else
+            {
+                Mensagem =
+                    "Não foi possível aprovar. " +
+                    "Verifique se há estoque suficiente " +
+                    "e se a solicitação ainda está pendente.";
+            }
+        }
+        catch (Exception ex)
+        {
+            Mensagem = $"Erro ao aprovar: {ex.Message}";
+        }
+    }
+
+    private void AbrirModalRejeitar(OrdemServicoPeca item)
+    {
+        SolicitacaoSelecionada = item;
+        MotivoRejeicao = string.Empty;
+        MostrarModalRejeitar = true;
+    }
+
+    private void FecharModalRejeitar()
+    {
+        MostrarModalRejeitar = false;
+        SolicitacaoSelecionada = null;
+        MotivoRejeicao = string.Empty;
+    }
+
+    private async Task Rejeitar()
+    {
+        if (SolicitacaoSelecionada == null)
+            return;
+
+        if (string.IsNullOrWhiteSpace(MotivoRejeicao))
+            return;
+
+        bool sucesso =
+            await OrdemServicoPecaDAO
+                .RejeitarSolicitacaoAsync(
+                    SolicitacaoSelecionada.Id,
+                    MotivoRejeicao);
+
+        if (sucesso)
+        {
+            FecharModalRejeitar();
+            await CarregarDados();
+        }
+    }
+
+    private string ClasseStatus(int status)
+    {
+        return status switch
+        {
+            STATUS_PENDENTE => "pendente",
+            STATUS_EM_ANDAMENTO => "andamento",
+            STATUS_CONCLUIDO => "concluido",
+            STATUS_CANCELADO => "cancelado",
+            _ => ""
+        };
+    }
+
+    private string ClasseUrgencia(int urgencia)
+    {
+        return urgencia switch
+        {
+            1 => "baixa",
+            2 => "media",
+            3 => "alta",
+            4 => "critica",
+            _ => ""
+        };
+    }
+}
+

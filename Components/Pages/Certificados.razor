@@ -308,7 +308,7 @@
                     <!-- CABEÇALHO OFICIAL -->
                     <div class="cert-header">
                         <div class="cert-brand">
-                            <img src="/imgs/baltec.svg" alt="Baltec Logo" class="cert-logo" />
+                            <img src="/imgs/logo.svg" alt="Baltec Logo" class="cert-logo" />
                             <div class="cert-company-details">
                                 <span class="company-name">BALTEC METROLOGIA E CALIBRAÇÃO LTDA.</span>
                                 <span class="company-info">Laboratório Acreditado pela Cgcre / Inmetro conforme ISO/IEC 17025</span>
@@ -516,75 +516,6 @@
         listaEquipamentos = await CertificadoDAO.ListarEquipamentosAuxAsync();
         listaTecnicos = await CertificadoDAO.ListarTecnicosAuxAsync();
         listaOS = await CertificadoDAO.ListarOrdensServicoAuxAsync();
-
-        // Dados padrão simulados de demonstração se a lista do banco estiver vazia
-        if (!listaCertificados.Any())
-        {
-            listaCertificados = new List<CertificadoCalibracao>
-            {
-                new CertificadoCalibracao
-                {
-                    Id = 1,
-                    NumeroCertificado = "CERT-2026-0001",
-                    ClienteNome = "Frigorífico Silva S/A",
-                    EquipamentoModelo = "Balança Plataforma 500kg Toledo",
-                    EquipamentoSerie = "TL-994812",
-                    DataCalibracao = DateTime.Today.AddMonths(-2),
-                    DataProximaCalibracao = DateTime.Today.AddMonths(10),
-                    TemperaturaAmbiente = 22.5m,
-                    UmidadeRelativa = 55.0m,
-                    TecnicoNome = "Eng. Marcos Oliveira",
-                    DataEmissao = DateTime.Today.AddMonths(-2)
-                },
-                new CertificadoCalibracao
-                {
-                    Id = 2,
-                    NumeroCertificado = "CERT-2026-0002",
-                    ClienteNome = "Farmacêutica Viva Ltda",
-                    EquipamentoModelo = "Balança Analítica Shimadzu 220g",
-                    EquipamentoSerie = "SH-102938",
-                    DataCalibracao = DateTime.Today.AddDays(-350),
-                    DataProximaCalibracao = DateTime.Today.AddDays(15),
-                    TemperaturaAmbiente = 21.0m,
-                    UmidadeRelativa = 48.5m,
-                    TecnicoNome = "Carlos Metrologia",
-                    DataEmissao = DateTime.Today.AddDays(-350)
-                },
-                new CertificadoCalibracao
-                {
-                    Id = 3,
-                    NumeroCertificado = "CERT-2025-0089",
-                    ClienteNome = "Metalúrgica AçoForte",
-                    EquipamentoModelo = "Célula de Carga Kratos 5t",
-                    EquipamentoSerie = "KT-7721",
-                    DataCalibracao = DateTime.Today.AddYears(-1).AddDays(-10),
-                    DataProximaCalibracao = DateTime.Today.AddDays(-10),
-                    TemperaturaAmbiente = 24.2m,
-                    UmidadeRelativa = 60.0m,
-                    TecnicoNome = "Eng. Marcos Oliveira",
-                    DataEmissao = DateTime.Today.AddYears(-1).AddDays(-10)
-                }
-            };
-        }
-
-        if (!listaEquipamentos.Any())
-        {
-            listaEquipamentos = new List<EquipamentoOption>
-            {
-                new EquipamentoOption { Id = 1, Modelo = "Balança Toledo 2090", NumeroSerie = "TOL-88391", ClienteNome = "Indústria Alpha" },
-                new EquipamentoOption { Id = 2, Modelo = "Balança Filizola Platinum", NumeroSerie = "FLZ-55102", ClienteNome = "Empresa Beta" },
-                new EquipamentoOption { Id = 3, Modelo = "Balança Analítica Marte", NumeroSerie = "MRT-1192", ClienteNome = "Laboratório Gama" }
-            };
-        }
-
-        if (!listaTecnicos.Any())
-        {
-            listaTecnicos = new List<TecnicoOption>
-            {
-                new TecnicoOption { Id = 1, Nome = "Eng. Roberto Silva - Metrologista Responsável" },
-                new TecnicoOption { Id = 2, Nome = "Carlos Eduardo - Técnico de Calibração" }
-            };
-        }
     }
 
     private IEnumerable<CertificadoCalibracao> CertificadosFiltrados
@@ -723,6 +654,6 @@
 
     private void VoltarInicio()
     {
-        Nav.NavigateTo("/home");
+        Nav.NavigateTo("/inicio");
     }
 }

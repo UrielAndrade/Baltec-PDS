@@ -1,0 +1,580 @@
+@page "/financeiro"
+@page "/financeiro/contas-pagar"
+@page "/financeiro/contas-receber"
+@page "/financeiro/fluxo-caixa"
+@rendermode InteractiveServer
+@using Baltec.models
+@using Baltec.DAO
+@inject FinanceiroDAO FinanceiroDAO
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JS
+<PageTitle>Financeiro & Fluxo de Caixa - Baltec</PageTitle>
+
+<div class="page-container">
+    <!-- HEADER -->
+    <header class="page-header">
+        <div class="header-left">
+            <div class="title-with-badge">
+                <h1>Módulo Financeiro</h1>
+                <span class="badge-tag">Fluxo de Caixa & Contas</span>
+            </div>
+            <p class="subtitle">Gestão integrada de contas a pagar, contas a receber, faturamento e fluxo de caixa operacional.</p>
+        </div>
+        <div class="header-actions">
+            <button class="btn btn-primary" @onclick="AbrirModalNovaTransacao">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                Nova Transação
+            </button>
+            <a href="/inicio" class="btn btn-outline">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 12H5M12 19l-7-7 7-7"/>
+                </svg>
+                Início
+            </a>
+        </div>
+    </header>
+
+    @if (!string.IsNullOrEmpty(mensagemFeedback))
+    {
+        <div class="alert @(sucessoFeedback ? "alert-success" : "alert-danger")">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                @if (sucessoFeedback)
+                {
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                }
+                else
+                {
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                }
+            </svg>
+            <span>@mensagemFeedback</span>
+            <button class="alert-close" @onclick="() => mensagemFeedback = string.Empty">×</button>
+        </div>
+    }
+
+    <!-- STATS CARDS -->
+    <div class="stats-grid">
+        <div class="stat-card stat-receitas">
+            <div class="stat-icon-wrapper green">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="1" x2="12" y2="23"></line>
+                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                </svg>
+            </div>
+            <div class="stat-info">
+                <span class="stat-label">Receitas Recebidas</span>
+                <span class="stat-number text-success">@totalReceitasPagas.ToString("C2", cultura)</span>
+                <span class="stat-detail">@qtdReceitasPagas recebimentos liquidados</span>
+            </div>
+        </div>
+
+        <div class="stat-card stat-despesas">
+            <div class="stat-icon-wrapper red">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="2" y="5" width="20" height="14" rx="2" ry="2"></rect>
+                    <line x1="2" y1="10" x2="22" y2="10"></line>
+                </svg>
+            </div>
+            <div class="stat-info">
+                <span class="stat-label">Despesas Pagas</span>
+                <span class="stat-number text-danger">@totalDespesasPagas.ToString("C2", cultura)</span>
+                <span class="stat-detail">@qtdDespesasPagas saídas operacionais</span>
+            </div>
+        </div>
+
+        <div class="stat-card stat-saldo">
+            <div class="stat-icon-wrapper blue">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                    <polyline points="17 6 23 6 23 12"></polyline>
+                </svg>
+            </div>
+            <div class="stat-info">
+                <span class="stat-label">Saldo em Caixa</span>
+                <span class="stat-number @(saldoGeral >= 0 ? "text-primary" : "text-danger")">@saldoGeral.ToString("C2", cultura)</span>
+                <span class="stat-detail">Saldo operacional realizado</span>
+            </div>
+        </div>
+
+        <div class="stat-card stat-pendente">
+            <div class="stat-icon-wrapper yellow">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+            </div>
+            <div class="stat-info">
+                <span class="stat-label">A Receber Pendente</span>
+                <span class="stat-number text-warning">@totalReceitasPendentes.ToString("C2", cultura)</span>
+                <span class="stat-detail">Previsão de entrada futura</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN CARD -->
+    <div class="main-card">
+        <!-- TOOLBAR & FILTERS -->
+        <div class="card-toolbar">
+            <div class="tab-filters">
+                <button class="tab-btn @(abaAtiva == "todas" ? "active" : "")" @onclick="@(() => MudarAba("todas"))">
+                    Todas as Transações (@todasTransacoes.Count)
+                </button>
+                <button class="tab-btn @(abaAtiva == "receber" ? "active" : "")" @onclick="@(() => MudarAba("receber"))">
+                    Contas a Receber (@todasTransacoes.Count(t => t.FkTipoTransacao == 1))
+                </button>
+                <button class="tab-btn @(abaAtiva == "pagar" ? "active" : "")" @onclick="@(() => MudarAba("pagar"))">
+                    Contas a Pagar (@todasTransacoes.Count(t => t.FkTipoTransacao == 2))
+                </button>
+                <button class="tab-btn @(abaAtiva == "fluxo" ? "active" : "")" @onclick="@(() => MudarAba("fluxo"))">
+                    Fluxo Realizado (Pagas)
+                </button>
+            </div>
+
+            <div class="search-and-filters">
+                <div class="search-input-box">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <input type="text" placeholder="Buscar por descrição, cliente ou fornecedor..." @bind="termoBusca" @bind:event="oninput" />
+                </div>
+
+                <div class="status-select-box">
+                    <select @bind="filtroStatus">
+                        <option value="todos">Todos os Status</option>
+                        <option value="1">Pendente</option>
+                        <option value="2">Pago</option>
+                        <option value="3">Atrasado</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- TRANSACTIONS TABLE -->
+        <div class="table-container">
+            @if (carregando)
+            {
+                <div class="loading-state">
+                    <div class="spinner"></div>
+                    <p>Carregando movimentações financeiras...</p>
+                </div>
+            }
+            else if (!TransacoesFiltradas.Any())
+            {
+                <div class="empty-state">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5">
+                        <line x1="12" y1="1" x2="12" y2="23"></line>
+                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                    </svg>
+                    <h3>Nenhuma transação encontrada</h3>
+                    <p>Não há movimentações correspondentes aos filtros aplicados.</p>
+                </div>
+            }
+            else
+            {
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Tipo</th>
+                            <th>Descrição</th>
+                            <th>Vínculo / Parceiro</th>
+                            <th>Vencimento</th>
+                            <th>Data Pagamento</th>
+                            <th>Status</th>
+                            <th class="text-right">Valor</th>
+                            <th class="text-center">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var t in TransacoesFiltradas)
+                        {
+                            <tr class="@(t.FkStatus == 2 ? "row-paid" : "")">
+                                <td>
+                                    @if (t.FkTipoTransacao == 1)
+                                    {
+                                        <span class="badge-tipo receita">
+                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                                <polyline points="18 15 12 9 6 15"></polyline>
+                                            </svg>
+                                            Receita
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge-tipo despesa">
+                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                                <polyline points="6 9 12 15 18 9"></polyline>
+                                            </svg>
+                                            Despesa
+                                        </span>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="desc-cell">
+                                        <span class="desc-title">@t.Descricao</span>
+                                        @if (!string.IsNullOrEmpty(t.NumeroOS))
+                                        {
+                                            <span class="os-badge">OS: @t.NumeroOS</span>
+                                        }
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="partner-name">
+                                        @(t.FkTipoTransacao == 1 ? (t.ClienteNome ?? "Baltec Geral") : (t.FornecedorNome ?? "Fornecedor / Despesa Interna"))
+                                    </span>
+                                </td>
+                                <td>@t.DataVencimento.ToString("dd/MM/yyyy")</td>
+                                <td>
+                                    @(t.DataPagamento.HasValue ? t.DataPagamento.Value.ToString("dd/MM/yyyy") : "-")
+                                </td>
+                                <td>
+                                    @if (t.FkStatus == 2)
+                                    {
+                                        <span class="badge-status status-pago">Pago</span>
+                                    }
+                                    else if (t.DataVencimento < DateTime.Today)
+                                    {
+                                        <span class="badge-status status-atrasado">Atrasado</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge-status status-pendente">Pendente</span>
+                                    }
+                                </td>
+                                <td class="text-right font-weight-bold @(t.FkTipoTransacao == 1 ? "valor-receita" : "valor-despesa")">
+                                    @(t.FkTipoTransacao == 1 ? "+" : "-") @t.Valor.ToString("C2", cultura)
+                                </td>
+                                <td class="text-center">
+                                    @if (t.FkStatus != 2)
+                                    {
+                                        <button class="btn-action-baixa" title="Confirmar pagamento / dar baixa" @onclick="() => DarBaixa(t)">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                                <polyline points="20 6 9 17 4 12"></polyline>
+                                            </svg>
+                                            Dar Baixa
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <span class="liquidado-check" title="Transação liquidada">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5">
+                                                <polyline points="20 6 9 17 4 12"></polyline>
+                                            </svg>
+                                            Liquidado
+                                        </span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- MODAL: NOVA TRANSAÇÃO -->
+@if (exibirModalNova)
+{
+    <div class="modal-overlay" @onclick="FecharModalNovaTransacao">
+        <div class="modal-content" @onclick:stopPropagation>
+            <div class="modal-header">
+                <h2>Lançamento Financeiro</h2>
+                <button class="btn-close" @onclick="FecharModalNovaTransacao">×</button>
+            </div>
+
+            <EditForm Model="@novaTransacao" OnValidSubmit="SalvarNovaTransacao">
+                <div class="modal-body">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Tipo de Transação *</label>
+                            <select class="form-control" @bind="novaTransacao.FkTipoTransacao">
+                                <option value="1">Receita (Entrada)</option>
+                                <option value="2">Despesa (Saída)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Valor (R$) *</label>
+                            <input type="number" step="0.01" min="0.01" class="form-control" @bind="novaTransacao.Valor" required placeholder="0,00" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Descrição *</label>
+                        <input type="text" class="form-control" @bind="novaTransacao.Descricao" required placeholder="Ex: Calibração de Balança de Precisão / Compra de Célula" />
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Data de Vencimento *</label>
+                            <input type="date" class="form-control" @bind="novaTransacao.DataVencimento" required />
+                        </div>
+
+                        <div class="form-group">
+                            <label>Situação Inicial</label>
+                            <select class="form-control" @bind="novaTransacao.FkStatus">
+                                <option value="1">Pendente</option>
+                                <option value="2">Já Liquidado / Pago Hoje</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Nome do Cliente ou Fornecedor (Opcional)</label>
+                        <input type="text" class="form-control" @bind="parceiroNomeInput" placeholder="Ex: Metalúrgica Delta Inox / Sensortec" />
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="FecharModalNovaTransacao">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" disabled="@salvando">
+                        @(salvando ? "Salvando..." : "Registrar Transação")
+                    </button>
+                </div>
+            </EditForm>
+        </div>
+    </div>
+}
+
+@code {
+    private readonly System.Globalization.CultureInfo cultura = new("pt-BR");
+
+    private List<TransacaoFinanceira> todasTransacoes = new();
+    private bool carregando = true;
+    private bool salvando = false;
+
+    // Filtros
+    private string abaAtiva = "todas";
+    private string termoBusca = string.Empty;
+    private string filtroStatus = "todos";
+
+    // Totais calculados
+    private decimal totalReceitasPagas = 0;
+    private decimal totalDespesasPagas = 0;
+    private decimal saldoGeral = 0;
+    private decimal totalReceitasPendentes = 0;
+    private int qtdReceitasPagas = 0;
+    private int qtdDespesasPagas = 0;
+
+    // Feedback
+    private string mensagemFeedback = string.Empty;
+    private bool sucessoFeedback = true;
+
+    // Modal
+    private bool exibirModalNova = false;
+    private TransacaoFinanceira novaTransacao = new();
+    private string parceiroNomeInput = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        AtualizarAbaPorRota();
+        await CarregarDadosAsync();
+    }
+
+    protected override void OnParametersSet()
+    {
+        AtualizarAbaPorRota();
+    }
+
+    private void AtualizarAbaPorRota()
+    {
+        var uri = NavigationManager.Uri.ToLowerInvariant();
+        if (uri.Contains("contas-pagar"))
+        {
+            abaAtiva = "pagar";
+        }
+        else if (uri.Contains("contas-receber"))
+        {
+            abaAtiva = "receber";
+        }
+        else if (uri.Contains("fluxo-caixa"))
+        {
+            abaAtiva = "fluxo";
+        }
+        else
+        {
+            abaAtiva = "todas";
+        }
+    }
+
+    private async Task CarregarDadosAsync()
+    {
+        carregando = true;
+        try
+        {
+            todasTransacoes = await FinanceiroDAO.ListarTodasAsync();
+            RecalcularTotais();
+        }
+        catch (Exception ex)
+        {
+            mensagemFeedback = $"Erro ao carregar transações: {ex.Message}";
+            sucessoFeedback = false;
+        }
+        finally
+        {
+            carregando = false;
+        }
+    }
+
+    private void RecalcularTotais()
+    {
+        totalReceitasPagas = todasTransacoes.Where(t => t.FkTipoTransacao == 1 && t.FkStatus == 2).Sum(t => t.Valor);
+        qtdReceitasPagas = todasTransacoes.Count(t => t.FkTipoTransacao == 1 && t.FkStatus == 2);
+
+        totalDespesasPagas = todasTransacoes.Where(t => t.FkTipoTransacao == 2 && t.FkStatus == 2).Sum(t => t.Valor);
+        qtdDespesasPagas = todasTransacoes.Count(t => t.FkTipoTransacao == 2 && t.FkStatus == 2);
+
+        saldoGeral = totalReceitasPagas - totalDespesasPagas;
+
+        totalReceitasPendentes = todasTransacoes.Where(t => t.FkTipoTransacao == 1 && t.FkStatus != 2).Sum(t => t.Valor);
+    }
+
+    private IEnumerable<TransacaoFinanceira> TransacoesFiltradas
+    {
+        get
+        {
+            var query = todasTransacoes.AsEnumerable();
+
+            // Filtro por Aba
+            if (abaAtiva == "receber")
+            {
+                query = query.Where(t => t.FkTipoTransacao == 1);
+            }
+            else if (abaAtiva == "pagar")
+            {
+                query = query.Where(t => t.FkTipoTransacao == 2);
+            }
+            else if (abaAtiva == "fluxo")
+            {
+                query = query.Where(t => t.FkStatus == 2);
+            }
+
+            // Filtro por Status
+            if (filtroStatus != "todos" && int.TryParse(filtroStatus, out int statusId))
+            {
+                query = query.Where(t => t.FkStatus == statusId);
+            }
+
+            // Filtro por busca textual
+            if (!string.IsNullOrWhiteSpace(termoBusca))
+            {
+                var termo = termoBusca.Trim().ToLowerInvariant();
+                query = query.Where(t => 
+                    t.Descricao.ToLowerInvariant().Contains(termo) ||
+                    (!string.IsNullOrEmpty(t.ClienteNome) && t.ClienteNome.ToLowerInvariant().Contains(termo)) ||
+                    (!string.IsNullOrEmpty(t.FornecedorNome) && t.FornecedorNome.ToLowerInvariant().Contains(termo)) ||
+                    (!string.IsNullOrEmpty(t.NumeroOS) && t.NumeroOS.ToLowerInvariant().Contains(termo))
+                );
+            }
+
+            return query;
+        }
+    }
+
+    private void MudarAba(string aba)
+    {
+        abaAtiva = aba;
+    }
+
+    private async Task DarBaixa(TransacaoFinanceira transacao)
+    {
+        try
+        {
+            var hoje = DateTime.Today;
+            var sucesso = await FinanceiroDAO.DarBaixaPagamentoAsync(transacao.Id, hoje);
+            if (sucesso)
+            {
+                transacao.FkStatus = 2;
+                transacao.StatusNome = "Pago";
+                transacao.DataPagamento = hoje;
+                RecalcularTotais();
+
+                mensagemFeedback = $"Baixa registrada com sucesso para \"{transacao.Descricao}\"!";
+                sucessoFeedback = true;
+            }
+        }
+        catch (Exception ex)
+        {
+            mensagemFeedback = $"Erro ao dar baixa: {ex.Message}";
+            sucessoFeedback = false;
+        }
+    }
+
+    private void AbrirModalNovaTransacao()
+    {
+        novaTransacao = new TransacaoFinanceira
+        {
+            FkTipoTransacao = abaAtiva == "pagar" ? 2 : 1,
+            FkStatus = 1,
+            DataVencimento = DateTime.Today.AddDays(7),
+            DataCadastro = DateTime.Now
+        };
+        parceiroNomeInput = string.Empty;
+        exibirModalNova = true;
+    }
+
+    private void FecharModalNovaTransacao()
+    {
+        exibirModalNova = false;
+    }
+
+    private async Task SalvarNovaTransacao()
+    {
+        if (novaTransacao.Valor <= 0)
+        {
+            mensagemFeedback = "Informe um valor positivo maior que zero.";
+            sucessoFeedback = false;
+            return;
+        }
+
+        salvando = true;
+        try
+        {
+            if (novaTransacao.FkTipoTransacao == 1)
+            {
+                novaTransacao.ClienteNome = string.IsNullOrWhiteSpace(parceiroNomeInput) ? "Cliente Baltec" : parceiroNomeInput;
+                novaTransacao.TipoTransacaoNome = "Receita";
+            }
+            else
+            {
+                novaTransacao.FornecedorNome = string.IsNullOrWhiteSpace(parceiroNomeInput) ? "Fornecedor / Despesa" : parceiroNomeInput;
+                novaTransacao.TipoTransacaoNome = "Despesa";
+            }
+
+            if (novaTransacao.FkStatus == 2)
+            {
+                novaTransacao.DataPagamento = DateTime.Today;
+                novaTransacao.StatusNome = "Pago";
+            }
+            else
+            {
+                novaTransacao.StatusNome = "Pendente";
+            }
+
+            var sucesso = await FinanceiroDAO.InserirAsync(novaTransacao);
+            if (sucesso)
+            {
+                mensagemFeedback = $"Transação \"{novaTransacao.Descricao}\" cadastrada com sucesso!";
+                sucessoFeedback = true;
+                exibirModalNova = false;
+                await CarregarDadosAsync();
+            }
+        }
+        catch (Exception ex)
+        {
+            mensagemFeedback = $"Erro ao salvar transação: {ex.Message}";
+            sucessoFeedback = false;
+        }
+        finally
+        {
+            salvando = false;
+        }
+    }
+}

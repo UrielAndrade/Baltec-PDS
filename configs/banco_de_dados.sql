@@ -1,4 +1,5 @@
-﻿create database baltec;
+CREATE DATABASE IF NOT EXISTS baltec;
+USE baltec;
 
 CREATE TABLE cargo (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -244,60 +245,57 @@ CREATE TABLE auditoria_log (
 );
 
 -- ==========================================
--- DADOs INICIAIs (sEED) PARA O sIsTEMA
+-- DADOS INICIAIS (SEED) PARA O SISTEMA
 -- ==========================================
 
-INsERT INTO cargo (nome, descricao) VALUEs 
-('T�cnico de Calibra��o', 'T�cnico respons�vel pelas aferi��es'),
+INSERT INTO cargo (nome, descricao) VALUES 
+('Técnico de Calibração', 'Técnico responsável pelas aferições'),
 ('Engenheiro', 'Engenheiro metrologista'),
-('Administrativo', 'Equipe de escrit�rio e atendimento'),
+('Administrativo', 'Equipe de escritório e atendimento'),
 ('Gerente', 'Gerente da unidade');
 
-INsERT INTO perfil (nome, descricao) VALUEs 
+INSERT INTO perfil (nome, descricao) VALUES 
 ('Admin', 'Acesso total ao sistema'),
-('Tecnico', 'Acesso �s Os e calibra��es'),
-('Atendimento', 'Acesso a clientes e balan�as');
+('Tecnico', 'Acesso às OS e calibrações'),
+('Atendimento', 'Acesso a clientes e balanças');
 
-INsERT INTO tipo_servico (nome) VALUEs 
-('Calibra��o de Balan�a Anal�tica'),
-('Manuten��o Preventiva'),
-('Manuten��o Corretiva'),
-('Aferi��o de Padr�es');
+INSERT INTO tipo_servico (nome) VALUES 
+('Calibração de Balança Analítica'),
+('Manutenção Preventiva'),
+('Manutenção Corretiva'),
+('Aferição de Padrões');
 
-INsERT INTO status_os (nome) VALUEs 
+INSERT INTO status_os (nome) VALUES 
 ('Pendente'),
 ('Em Andamento'),
-('Aguardando Pe�a'),
-('Conclu�do'),
+('Aguardando Peça'),
+('Concluído'),
 ('Cancelado');
 
-INsERT INTO grau_urgencia (nome) VALUEs 
+INSERT INTO grau_urgencia (nome) VALUES 
 ('Baixa'),
-('M�dia'),
+('Média'),
 ('Alta'),
-('Cr�tica');
+('Crítica');
 
-INsERT INTO tipo_movimentacao (nome) VALUEs 
+INSERT INTO tipo_movimentacao (nome) VALUES 
 ('Entrada (Compra)'),
-('sa�da (Os)'),
+('Saída (OS)'),
 ('Ajuste de Estoque (+/-)');
 
-INsERT INTO categoria_componente (nome) VALUEs 
-('sensores'),
+INSERT INTO categoria_componente (nome) VALUES 
+('Sensores'),
 ('Placas de Circuito'),
 ('Cabos'),
-('P�s de Borracha'),
+('Pés de Borracha'),
 ('Displays');
 
-INsERT INTO tipo_transacao_financeira (nome) VALUEs 
+INSERT INTO tipo_transacao_financeira (nome) VALUES 
 ('Receita'),
 ('Despesa');
 
-INsERT INTO status_transacao_financeira (nome) VALUEs 
+INSERT INTO status_transacao_financeira (nome) VALUES 
 ('Pendente'),
 ('Pago'),
 ('Atrasado'),
 ('Cancelado');
-
-
-

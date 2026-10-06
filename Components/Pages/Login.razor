@@ -1,16 +1,23 @@
 @page "/"
-@using Baltec.DAO
 @rendermode InteractiveServer
-@inject NavigationManager Navigation
+@using Baltec.DAO
+@using Baltec.models
 @inject UsuarioDAO UsuarioDAO
+@inject NavigationManager Navigation
 
 <PageTitle>Login - Baltec</PageTitle>
 
 <main class="page-background">
     <div class="container">
-        <img class="baltec-logo" src="/imgs/baltec.svg" alt="Logo da Baltec" />
+        <img class="baltec-logo" src="/imgs/logo.svg" alt="Logo da Baltec" />
         <form class="login-form" @onsubmit:preventDefault>
             <h1>Login</h1>
+
+            @if (!string.IsNullOrEmpty(erro))
+            {
+                <div class="erro-msg">@erro</div>
+            }
+
             <div class="input-group">
                 <label for="email">Email</label>
                 <input id="email" type="email" @bind="email" placeholder="Digite seu email" />
@@ -26,12 +33,9 @@
                 </div>
             </div>
 
-            @if (!string.IsNullOrEmpty(erro))
-            {
-                <p class="erro-msg">@erro</p>
-            }
-
-            <button type="button" @onclick="Entrar">Entrar</button>
+            <button type="button" @onclick="Entrar" disabled="@carregando">
+                @(carregando ? "Entrando..." : "Entrar")
+            </button>
             <p class="register-link">Não tem uma conta? <a href="/cadastro">Cadastre-se</a></p>
         </form>
         <p class="version">Versão 1.0.0 - © 2026 Baltec</p>
@@ -43,24 +47,41 @@
     private string senha = "";
     private bool mostrarSenha = false;
     private string erro = "";
+    private bool carregando = false;
 
     private void ToggleSenha() => mostrarSenha = !mostrarSenha;
 
     private async Task Entrar()
     {
+        erro = "";
+
         if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(senha))
         {
-            erro = "Preencha o email e a senha.";
-            return;
-        }
-        
-        var usuario = await UsuarioDAO.AutenticarAsync(email, senha);
-        if (usuario == null)
-        {
-            erro = "Credenciais inválidas.";
+            erro = "Informe o email e a senha.";
             return;
         }
 
-        Navigation.NavigateTo("/inicio");
+        carregando = true;
+
+        try
+        {
+            var usuario = await UsuarioDAO.AutenticarAsync(email.Trim(), senha);
+            if (usuario != null)
+            {
+                Navigation.NavigateTo("/inicio");
+            }
+            else
+            {
+                erro = "Email ou senha incorretos.";
+            }
+        }
+        catch (Exception ex)
+        {
+            erro = $"Erro ao conectar com o banco de dados: {ex.Message}";
+        }
+        finally
+        {
+            carregando = false;
+        }
     }
 }

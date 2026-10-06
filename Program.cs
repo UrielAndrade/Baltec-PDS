@@ -1,3 +1,4 @@
+
 using Baltec.Components;
 using Baltec.configs;
 using Baltec.DAO;
@@ -9,8 +10,23 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 builder.Services.AddSingleton<DatabaseConnection>();
+
 builder.Services.AddScoped<UsuarioDAO>();
 builder.Services.AddScoped<CertificadoCalibracaoDAO>();
+builder.Services.AddScoped<ClienteDAO>();
+builder.Services.AddScoped<EquipamentoDAO>();
+
+// DAO para requisições de peças das Ordens de Serviço
+builder.Services.AddScoped<OrdemServicoPecaDAO>();
+builder.Services.AddScoped<OrdemServicoDAO>();
+
+// DAOs do Módulo Financeiro e Dashboard
+builder.Services.AddScoped<FinanceiroDAO>();
+builder.Services.AddScoped<DashboardDAO>();
+
+// DAOs para componentes e controle de estoque
+builder.Services.AddScoped<ComponenteDAO>();
+builder.Services.AddScoped<MovimentacaoEstoqueDAO>();
 
 var app = builder.Build();
 
@@ -18,7 +34,6 @@ var app = builder.Build();
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
