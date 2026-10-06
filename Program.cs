@@ -14,6 +14,7 @@ builder.Services.AddSingleton<DatabaseConnection>();
 builder.Services.AddScoped<UsuarioDAO>();
 builder.Services.AddScoped<CertificadoCalibracaoDAO>();
 builder.Services.AddScoped<ClienteDAO>();
+builder.Services.AddScoped<FornecedorDAO>();
 builder.Services.AddScoped<EquipamentoDAO>();
 
 // DAO para requisições de peças das Ordens de Serviço
