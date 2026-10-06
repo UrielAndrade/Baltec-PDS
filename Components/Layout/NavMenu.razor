@@ -17,7 +17,7 @@
         </div>
 
         <div class="nav-item">
-            <a class="nav-link @(IsActive("/cadastro-balanca") ? "active" : "")" href="/cadastro-balanca">
+            <a class="nav-link @(IsActive("/balanca") || IsActive("/cadastro-balanca") ? "active" : "")" href="/balanca">
                 <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="12" y1="2" x2="12" y2="22"></line>
                     <line x1="5" y1="22" x2="19" y2="22"></line>
@@ -27,12 +27,12 @@
                     <path d="M16 17h6l-3-6z"></path>
                     <line x1="19" y1="7" x2="19" y2="11"></line>
                 </svg>
-                <span>Cadastro de balança</span>
+                <span>Balanças</span>
             </a>
         </div>
 
         <div class="nav-item">
-            <a class="nav-link @(IsActive("/cadastro-componente") ? "active" : "")" href="/cadastro-componente">
+            <a class="nav-link @(IsActive("/componentes") || IsActive("/cadastro-componente") || IsActive("/componentes/cadastro") ? "active" : "")" href="/componentes">
                 <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="5" r="3"></circle>
                     <circle cx="5" cy="19" r="3"></circle>
@@ -41,7 +41,7 @@
                     <line x1="12" y1="8" x2="17.5" y2="16.5"></line>
                     <line x1="8" y1="19" x2="16" y2="19"></line>
                 </svg>
-                <span>Cadastro de componente</span>
+                <span>Componentes & Estoque</span>
             </a>
         </div>
 
@@ -67,11 +67,11 @@
         </div>
 
         <div class="nav-item">
-            <a class="nav-link @(IsActive("/ordem-servico-peca") ? "active" : "")" href="/ordem-servico-peca">
+            <a class="nav-link @(IsActive("/ospeca") || IsActive("/ordem-servico-peca") ? "active" : "")" href="/ospeca">
                 <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M19.5 10a2.5 2.5 0 0 1 0 5H18v1.5a2.5 2.5 0 0 1-2.5 2.5H14v1.5a2.5 2.5 0 0 1-5 0V19H7.5A2.5 2.5 0 0 1 5 16.5V15H3.5a2.5 2.5 0 0 1 0-5H5V8.5A2.5 2.5 0 0 1 7.5 6H9V4.5a2.5 2.5 0 0 1 5 0V6h1.5A2.5 2.5 0 0 1 18 8.5V10h1.5z"></path>
                 </svg>
-                <span>Gerar ordem de serviço de peça</span>
+                <span>Ordens de Serviço de Peça</span>
             </a>
         </div>
 

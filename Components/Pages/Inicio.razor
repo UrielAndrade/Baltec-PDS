@@ -36,7 +36,7 @@
             <div class="card-content">
                 <h3>Balanças Cadastradas</h3>
                 <span class="value">@metricas.TotalBalancas</span>
-                <span class="trend positive">↑ 12% este mês</span>
+                <span class="trend">Total no banco</span>
             </div>
         </div>
 
@@ -67,7 +67,7 @@
             <div class="card-content">
                 <h3>Certificados Calibrados</h3>
                 <span class="value">@metricas.TotalCertificados</span>
-                <span class="trend positive">100% de conformidade RBC</span>
+                <span class="trend">Emitidos</span>
             </div>
         </div>
 
@@ -81,7 +81,7 @@
             <div class="card-content">
                 <h3>Faturamento Mensal</h3>
                 <span class="value">R$ @metricas.FaturamentoMensal.ToString("N0", cultura)</span>
-                <span class="trend positive">↑ @CalcularPercentualMeta()% vs meta</span>
+                <span class="trend">Mês atual</span>
             </div>
         </div>
     </div>
@@ -187,27 +187,29 @@
             <h2>Acesso Rápido</h2>
             
             <div class="quick-links">
-
-                <a href="/cadastro-balanca" class="quick-btn">
-                    Nova Balança
+                <a href="/balanca" class="quick-btn">
+                    Balanças
                 </a>
 
-                <a href="/ordem-servico" class="quick-btn">
-                    Criar OS
+                <a href="/os" class="quick-btn">
+                    Ordens de Serviço
                 </a>
 
                 <a href="/calibracao" class="quick-btn">
-                    Novo Certificado
+                    Certificados
                 </a>
+
                 <a href="/financeiro" class="quick-btn">
                     Módulo Financeiro
                 </a>
 
-                <a href="/componente" class="quick-btn">
-                    Cadastro de componente
+                <a href="/componentes" class="quick-btn">
+                    Componentes & Estoque
                 </a>
 
-
+                <a href="/ospeca" class="quick-btn">
+                    OS de Peças
+                </a>
             </div>
            
 
