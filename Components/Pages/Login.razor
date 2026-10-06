@@ -1,8 +1,5 @@
 @page "/"
 @rendermode InteractiveServer
-@using Baltec.DAO
-@using Baltec.models
-@inject UsuarioDAO UsuarioDAO
 @inject NavigationManager Navigation
 
 <PageTitle>Login - Baltec</PageTitle>
@@ -10,13 +7,8 @@
 <main class="page-background">
     <div class="container">
         <img class="baltec-logo" src="/imgs/logo.svg" alt="Logo da Baltec" />
-        <form class="login-form" @onsubmit:preventDefault>
+        <form class="login-form" @onsubmit="Entrar" @onsubmit:preventDefault>
             <h1>Login</h1>
-
-            @if (!string.IsNullOrEmpty(erro))
-            {
-                <div class="erro-msg">@erro</div>
-            }
 
             <div class="input-group">
                 <label for="email">Email</label>
@@ -33,9 +25,7 @@
                 </div>
             </div>
 
-            <button type="button" @onclick="Entrar" disabled="@carregando">
-                @(carregando ? "Entrando..." : "Entrar")
-            </button>
+            <button type="submit">Entrar</button>
             <p class="register-link">Não tem uma conta? <a href="/cadastro">Cadastre-se</a></p>
         </form>
         <p class="version">Versão 1.0.0 - © 2026 Baltec</p>
@@ -46,42 +36,12 @@
     private string email = "";
     private string senha = "";
     private bool mostrarSenha = false;
-    private string erro = "";
-    private bool carregando = false;
 
     private void ToggleSenha() => mostrarSenha = !mostrarSenha;
 
-    private async Task Entrar()
+    private void Entrar()
     {
-        erro = "";
-
-        if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(senha))
-        {
-            erro = "Informe o email e a senha.";
-            return;
-        }
-
-        carregando = true;
-
-        try
-        {
-            var usuario = await UsuarioDAO.AutenticarAsync(email.Trim(), senha);
-            if (usuario != null)
-            {
-                Navigation.NavigateTo("/inicio");
-            }
-            else
-            {
-                erro = "Email ou senha incorretos.";
-            }
-        }
-        catch (Exception ex)
-        {
-            erro = $"Erro ao conectar com o banco de dados: {ex.Message}";
-        }
-        finally
-        {
-            carregando = false;
-        }
+        // Acesso direto sem autenticação por enquanto
+        Navigation.NavigateTo("/inicio");
     }
 }
