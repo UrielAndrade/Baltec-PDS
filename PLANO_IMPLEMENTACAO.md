@@ -259,7 +259,7 @@ graph TD
 
 ---
 
-### **PESSOA 6 — Certificados de Calibração & Metrologia**
+### ARTHUR BRAGA — Certificados de Calibração & Metrologia**
 
 > **Objetivo Central:** Aferição de conformidade com normas metrológicas, cálculo da validade do certificado e emissão do documento.
 
