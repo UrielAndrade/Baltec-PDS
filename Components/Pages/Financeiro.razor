@@ -57,7 +57,7 @@
                 }
             </svg>
             <span>@mensagemFeedback</span>
-            <button class="alert-close" @onclick="() => mensagemFeedback = string.Empty">×</button>
+            <button class="alert-close" aria-label="Fechar alerta" @onclick="() => mensagemFeedback = string.Empty">×</button>
         </div>
     }
 
@@ -289,7 +289,7 @@
         <div class="modal-content" @onclick:stopPropagation>
             <div class="modal-header">
                 <h2>Lançamento Financeiro</h2>
-                <button class="btn-close" @onclick="FecharModalNovaTransacao">×</button>
+                <button class="btn-close" aria-label="Fechar modal" @onclick="FecharModalNovaTransacao">×</button>
             </div>
 
             <EditForm Model="@novaTransacao" OnValidSubmit="SalvarNovaTransacao">
