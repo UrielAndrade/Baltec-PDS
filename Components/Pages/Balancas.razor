@@ -131,7 +131,7 @@
                        @bind:event="oninput" />
                 @if (!string.IsNullOrWhiteSpace(Pesquisa))
                 {
-                    <button class="clear-search" @onclick='() => Pesquisa = ""'>&times;</button>
+                    <button class="clear-search" aria-label="Limpar pesquisa" @onclick='() => Pesquisa = ""'>&times;</button>
                 }
             </div>
         </div>
@@ -260,7 +260,7 @@
                     <span class="modal-badge">@(EhEdicao ? "Editar Balança" : "Nova Balança")</span>
                     <h2>@(EhEdicao ? $"Editar #{NovaBalanca.Id} - {NovaBalanca.Modelo}" : "Nova Balança")</h2>
                 </div>
-                <button type="button" class="btn-close" @onclick="FecharModal">&times;</button>
+                <button type="button" class="btn-close" aria-label="Fechar modal" @onclick="FecharModal">&times;</button>
             </div>
 
             <div class="modal-body">
@@ -385,7 +385,7 @@
                     <span class="modal-badge">Ficha Técnica</span>
                     <h2>@BalancaDetalhes.Modelo</h2>
                 </div>
-                <button type="button" class="btn-close" @onclick="FecharModalDetalhes">&times;</button>
+                <button type="button" class="btn-close" aria-label="Fechar modal" @onclick="FecharModalDetalhes">&times;</button>
             </div>
 
             <div class="modal-body">

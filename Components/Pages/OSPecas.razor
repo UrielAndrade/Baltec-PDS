@@ -147,7 +147,7 @@
                        @bind:event="oninput" />
                 @if (!string.IsNullOrWhiteSpace(TermoBusca))
                 {
-                    <button class="clear-search" @onclick='() => TermoBusca = ""'>&times;</button>
+                    <button class="clear-search" aria-label="Limpar pesquisa" @onclick='() => TermoBusca = ""'>&times;</button>
                 }
             </div>
         </div>
@@ -298,7 +298,7 @@
                     <span class="modal-badge">Estoque & OS</span>
                     <h2>Nova Solicitação de Peça</h2>
                 </div>
-                <button type="button" class="btn-close" @onclick="FecharModalNova">&times;</button>
+                <button type="button" class="btn-close" aria-label="Fechar modal" @onclick="FecharModalNova">&times;</button>
             </div>
 
             <div class="modal-body">
@@ -399,7 +399,7 @@
                     <span class="modal-badge badge-rejeicao">Rejeição</span>
                     <h2>Rejeitar Solicitação #@SolicitacaoSelecionada.Id</h2>
                 </div>
-                <button type="button" class="btn-close" @onclick="FecharModalRejeitar">&times;</button>
+                <button type="button" class="btn-close" aria-label="Fechar modal" @onclick="FecharModalRejeitar">&times;</button>
             </div>
 
             <div class="modal-body">
@@ -440,7 +440,7 @@
                     <span class="modal-badge">Detalhes</span>
                     <h2>Solicitação de Peça #@SolicitacaoSelecionada.Id</h2>
                 </div>
-                <button type="button" class="btn-close" @onclick="FecharModalDetalhes">&times;</button>
+                <button type="button" class="btn-close" aria-label="Fechar modal" @onclick="FecharModalDetalhes">&times;</button>
             </div>
 
             <div class="modal-body">
