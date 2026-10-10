@@ -118,11 +118,12 @@
             <input type="text"
                    class="search-input"
                    placeholder="Buscar por Nº OS, cliente, equipamento ou técnico..."
+                   aria-label="Buscar por número da OS, cliente, equipamento ou técnico"
                    @bind="termoBusca"
                    @bind:event="oninput" />
             @if (!string.IsNullOrWhiteSpace(termoBusca))
             {
-                <button class="clear-search" @onclick='() => termoBusca = ""'>&times;</button>
+                <button class="clear-search" aria-label="Limpar busca" title="Limpar busca" @onclick='() => termoBusca = ""'>&times;</button>
             }
         </div>
     </div>
@@ -255,13 +256,13 @@
 @if (mostrarModalNovaOS)
 {
     <div class="modal-backdrop" @onclick="FecharModalNovaOS">
-        <div class="modal-dialog" @onclick:stopPropagation="true">
+        <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="modalNovaOSTitle" @onclick:stopPropagation="true">
             <div class="modal-header">
                 <div class="modal-title-box">
                     <span class="modal-badge">Nova OS</span>
-                    <h2>Abertura de Ordem de Serviço</h2>
+                    <h2 id="modalNovaOSTitle">Abertura de Ordem de Serviço</h2>
                 </div>
-                <button type="button" class="btn-close" @onclick="FecharModalNovaOS">&times;</button>
+                <button type="button" class="btn-close" aria-label="Fechar" title="Fechar" @onclick="FecharModalNovaOS">&times;</button>
             </div>
 
             <div class="modal-body">
@@ -393,13 +394,13 @@
 @if (mostrarModalDetalhes && osSelecionada != null)
 {
     <div class="modal-backdrop" @onclick="FecharModalDetalhes">
-        <div class="modal-dialog modal-lg" @onclick:stopPropagation="true">
+        <div class="modal-dialog modal-lg" role="dialog" aria-modal="true" aria-labelledby="modalDetalhesTitle" @onclick:stopPropagation="true">
             <div class="modal-header">
                 <div class="modal-title-box">
                     <span class="modal-badge">Ordem de Serviço</span>
-                    <h2>@osSelecionada.NumeroOS</h2>
+                    <h2 id="modalDetalhesTitle">@osSelecionada.NumeroOS</h2>
                 </div>
-                <button type="button" class="btn-close" @onclick="FecharModalDetalhes">&times;</button>
+                <button type="button" class="btn-close" aria-label="Fechar" title="Fechar" @onclick="FecharModalDetalhes">&times;</button>
             </div>
 
             <div class="modal-body">
