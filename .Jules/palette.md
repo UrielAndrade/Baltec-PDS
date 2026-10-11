@@ -1,0 +1,3 @@
+## 2026-03-31 - Table Action Button Accessibility in Blazor Data Grids
+**Learning:** Table action buttons with generic visual labels ("Ver", "Editar", "Desativar") lack context for screen reader users navigating row actions sequentially. Including row identifier properties (such as model name and serial number) in `aria-label` ensures clarity without breaking Label in Name (WCAG 2.5.3) when starting with the visual button text.
+**Action:** When adding accessible labels to row-level action buttons in Blazor tables, structure `aria-label` as `"[Visual Action] [entity type] [entity model/identifier]"`.

@@ -218,7 +218,10 @@
 
                                 <td class="col-acoes text-right">
                                     <div class="action-buttons">
-                                        <button class="btn-action btn-detalhes" title="Ver detalhes completos" @onclick="() => AbrirModalDetalhes(equipamento)">
+                                        <button class="btn-action btn-detalhes"
+                                                title="Ver detalhes completos"
+                                                aria-label="Ver detalhes da balança @equipamento.Modelo - Série @equipamento.NumeroSerie"
+                                                @onclick="() => AbrirModalDetalhes(equipamento)">
                                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                                 <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                                                 <circle cx="12" cy="12" r="3"></circle>
@@ -226,7 +229,10 @@
                                             Ver
                                         </button>
 
-                                        <button class="btn-action btn-editar" title="Editar dados da balança" @onclick="() => AbrirModalEditar(equipamento)">
+                                        <button class="btn-action btn-editar"
+                                                title="Editar dados da balança"
+                                                aria-label="Editar balança @equipamento.Modelo - Série @equipamento.NumeroSerie"
+                                                @onclick="() => AbrirModalEditar(equipamento)">
                                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                                 <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
                                                 <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
@@ -236,6 +242,7 @@
 
                                         <button class="btn-action @(equipamento.Ativo ? "btn-toggle-off" : "btn-toggle-on")"
                                                 title="@(equipamento.Ativo ? "Desativar balança" : "Ativar balança")"
+                                                aria-label="@(equipamento.Ativo ? "Desativar" : "Ativar") balança @equipamento.Modelo - Série @equipamento.NumeroSerie"
                                                 @onclick="() => AlternarStatus(equipamento)">
                                             @(equipamento.Ativo ? "Desativar" : "Ativar")
                                         </button>
