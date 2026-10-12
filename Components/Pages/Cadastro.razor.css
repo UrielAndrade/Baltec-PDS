@@ -121,24 +121,34 @@ main.page-background {
     align-items: center;
 }
 
-.input-icon {
+.toggle-password-btn {
     position: absolute;
-    right: 10px;
+    right: 6px;
     display: flex;
     align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    padding: 4px;
+    border-radius: 4px;
     cursor: pointer;
     user-select: none;
 }
 
-.input-icon img {
+.toggle-password-btn img {
     width: 18px;
     height: 18px;
     opacity: 0.5;
     transition: opacity 0.2s;
 }
 
-.input-icon:hover img {
+.toggle-password-btn:hover img {
     opacity: 0.8;
+}
+
+.toggle-password-btn:focus-visible {
+    outline: 2px solid #1B984D;
+    outline-offset: 1px;
 }
 
 /* ===== MESSAGES ===== */
