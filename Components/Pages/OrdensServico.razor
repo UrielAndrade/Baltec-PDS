@@ -122,7 +122,7 @@
                    @bind:event="oninput" />
             @if (!string.IsNullOrWhiteSpace(termoBusca))
             {
-                <button class="clear-search" @onclick='() => termoBusca = ""'>&times;</button>
+                <button class="clear-search" aria-label="Limpar busca" title="Limpar busca" @onclick='() => termoBusca = ""'>&times;</button>
             }
         </div>
     </div>
@@ -213,7 +213,7 @@
                                         <!-- Botão Avançar Status -->
                                         @if (os.FkStatus == 1) // Pendente -> Avança para Em Andamento
                                         {
-                                            <button class="btn-action btn-avancar" title="Iniciar Atendimento (Em Andamento)" @onclick="() => AvancarStatus(os)">
+                                            <button class="btn-action btn-avancar" title="Iniciar Atendimento (Em Andamento)" aria-label="Iniciar Atendimento (Em Andamento)" @onclick="() => AvancarStatus(os)">
                                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                                     <polygon points="5 3 19 12 5 21 5 3"></polygon>
                                                 </svg>
@@ -222,7 +222,7 @@
                                         }
                                         else if (os.FkStatus == 2 || os.FkStatus == 3) // Em Andamento ou Aguardando Peça -> Concluir
                                         {
-                                            <button class="btn-action btn-concluir" title="Concluir Ordem de Serviço" @onclick="() => ConcluirOS(os)">
+                                            <button class="btn-action btn-concluir" title="Concluir Ordem de Serviço" aria-label="Concluir Ordem de Serviço" @onclick="() => ConcluirOS(os)">
                                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                                     <polyline points="20 6 9 17 4 12"></polyline>
                                                 </svg>
@@ -231,7 +231,7 @@
                                         }
 
                                         <!-- Detalhes -->
-                                        <button class="btn-action btn-detalhes" title="Ver detalhes completos da OS" @onclick="() => VisualizarDetalhes(os)">
+                                        <button class="btn-action btn-detalhes" title="Ver detalhes completos da OS" aria-label="Ver detalhes completos da OS" @onclick="() => VisualizarDetalhes(os)">
                                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                                 <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                                                 <circle cx="12" cy="12" r="3"></circle>
@@ -261,7 +261,7 @@
                     <span class="modal-badge">Nova OS</span>
                     <h2>Abertura de Ordem de Serviço</h2>
                 </div>
-                <button type="button" class="btn-close" @onclick="FecharModalNovaOS">&times;</button>
+                <button type="button" class="btn-close" aria-label="Fechar modal" @onclick="FecharModalNovaOS">&times;</button>
             </div>
 
             <div class="modal-body">
@@ -399,7 +399,7 @@
                     <span class="modal-badge">Ordem de Serviço</span>
                     <h2>@osSelecionada.NumeroOS</h2>
                 </div>
-                <button type="button" class="btn-close" @onclick="FecharModalDetalhes">&times;</button>
+                <button type="button" class="btn-close" aria-label="Fechar modal" @onclick="FecharModalDetalhes">&times;</button>
             </div>
 
             <div class="modal-body">
