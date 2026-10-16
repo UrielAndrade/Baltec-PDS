@@ -21,57 +21,57 @@
         <div class="form-grid">
 
             <div class="form-group">
-                <label>Razão Social</label>
-                <input type="text"
+                <label for="razaoSocial">Razão Social <span class="text-danger" aria-hidden="true">*</span></label>
+                <input id="razaoSocial" type="text"
                        @bind="NovoCliente.RazaoSocial"
-                       placeholder="Digite a razão social" />
+                       placeholder="Digite a razão social" required aria-required="true" />
             </div>
 
             <div class="form-group">
-                <label>Nome Fantasia</label>
-                <input type="text"
+                <label for="nomeFantasia">Nome Fantasia</label>
+                <input id="nomeFantasia" type="text"
                        @bind="NovoCliente.NomeFantasia"
                        placeholder="Digite o nome fantasia" />
             </div>
 
             <div class="form-group">
-                <label>CNPJ/CPF</label>
-                <input type="text"
+                <label for="cnpjCpf">CNPJ/CPF <span class="text-danger" aria-hidden="true">*</span></label>
+                <input id="cnpjCpf" type="text"
                        @bind="NovoCliente.CnpjCpf"
-                       placeholder="Digite o CNPJ ou CPF" />
+                       placeholder="Digite o CNPJ ou CPF" required aria-required="true" />
             </div>
 
             <div class="form-group">
-                <label>Telefone</label>
-                <input type="text"
+                <label for="telefone">Telefone</label>
+                <input id="telefone" type="text"
                        @bind="NovoCliente.Telefone"
                        placeholder="Digite o telefone" />
             </div>
 
             <div class="form-group">
-                <label>E-mail</label>
-                <input type="email"
+                <label for="email">E-mail</label>
+                <input id="email" type="email"
                        @bind="NovoCliente.Email"
                        placeholder="Digite o e-mail" />
             </div>
 
             <div class="form-group">
-                <label>Endereço</label>
-                <input type="text"
+                <label for="endereco">Endereço</label>
+                <input id="endereco" type="text"
                        @bind="NovoCliente.Endereco"
                        placeholder="Digite o endereço" />
             </div>
 
             <div class="form-group">
-                <label>Cidade</label>
-                <input type="text"
+                <label for="cidade">Cidade</label>
+                <input id="cidade" type="text"
                        @bind="NovoCliente.Cidade"
                        placeholder="Digite a cidade" />
             </div>
 
             <div class="form-group">
-                <label>Estado</label>
-                <input type="text"
+                <label for="estado">Estado</label>
+                <input id="estado" type="text"
                        maxlength="2"
                        @bind="NovoCliente.Estado"
                        placeholder="UF" />
@@ -81,14 +81,14 @@
 
         @if (!string.IsNullOrWhiteSpace(MensagemErro))
         {
-            <div class="alert alert-danger">
+            <div class="alert alert-danger" role="alert" aria-live="assertive">
                 @MensagemErro
             </div>
         }
 
         @if (!string.IsNullOrWhiteSpace(MensagemSucesso))
         {
-            <div class="alert alert-success">
+            <div class="alert alert-success" role="status" aria-live="polite">
                 @MensagemSucesso
             </div>
         }
