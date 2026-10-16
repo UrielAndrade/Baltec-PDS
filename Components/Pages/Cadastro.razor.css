@@ -126,8 +126,18 @@ main.page-background {
     right: 10px;
     display: flex;
     align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    padding: 2px;
+    border-radius: 4px;
     cursor: pointer;
     user-select: none;
+}
+
+.input-icon:focus-visible {
+    outline: 2px solid #1B984D;
+    outline-offset: 1px;
 }
 
 .input-icon img {
@@ -137,7 +147,8 @@ main.page-background {
     transition: opacity 0.2s;
 }
 
-.input-icon:hover img {
+.input-icon:hover img,
+.input-icon:focus-visible img {
     opacity: 0.8;
 }
 
@@ -173,7 +184,7 @@ main.page-background {
 }
 
 /* ===== BUTTON ===== */
-.cadastro-form button {
+.cadastro-form button:not(.input-icon) {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -192,15 +203,15 @@ main.page-background {
     transition: filter 0.2s, transform 0.1s;
 }
 
-.cadastro-form button:hover:not(:disabled) {
+.cadastro-form button:not(.input-icon):hover:not(:disabled) {
     filter: brightness(1.1);
 }
 
-.cadastro-form button:active:not(:disabled) {
+.cadastro-form button:not(.input-icon):active:not(:disabled) {
     transform: scale(0.98);
 }
 
-.cadastro-form button:disabled {
+.cadastro-form button:not(.input-icon):disabled {
     opacity: 0.7;
     cursor: not-allowed;
 }
