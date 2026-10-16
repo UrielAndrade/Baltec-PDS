@@ -99,25 +99,36 @@ main.page-background {
     color: #aaa;
 }
 
-/* ===== EYE ICON ===== */
-.input-icon {
+/* ===== PASSWORD TOGGLE BUTTON ===== */
+.toggle-password-btn {
     position: absolute;
     right: 10px;
     display: flex;
     align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    padding: 4px;
+    border-radius: 4px;
     cursor: pointer;
     user-select: none;
 }
 
-.input-icon img {
+.toggle-password-btn img {
     width: 20px;
     height: 20px;
     opacity: 0.55;
     transition: opacity 0.2s;
 }
 
-.input-icon:hover img {
+.toggle-password-btn:hover img,
+.toggle-password-btn:focus img {
     opacity: 0.85;
+}
+
+.toggle-password-btn:focus-visible {
+    outline: 2px solid #1B984D;
+    outline-offset: 1px;
 }
 
 /* ===== ERROR ===== */
@@ -132,7 +143,7 @@ main.page-background {
 }
 
 /* ===== BUTTON ===== */
-.login-form button {
+.login-form > button {
     margin-top: 4px;
     width: 100%;
     height: 2.75rem;
@@ -147,11 +158,11 @@ main.page-background {
     transition: filter 0.2s, transform 0.1s;
 }
 
-.login-form button:hover {
+.login-form > button:hover {
     filter: brightness(1.1);
 }
 
-.login-form button:active {
+.login-form > button:active {
     transform: scale(0.98);
 }
 
