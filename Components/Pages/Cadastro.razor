@@ -11,7 +11,7 @@
     <div class="container">
         <img class="baltec-logo" src="/imgs/logo.svg" alt="Logo da Baltec" />
 
-        <form class="cadastro-form" @onsubmit:preventDefault>
+        <form class="cadastro-form" @onsubmit="Cadastrar" @onsubmit:preventDefault>
             <h1>Criar Conta</h1>
 
             <div class="form-row">
@@ -57,9 +57,11 @@
                     <div class="password-wrapper">
                         <input id="senha-cad" type="@(mostrarSenha ? "text" : "password")"
                                @bind="senha" placeholder="Mínimo 6 caracteres" />
-                        <span class="input-icon" @onclick="ToggleSenha">
-                            <img src="/imgs/eye.svg" alt="Mostrar senha" />
-                        </span>
+                        <button type="button" class="input-icon" @onclick="ToggleSenha"
+                                aria-label="@(mostrarSenha ? "Ocultar senha" : "Mostrar senha")"
+                                title="@(mostrarSenha ? "Ocultar senha" : "Mostrar senha")">
+                            <img src="/imgs/eye.svg" alt="" aria-hidden="true" />
+                        </button>
                     </div>
                 </div>
                 <div class="input-group">
@@ -67,9 +69,11 @@
                     <div class="password-wrapper">
                         <input id="conf-senha" type="@(mostrarConfSenha ? "text" : "password")"
                                @bind="confirmarSenha" placeholder="Repita a senha" />
-                        <span class="input-icon" @onclick="ToggleConfSenha">
-                            <img src="/imgs/eye.svg" alt="Mostrar senha" />
-                        </span>
+                        <button type="button" class="input-icon" @onclick="ToggleConfSenha"
+                                aria-label="@(mostrarConfSenha ? "Ocultar senha" : "Mostrar senha")"
+                                title="@(mostrarConfSenha ? "Ocultar senha" : "Mostrar senha")">
+                            <img src="/imgs/eye.svg" alt="" aria-hidden="true" />
+                        </button>
                     </div>
                 </div>
             </div>
@@ -89,7 +93,7 @@
                 </div>
             }
 
-            <button type="button" @onclick="Cadastrar" disabled="@carregando">
+            <button type="submit" disabled="@carregando">
                 @if (carregando)
                 {
                     <span class="spinner"></span>
