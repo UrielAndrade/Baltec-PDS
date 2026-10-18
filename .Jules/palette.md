@@ -1,0 +1,3 @@
+## 2026-03-30 - Accessible Password Visibility Toggles in Blazor Forms
+**Learning:** Interactive input icons in Blazor forms (such as eye icons for password visibility) were implemented as non-semantic `<span @onclick="...">` tags. Non-semantic elements with `@onclick` are ignored in the document tab order and cannot be triggered via keyboard (Space/Enter) or recognized as interactive controls by screen readers.
+**Action:** Always render interactive icon toggles using semantic `<button type="button">` with dynamic `aria-label`, `aria-pressed`, and `:focus-visible` styles to ensure full keyboard navigation and screen reader support.
