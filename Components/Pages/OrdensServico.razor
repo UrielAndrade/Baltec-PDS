@@ -118,11 +118,12 @@
             <input type="text"
                    class="search-input"
                    placeholder="Buscar por Nº OS, cliente, equipamento ou técnico..."
+                   aria-label="Buscar ordens de serviço"
                    @bind="termoBusca"
                    @bind:event="oninput" />
             @if (!string.IsNullOrWhiteSpace(termoBusca))
             {
-                <button class="clear-search" @onclick='() => termoBusca = ""'>&times;</button>
+                <button class="clear-search" aria-label="Limpar busca" @onclick='() => termoBusca = ""'>&times;</button>
             }
         </div>
     </div>
