@@ -100,13 +100,35 @@ main.page-background {
 }
 
 /* ===== EYE ICON ===== */
-.input-icon {
+.password-wrapper .input-icon {
     position: absolute;
-    right: 10px;
+    right: 8px;
     display: flex;
     align-items: center;
+    justify-content: center;
+    width: auto;
+    height: auto;
     cursor: pointer;
     user-select: none;
+    background: transparent;
+    border: none;
+    padding: 4px;
+    border-radius: 4px;
+    margin: 0;
+}
+
+.password-wrapper .input-icon:hover {
+    background: transparent;
+    filter: none;
+}
+
+.password-wrapper .input-icon:active {
+    transform: none;
+}
+
+.password-wrapper .input-icon:focus-visible {
+    outline: 2px solid #1B984D;
+    outline-offset: 1px;
 }
 
 .input-icon img {

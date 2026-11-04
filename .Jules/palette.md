@@ -1,0 +1,3 @@
+## 2026-11-04 - Password Visibility Toggle Semantics & Form Button Overrides
+**Learning:** In Blazor form cards that style broad `button` element selectors (e.g., submit button gradients and sizing), replacing clickable icons with `<button type="button">` will inadvertently inherit parent button styles unless scoped via specific wrappers (like `.password-wrapper .input-icon`) with proper resets for background, border, size, and hover/active states.
+**Action:** When converting icon toggles inside form containers to `<button type="button">`, scope the CSS selector with its wrapper container (`.password-wrapper .input-icon`) and reset `width`, `height`, `margin`, `background`, and `hover`/`active` transformations.
