@@ -121,23 +121,39 @@ main.page-background {
     align-items: center;
 }
 
-.input-icon {
+.password-wrapper button.input-icon {
     position: absolute;
-    right: 10px;
+    right: 8px;
     display: flex;
     align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    margin: 0;
+    background: transparent;
+    border: none;
+    border-radius: 4px;
     cursor: pointer;
     user-select: none;
+    outline: none;
+    transform: none;
+    filter: none;
 }
 
-.input-icon img {
+.password-wrapper button.input-icon:focus-visible {
+    box-shadow: 0 0 0 2px #1B984D;
+}
+
+.password-wrapper button.input-icon img {
     width: 18px;
     height: 18px;
     opacity: 0.5;
     transition: opacity 0.2s;
+    pointer-events: none;
 }
 
-.input-icon:hover img {
+.password-wrapper button.input-icon:hover img {
     opacity: 0.8;
 }
 
@@ -173,7 +189,7 @@ main.page-background {
 }
 
 /* ===== BUTTON ===== */
-.cadastro-form button {
+.cadastro-form button:not(.input-icon) {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -192,15 +208,15 @@ main.page-background {
     transition: filter 0.2s, transform 0.1s;
 }
 
-.cadastro-form button:hover:not(:disabled) {
+.cadastro-form button:not(.input-icon):hover:not(:disabled) {
     filter: brightness(1.1);
 }
 
-.cadastro-form button:active:not(:disabled) {
+.cadastro-form button:not(.input-icon):active:not(:disabled) {
     transform: scale(0.98);
 }
 
-.cadastro-form button:disabled {
+.cadastro-form button:not(.input-icon):disabled {
     opacity: 0.7;
     cursor: not-allowed;
 }
