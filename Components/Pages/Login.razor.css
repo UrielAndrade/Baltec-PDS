@@ -99,24 +99,48 @@ main.page-background {
     color: #aaa;
 }
 
-/* ===== EYE ICON ===== */
-.input-icon {
+/* ===== EYE ICON BUTTON ===== */
+.password-wrapper button.input-icon {
     position: absolute;
-    right: 10px;
+    right: 8px;
     display: flex;
     align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    padding: 4px;
+    width: auto;
+    height: auto;
+    margin: 0;
     cursor: pointer;
     user-select: none;
+    border-radius: 4px;
+    transition: opacity 0.2s, background-color 0.2s;
 }
 
-.input-icon img {
+.password-wrapper button.input-icon:hover {
+    background: rgba(0, 0, 0, 0.05);
+    filter: none;
+}
+
+.password-wrapper button.input-icon:active {
+    transform: none;
+}
+
+.password-wrapper button.input-icon:focus-visible {
+    outline: 2px solid #1B984D;
+    outline-offset: 1px;
+}
+
+.password-wrapper button.input-icon img {
     width: 20px;
     height: 20px;
     opacity: 0.55;
     transition: opacity 0.2s;
+    display: block;
 }
 
-.input-icon:hover img {
+.password-wrapper button.input-icon:hover img {
     opacity: 0.85;
 }
 
